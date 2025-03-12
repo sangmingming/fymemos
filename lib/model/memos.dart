@@ -8,25 +8,37 @@ class Memo {
   late final DateTime createTime;
   late final DateTime displayTime;
   late final String content;
-  late final Visibility visibility;
+  late final MemoVisibility visibility;
 
-  Memo(this.name, this.uid, this.creator, this.createTime, this.displayTime, this.content, this.visibility);
+  Memo(
+    this.name,
+    this.uid,
+    this.creator,
+    this.createTime,
+    this.displayTime,
+    this.content,
+    this.visibility,
+  );
 
   factory Memo.fromJson(Map<String, dynamic> json) {
-    return Memo(json['name'] ?? "", 
-      json['uid'] ?? "", 
+    return Memo(
+      json['name'] ?? "",
+      json['uid'] ?? "",
       json['creator'] ?? "",
       DateTime.parse(json['createTime'] ?? DateTime.now().toIso8601String()),
       DateTime.parse(json['displayTime'] ?? DateTime.now().toIso8601String()),
       json['content'] ?? "",
-      Visibility.fromString(json['visibility'] ?? ""));
+      MemoVisibility.fromString(json['visibility'] ?? ""),
+    );
   }
 
   String getFormattedDisplayTime() {
     final now = DateTime.now();
     final difference = now.difference(displayTime);
 
-    if (difference.inMinutes < 60) {
+    if (difference.inSeconds < 60) {
+      return '刚刚';
+    } else if (difference.inMinutes < 60) {
       return '${difference.inMinutes}分钟前';
     } else if (difference.inHours < 24) {
       return '${difference.inHours}小时前';
@@ -36,31 +48,56 @@ class Memo {
       return DateFormat.yMMMd().format(displayTime);
     }
   }
-
 }
 
-enum Visibility {
-  Public(icon: "assets/image/memo_public.svg", name: "PUBLIC"),
-  Private(icon: "assets/image/memo_private.svg", name: "PRIVATE"),
-  Protected(icon: "assets/image/memo_workspace.svg", name: "PROTECTED");
+class CreateMemoRequest {
+  late final String content;
+  late final MemoVisibility visibility;
 
+  CreateMemoRequest(this.content, this.visibility);
 
+  Map<String, dynamic> toJson() {
+    return {'content': content, 'visibility': visibility.name};
+  }
+}
 
-  const Visibility({required this.icon, required this.name, });
+enum MemoVisibility {
+  Public(
+    icon: "assets/image/memo_public.svg",
+    name: "PUBLIC",
+    displayText: "公开",
+  ),
+  Private(
+    icon: "assets/image/memo_private.svg",
+    name: "PRIVATE",
+    displayText: "仅自己可见",
+  ),
+  Protected(
+    icon: "assets/image/memo_workspace.svg",
+    name: "PROTECTED",
+    displayText: "工作空间可见",
+  );
+
+  const MemoVisibility({
+    required this.icon,
+    required this.name,
+    required this.displayText,
+  });
 
   final String icon;
   final String name;
+  final String displayText;
 
-  factory Visibility.fromString(String name) {
+  factory MemoVisibility.fromString(String name) {
     switch (name) {
       case "PUBLIC":
-        return Visibility.Public;
+        return MemoVisibility.Public;
       case "PRIVATE":
-        return Visibility.Private;
+        return MemoVisibility.Private;
       case "PROTECTED":
-        return Visibility.Protected;
+        return MemoVisibility.Protected;
       default:
-        return Visibility.Public;
+        return MemoVisibility.Public;
     }
   }
 }
@@ -73,12 +110,10 @@ class MemosResponse {
 
   factory MemosResponse.fromJson(Map<String, dynamic> json) {
     List<dynamic> list = json['memos'] as List<dynamic>;
-    List<Memo> memos = list.map((item) => 
-      Memo.fromJson(item as Map<String, dynamic>)
-    ).toList();
-    return MemosResponse(
-      memos: memos,
-      nextPageToken: json['nextPageToken']  
-    );
+    List<Memo> memos =
+        list
+            .map((item) => Memo.fromJson(item as Map<String, dynamic>))
+            .toList();
+    return MemosResponse(memos: memos, nextPageToken: json['nextPageToken']);
   }
 }

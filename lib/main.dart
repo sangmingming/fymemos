@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fymemos/model/memos.dart';
+import 'package:fymemos/pages/create_memo_page.dart';
 import 'package:fymemos/widgets/memo.dart';
 import 'package:intl/intl.dart';
 import 'repo/repository.dart';
@@ -38,7 +39,7 @@ class MyApp extends StatelessWidget {
         fontFamily: "Noto",
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page中文'),
+      home: const MyHomePage(title: 'Memos'),
     );
   }
 }
@@ -63,27 +64,26 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   List<Memo> memo = List.empty();
-    final ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
   bool _isLoadingMore = false;
   String? _nextPageToken;
-
 
   @override
   void initState() {
     super.initState();
     loadData();
     _scrollController.addListener(() {
-      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
         if (!_isLoadingMore && _nextPageToken != null) {
           _isLoadingMore = true;
           loadMoreData(_nextPageToken!);
         }
       }
     });
-    
   }
 
-    Future<void> loadData() async {
+  Future<void> loadData() async {
     MemosResponse r = await fetchMemos();
     if (r.memos != null) {
       print("${r.nextPageToken}");
@@ -94,7 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-    Future<void> _refreshData() async {
+  Future<void> _refreshData() async {
     await loadData();
   }
 
@@ -124,8 +124,15 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  void _createMemo() {
-    throw UnimplementedError();
+  void _createMemo() async {
+    final newMemo = await Navigator.of(
+      context,
+    ).push<Memo?>(MaterialPageRoute(builder: (context) => CreateMemoPage()));
+    if (newMemo != null) {
+      setState(() {
+        memo.insert(0, newMemo);
+      });
+    }
   }
 
   @override
@@ -163,11 +170,12 @@ class _MyHomePageState extends State<MyHomePage> {
             } else {
               return MemoItem(memo: memo[index]);
             }
-        }),
+          },
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _createMemo,
-        tooltip: 'Increment',
+        tooltip: '创作',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
