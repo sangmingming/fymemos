@@ -18,8 +18,11 @@ void initDio() {
   );
   dio.transformer = DefaultTransformer()..jsonDecodeCallback = parseJson;
 }
-Future<MemosResponse> login() async {
-  final res = await dio.get("https://memos.isming.info/api/v1/memos");
+Future<MemosResponse> fetchMemos({String? pageToken}) async {
+  final res = await dio.get("https://memos.isming.info/api/v1/memos", 
+  queryParameters: {
+      if (pageToken != null) 'pageToken': pageToken,
+    },);
   return MemosResponse.fromJson(res.data as Map<String, dynamic>);
 }
 

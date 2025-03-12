@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:fymemos/model/memos.dart';
 import 'package:fymemos/widgets/memo.dart';
+import 'package:intl/intl.dart';
 import 'repo/repository.dart';
 
 void main() {
+  // Intl.defaultLocale = 'zh_CN';
   runApp(const MyApp());
 }
 
@@ -60,35 +62,70 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
   List<Memo> memo = List.empty();
+    final ScrollController _scrollController = ScrollController();
+  bool _isLoadingMore = false;
+  String? _nextPageToken;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
 
   @override
   void initState() {
     super.initState();
     loadData();
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+        if (!_isLoadingMore && _nextPageToken != null) {
+          _isLoadingMore = true;
+          loadMoreData(_nextPageToken!);
+        }
+      }
+    });
     
   }
 
-  void loadData() async {
-    MemosResponse r = await login();
+    Future<void> loadData() async {
+    MemosResponse r = await fetchMemos();
     if (r.memos != null) {
       print("${r.nextPageToken}");
       setState(() {
         memo = r.memos!;
+        _nextPageToken = r.nextPageToken;
       });
     }
+  }
+
+    Future<void> _refreshData() async {
+    await loadData();
+  }
+
+  void loadMoreData(String pageToken) async {
+    if (_nextPageToken == null) return;
+
+    setState(() {
+      _isLoadingMore = true;
+    });
+    MemosResponse r = await fetchMemos(pageToken: pageToken);
+    if (r.memos != null) {
+      print("${r.nextPageToken}");
+      setState(() {
+        memo.addAll(r.memos!);
+        if (r.nextPageToken != null && r.nextPageToken!.isNotEmpty) {
+          _nextPageToken = r.nextPageToken;
+        } else {
+          _nextPageToken = null;
+        }
+        _isLoadingMore = false;
+      });
+    } else {
+      setState(() {
+        _isLoadingMore = false;
+        _nextPageToken = null;
+      });
+    }
+  }
+
+  void _createMemo() {
+    throw UnimplementedError();
   }
 
   @override
@@ -109,13 +146,27 @@ class _MyHomePageState extends State<MyHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: ListView.builder(
-        itemCount: memo.length,
-        itemBuilder: (context, index) {
-          return MemoItem(memo: memo[index]);
-      }),
+      body: RefreshIndicator(
+        onRefresh: _refreshData,
+        child: ListView.builder(
+          controller: _scrollController,
+          itemCount: memo.length + 1,
+          itemBuilder: (context, index) {
+            if (index == memo.length) {
+              if (_isLoadingMore) {
+                return Center(child: CircularProgressIndicator());
+              } else if (_nextPageToken == null) {
+                return Center(child: Text('No more data'));
+              } else {
+                return SizedBox.shrink(); // Empty space when not loading more and not at the end
+              }
+            } else {
+              return MemoItem(memo: memo[index]);
+            }
+        }),
+      ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: _createMemo,
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
