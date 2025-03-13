@@ -4,23 +4,18 @@ import 'package:fymemos/pages/create_memo_page.dart';
 import 'package:fymemos/widgets/memo.dart';
 import 'package:fymemos/repo/repository.dart';
 
-class MemoListPage extends StatefulWidget {
-  final String? memoState;
-  const MemoListPage({super.key, this.memoState});
+class ArchivedMemoListPage extends StatefulWidget {
+  const ArchivedMemoListPage({super.key});
 
   @override
-  State<MemoListPage> createState() => _MemoListPageState(memoState: memoState);
+  State<ArchivedMemoListPage> createState() => _ArchivedMemoListPageState();
 }
 
-class _MemoListPageState extends State<MemoListPage> {
+class _ArchivedMemoListPageState extends State<ArchivedMemoListPage> {
   List<Memo> memo = [];
   final ScrollController _scrollController = ScrollController();
   bool _isLoadingMore = false;
   String? _nextPageToken;
-
-  final String? memoState;
-
-  _MemoListPageState({this.memoState});
 
   @override
   void initState() {
@@ -36,7 +31,7 @@ class _MemoListPageState extends State<MemoListPage> {
   }
 
   Future<void> loadData() async {
-    MemosResponse r = await fetchMemos(state: memoState);
+    MemosResponse r = await fetchMemos(state: "ARCHIVED");
     if (r.memos != null) {
       setState(() {
         memo = r.memos!;
@@ -54,7 +49,7 @@ class _MemoListPageState extends State<MemoListPage> {
 
     MemosResponse r = await fetchMemos(
       pageToken: _nextPageToken!,
-      state: memoState,
+      state: "ARCHIVED",
     );
     print(r.nextPageToken ?? "is null");
     if (r.memos != null) {
@@ -79,18 +74,6 @@ class _MemoListPageState extends State<MemoListPage> {
     await loadData();
   }
 
-  void _createMemo() async {
-    final newMemo = await Navigator.of(
-      context,
-    ).push<Memo>(MaterialPageRoute(builder: (context) => CreateMemoPage()));
-
-    if (newMemo != null) {
-      setState(() {
-        memo.insert(0, newMemo);
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -113,11 +96,6 @@ class _MemoListPageState extends State<MemoListPage> {
             }
           },
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _createMemo,
-        tooltip: 'Create Memo',
-        child: const Icon(Icons.add),
       ),
     );
   }

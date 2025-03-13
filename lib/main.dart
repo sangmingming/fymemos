@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:fymemos/model/users.dart';
+import 'package:fymemos/pages/archived_memo_list_page.dart';
 import 'package:fymemos/pages/create_memo_page.dart';
 import 'package:fymemos/pages/memo_list_page.dart';
+import 'package:fymemos/pages/resources_list_page.dart';
 import 'package:fymemos/repo/repository.dart';
+import 'package:fymemos/widgets/statics.dart';
 
 void main() {
   runApp(const MyApp());
@@ -35,7 +39,16 @@ class MemoDestination {
 
 const List<MemoDestination> destinations = <MemoDestination>[
   MemoDestination('Memos', Icons.workspaces_outline, Icons.workspaces_filled),
-  MemoDestination('Resources', Icons.image_outlined, Icons.image_rounded),
+  MemoDestination(
+    'Archived',
+    Icons.inventory_2_outlined,
+    Icons.inventory_2_rounded,
+  ),
+  MemoDestination(
+    'Resources',
+    Icons.perm_media_outlined,
+    Icons.perm_media_rounded,
+  ),
 ];
 
 class NavigationDrawerHomePage extends StatefulWidget {
@@ -50,91 +63,116 @@ class _NavigationDrawerHomePageState extends State<NavigationDrawerHomePage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   int screenIndex = 0;
-  late bool showNavigationDrawer;
+  late bool showNavigationRail;
+  String title = destinations[0].label;
+  UserProfile? userProfile;
+  UserStats? userStats;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  void _loadUserData() async {
+    final user = await getAuthStatus();
+    final stats = await getUserStats(user.name);
+    print(user.name);
+    print(stats.name);
+
+    setState(() {
+      userProfile = user;
+      userStats = stats;
+    });
+  }
 
   void handleScreenChanged(int selectedScreen) {
+    print("Selected screen: $selectedScreen");
     setState(() {
       screenIndex = selectedScreen;
     });
   }
 
-  void openDrawer() {
-    scaffoldKey.currentState!.openEndDrawer();
+  void handleDrawerScreenChanged(int selectedScreen) {
+    print("Selected screen: $selectedScreen");
+    setState(() {
+      screenIndex = selectedScreen;
+    });
+    scaffoldKey.currentState!.closeDrawer();
   }
 
   @override
-  Widget build(BuildContext context) {
+  void didChangeDependencies() {
+    showNavigationRail = MediaQuery.of(context).size.width >= 500;
+    super.didChangeDependencies();
+  }
+
+  Widget buildWithNavigationDrawer(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
+      appBar: AppBar(title: Text(destinations[screenIndex].label)),
+      body: SafeArea(bottom: false, top: false, child: getCurrentPage()),
+      drawer: NavigationDrawer(
+        onDestinationSelected: handleDrawerScreenChanged,
+        selectedIndex: screenIndex,
+        children: _buildNavigationItems(context),
+      ),
+    );
+  }
 
+  List<Widget> _buildNavigationItems(BuildContext context) {
+    return <Widget>[
+      UserStatisticWidget(user: userProfile, userStats: userStats),
+      ...destinations.map(
+        (MemoDestination destination) => NavigationDrawerDestination(
+          label: Text(destination.label),
+          icon: Icon(destination.icon),
+          selectedIcon: Icon(destination.selectedIcon),
+        ),
+      ),
+      const Padding(
+        padding: EdgeInsets.fromLTRB(28, 16, 28, 10),
+        child: Divider(),
+      ),
+    ];
+  }
+
+  Widget buildWithNavigationRail(BuildContext context) {
+    return Scaffold(
+      key: scaffoldKey,
       body: SafeArea(
         bottom: false,
         top: false,
         child: Row(
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5),
-              child: NavigationRail(
-                minWidth: 50,
-                extended: true,
-                destinations:
-                    destinations.map((MemoDestination destination) {
-                      return NavigationRailDestination(
-                        label: Text(destination.label),
-                        icon: Icon(destination.icon),
-                        selectedIcon: Icon(destination.selectedIcon),
-                      );
-                    }).toList(),
-                selectedIndex: screenIndex,
-                useIndicator: true,
-                onDestinationSelected: (int index) {
-                  setState(() {
-                    screenIndex = index;
-                  });
-                },
-              ),
+            NavigationDrawer(
+              backgroundColor: Theme.of(context).canvasColor,
+              onDestinationSelected: handleScreenChanged,
+              selectedIndex: screenIndex,
+              children: _buildNavigationItems(context),
             ),
-            const VerticalDivider(thickness: 1, width: 1),
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Text('Page Index = $screenIndex'),
-                  ElevatedButton(
-                    onPressed: openDrawer,
-                    child: const Text('Open Drawer'),
-                  ),
-                ],
-              ),
-            ),
+
+            Expanded(child: getCurrentPage()),
           ],
         ),
       ),
-
-      drawer: NavigationDrawer(
-        onDestinationSelected: handleScreenChanged,
-        selectedIndex: screenIndex,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.fromLTRB(28, 16, 16, 10),
-            child: Text(
-              'Header',
-              style: Theme.of(context).textTheme.titleSmall,
-            ),
-          ),
-          ...destinations.map((MemoDestination destination) {
-            return NavigationDrawerDestination(
-              label: Text(destination.label),
-              icon: Icon(destination.icon),
-              selectedIcon: Icon(destination.selectedIcon),
-            );
-          }),
-          const Padding(
-            padding: EdgeInsets.fromLTRB(28, 16, 28, 10),
-            child: Divider(),
-          ),
-        ],
-      ),
     );
+  }
+
+  Widget getCurrentPage() {
+    if (screenIndex == 0) {
+      return MemoListPage();
+    } else if (screenIndex == 1) {
+      return ArchivedMemoListPage();
+    } else {
+      return ResourcesListPage();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return showNavigationRail
+        ? buildWithNavigationRail(context)
+        : buildWithNavigationDrawer(context);
   }
 }
