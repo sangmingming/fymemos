@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    
+    <!-- 背景圆角方块 -->
+    <path
+        android:fillColor="#4A90E2"
+        android:pathData="M8,20a12,12 0 0 1 12,-12h68a12,12 0 0 1 12,12v68a12,12 0 0 1 -12,12h-68a12,12 0 0 1 -12,-12z" />
+    
+    <!-- 纸张 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M30,30h48v48h-48z"
+        android:strokeColor="#CCCCCC"
+        android:strokeWidth="2" />
+    
+    <!-- 笔迹 -->
+    <path
+        android:fillColor="#FFC107"
+        android:pathData="M36,42h36M36,54h24M36,66h18"
+        android:strokeColor="#FF9800"
+        android:strokeWidth="4"
+        android:strokeLineCap="round" />
+    
+    <!-- 笔 -->
+    <path
+        android:fillColor="#D32F2F"
+        android:pathData="M72,72l8,8l-4,4l-8,-8z" />
+</vector>
