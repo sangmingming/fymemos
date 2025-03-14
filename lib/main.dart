@@ -6,6 +6,7 @@ import 'package:fymemos/pages/login_page.dart';
 import 'package:fymemos/pages/memo_detail_page.dart';
 import 'package:fymemos/pages/memo_list_page.dart';
 import 'package:fymemos/pages/resources_list_page.dart';
+import 'package:fymemos/pages/tag_memo_list_page.dart';
 import 'package:fymemos/repo/repository.dart';
 import 'package:fymemos/widgets/statics.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -59,6 +60,13 @@ class MyApp extends StatelessWidget {
               return MaterialPageRoute(
                 builder: (context) {
                   return MemoDetailPage(resourceName: uri.pathSegments[1]);
+                },
+              );
+            } else if (uri.pathSegments.length == 2 &&
+                uri.pathSegments.first == "tags") {
+              return MaterialPageRoute(
+                builder: (context) {
+                  return TagMemoListPage(memoTag: uri.pathSegments[1]);
                 },
               );
             }
@@ -220,6 +228,28 @@ class _NavigationDrawerHomePageState extends State<NavigationDrawerHomePage> {
         padding: EdgeInsets.fromLTRB(28, 16, 28, 10),
         child: Divider(),
       ),
+      ...userStats?.tagCount.entries
+              .map(
+                (entity) => ListTile(
+                  onTap: () {
+                    Navigator.of(context).pushNamed("/tags/${entity.key}");
+                  },
+                  leading: Icon(Icons.tag),
+                  title: Row(
+                    children: [
+                      Text(entity.key),
+                      SizedBox(width: 4),
+                      Text(
+                        "(${entity.value})",
+                        style: Theme.of(context).textTheme.labelMedium,
+                      ),
+                    ],
+                  ),
+                  trailing: Icon(Icons.more_horiz_rounded),
+                ),
+              )
+              .toList() ??
+          [],
     ];
   }
 

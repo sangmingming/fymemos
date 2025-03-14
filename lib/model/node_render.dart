@@ -136,7 +136,7 @@ class NodeRenderer extends StatelessWidget {
     return WidgetSpan(
       child: GestureDetector(
         onTap: () {
-          // Handle tag tap
+          Navigator.of(context).pushNamed("/tags/${node.content}");
         },
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 4, vertical: 4),

@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:fymemos/model/memos.dart';
 import 'package:fymemos/model/resources.dart';
 import 'package:fymemos/model/users.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 const int PAGE_SIZE = 20;
 
@@ -36,6 +37,7 @@ Future<MemosResponse> fetchMemos({
   String? parent,
   String? pageToken,
   String? state,
+  String? filter,
 }) async {
   final res = await dio.get(
     "/api/v1/memos",
@@ -43,6 +45,26 @@ Future<MemosResponse> fetchMemos({
       if (parent != null) 'parent': parent,
       if (pageToken != null) 'pageToken': pageToken,
       if (state != null) 'state': state,
+      if (filter != null) 'filter': filter,
+      'pageSize': PAGE_SIZE,
+    },
+  );
+  return MemosResponse.fromJson(res.data as Map<String, dynamic>);
+}
+
+Future<MemosResponse> fetchUserMemos({
+  String? pageToken,
+  String? state,
+  String? filter,
+}) async {
+  final sp = await SharedPreferences.getInstance();
+  final user = sp.getString("user");
+  final res = await dio.get(
+    "/api/v1/$user/memos",
+    queryParameters: {
+      if (pageToken != null) 'pageToken': pageToken,
+      if (state != null) 'state': state,
+      if (filter != null) 'filter': filter,
       'pageSize': PAGE_SIZE,
     },
   );
