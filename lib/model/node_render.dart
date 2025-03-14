@@ -43,7 +43,7 @@ class NodeRenderer extends StatelessWidget {
     }
   }
 
-  TextSpan _renderChildNode(Node node, BuildContext context) {
+  InlineSpan _renderChildNode(Node node, BuildContext context) {
     switch (node.type) {
       case NodeType.TAG:
         return _renderTagNode(node.node as TagNode, context);
@@ -132,15 +132,25 @@ class NodeRenderer extends StatelessWidget {
     );
   }
 
-  TextSpan _renderTagNode(TagNode node, BuildContext context) {
-    return TextSpan(
-      text: '#${node.content}',
-      style: TextStyle(color: Colors.blue),
-      recognizer:
-          TapGestureRecognizer()
-            ..onTap = () {
-              // Handle tag tap
-            },
+  InlineSpan _renderTagNode(TagNode node, BuildContext context) {
+    return WidgetSpan(
+      child: GestureDetector(
+        onTap: () {
+          // Handle tag tap
+        },
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+          margin: EdgeInsets.symmetric(horizontal: 1),
+          decoration: BoxDecoration(
+            color: Theme.of(context).primaryColor.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: Text(
+            '#${node.content}',
+            style: TextStyle(color: Theme.of(context).primaryColor),
+          ),
+        ),
+      ),
     );
   }
 
@@ -172,7 +182,7 @@ class NodeRenderer extends StatelessWidget {
   TextSpan _renderAutoLinkNode(AutoLinkNode node, BuildContext context) {
     return TextSpan(
       text: node.url,
-      style: TextStyle(color: Colors.blue),
+      style: TextStyle(color: Theme.of(context).primaryColor),
       recognizer:
           TapGestureRecognizer()
             ..onTap = () {
@@ -184,7 +194,7 @@ class NodeRenderer extends StatelessWidget {
   TextSpan _renderLinkNode(LinkNode node, BuildContext context) {
     return TextSpan(
       text: node.text,
-      style: TextStyle(color: Colors.blue),
+      style: TextStyle(color: Theme.of(context).primaryColor),
       recognizer:
           TapGestureRecognizer()
             ..onTap = () {

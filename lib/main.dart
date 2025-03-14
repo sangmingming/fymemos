@@ -1,3 +1,4 @@
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:fymemos/model/users.dart';
 import 'package:fymemos/pages/archived_memo_list_page.dart';
@@ -18,35 +19,61 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        fontFamily: "Noto",
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
-      initialRoute: '/',
-      onGenerateRoute: (settings) {
-        final uri = Uri.parse(settings.name!);
-        print(
-          "jump uri: $uri  first : ${uri.pathSegments.first} count: ${uri.pathSegments.length}",
-        );
-        if (uri.pathSegments.length == 2 && uri.pathSegments.first == "memos") {
-          return MaterialPageRoute(
-            builder: (context) {
-              return MemoDetailPage(resourceName: uri.pathSegments[1]);
-            },
+    return DynamicColorBuilder(
+      builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
+        ColorScheme lightColorScheme;
+        ColorScheme darkColorScheme;
+
+        if (lightDynamic != null && darkDynamic != null) {
+          lightColorScheme = lightDynamic.harmonized();
+          darkColorScheme = darkDynamic.harmonized();
+        } else {
+          lightColorScheme = ColorScheme.fromSeed(seedColor: Colors.green);
+          darkColorScheme = ColorScheme.fromSeed(
+            seedColor: Colors.green,
+            brightness: Brightness.dark,
           );
         }
-        return MaterialPageRoute(
-          builder: (context) {
-            return const CheckLoginPage();
+
+        return MaterialApp(
+          title: 'Flutter Demo',
+          theme: ThemeData(
+            fontFamily: "Noto",
+            colorScheme: lightColorScheme,
+            useMaterial3: true,
+          ),
+          darkTheme: ThemeData(
+            fontFamily: "Noto",
+            colorScheme: darkColorScheme,
+            useMaterial3: true,
+          ),
+          themeMode: ThemeMode.system, // Use system theme mode
+          initialRoute: '/',
+          onGenerateRoute: (settings) {
+            final uri = Uri.parse(settings.name!);
+            print(
+              "jump uri: $uri  first : ${uri.pathSegments.first} count: ${uri.pathSegments.length}",
+            );
+            if (uri.pathSegments.length == 2 &&
+                uri.pathSegments.first == "memos") {
+              return MaterialPageRoute(
+                builder: (context) {
+                  return MemoDetailPage(resourceName: uri.pathSegments[1]);
+                },
+              );
+            }
+            return MaterialPageRoute(
+              builder: (context) {
+                return const CheckLoginPage();
+              },
+            );
+          },
+          routes: {
+            '/': (context) => const CheckLoginPage(),
+            '/home': (context) => const NavigationDrawerHomePage(),
+            '/login': (context) => const LoginPage(),
           },
         );
-      },
-      routes: {
-        '/': (context) => const CheckLoginPage(),
-        '/home': (context) => const NavigationDrawerHomePage(),
-        '/login': (context) => const LoginPage(),
       },
     );
   }
