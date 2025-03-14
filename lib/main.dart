@@ -6,6 +6,7 @@ import 'package:fymemos/pages/login_page.dart';
 import 'package:fymemos/pages/memo_detail_page.dart';
 import 'package:fymemos/pages/memo_list_page.dart';
 import 'package:fymemos/pages/resources_list_page.dart';
+import 'package:fymemos/pages/settings_page.dart';
 import 'package:fymemos/pages/tag_memo_list_page.dart';
 import 'package:fymemos/repo/repository.dart';
 import 'package:fymemos/widgets/statics.dart';
@@ -80,6 +81,7 @@ class MyApp extends StatelessWidget {
             '/': (context) => const CheckLoginPage(),
             '/home': (context) => const NavigationDrawerHomePage(),
             '/login': (context) => const LoginPage(),
+            '/settings': (context) => const SettingsPage(),
           },
         );
       },
@@ -143,6 +145,7 @@ const List<MemoDestination> destinations = <MemoDestination>[
     Icons.perm_media_outlined,
     Icons.perm_media_rounded,
   ),
+  MemoDestination("Settings", Icons.settings_outlined, Icons.settings_rounded),
 ];
 
 class NavigationDrawerHomePage extends StatefulWidget {
@@ -182,6 +185,10 @@ class _NavigationDrawerHomePageState extends State<NavigationDrawerHomePage> {
 
   void handleScreenChanged(int selectedScreen) {
     print("Selected screen: $selectedScreen");
+    if (selectedScreen == destinations.length - 1) {
+      Navigator.of(context).pushNamed("/settings");
+      return;
+    }
     setState(() {
       screenIndex = selectedScreen;
     });
