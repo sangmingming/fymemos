@@ -1,4 +1,6 @@
 import 'package:flutter/foundation.dart';
+import 'package:fymemos/model/memo_nodes.dart';
+import 'package:fymemos/model/resources.dart';
 import 'package:intl/intl.dart';
 
 class Memo {
@@ -9,6 +11,11 @@ class Memo {
   late final DateTime displayTime;
   late final String content;
   late final MemoVisibility visibility;
+  final bool pinned;
+  final List<MemoResource> resources;
+  final List<Node> nodes;
+  final String snippet;
+  final List<Relation> relations;
 
   Memo(
     this.name,
@@ -18,6 +25,11 @@ class Memo {
     this.displayTime,
     this.content,
     this.visibility,
+    this.pinned,
+    this.resources,
+    this.nodes,
+    this.snippet,
+    this.relations,
   );
 
   factory Memo.fromJson(Map<String, dynamic> json) {
@@ -29,6 +41,17 @@ class Memo {
       DateTime.parse(json['displayTime'] ?? DateTime.now().toIso8601String()),
       json['content'] ?? "",
       MemoVisibility.fromString(json['visibility'] ?? ""),
+      json['pinned'] ?? false,
+      (json['resources'] as List<dynamic>)
+          .map((item) => MemoResource.fromJson(item as Map<String, dynamic>))
+          .toList(),
+      (json['nodes'] as List<dynamic>)
+          .map((item) => Node.fromJson(item as Map<String, dynamic>))
+          .toList(),
+      json['snippet'] ?? "",
+      (json['relations'] as List<dynamic>? ?? [])
+          .map((item) => Relation.fromJson(item as Map<String, dynamic>))
+          .toList(),
     );
   }
 
@@ -47,6 +70,32 @@ class Memo {
     } else {
       return DateFormat.yMMMd().format(displayTime);
     }
+  }
+}
+
+class Relation {
+  final RelatedMemo relatedMemo;
+
+  Relation(this.relatedMemo);
+
+  factory Relation.fromJson(Map<String, dynamic> json) {
+    return Relation(RelatedMemo.fromJson(json['relatedMemo']));
+  }
+}
+
+class RelatedMemo {
+  final String name;
+  final String uid;
+  final String snippet;
+
+  RelatedMemo(this.name, this.uid, this.snippet);
+
+  factory RelatedMemo.fromJson(Map<String, dynamic> json) {
+    return RelatedMemo(
+      json['name'] ?? "",
+      json['uid'] ?? "",
+      json['snippet'] ?? "",
+    );
   }
 }
 

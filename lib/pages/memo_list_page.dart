@@ -3,6 +3,7 @@ import 'package:fymemos/model/memos.dart';
 import 'package:fymemos/pages/create_memo_page.dart';
 import 'package:fymemos/widgets/memo.dart';
 import 'package:fymemos/repo/repository.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MemoListPage extends StatefulWidget {
   final String? memoState;
@@ -17,6 +18,7 @@ class _MemoListPageState extends State<MemoListPage> {
   final ScrollController _scrollController = ScrollController();
   bool _isLoadingMore = false;
   String? _nextPageToken;
+  String? user = null;
 
   final String? memoState;
 
@@ -36,7 +38,11 @@ class _MemoListPageState extends State<MemoListPage> {
   }
 
   Future<void> loadData() async {
-    MemosResponse r = await fetchMemos(state: memoState);
+    if (user == null) {
+      final sp = await SharedPreferences.getInstance();
+      user = await sp.getString("user");
+    }
+    MemosResponse r = await fetchMemos(parent: user, state: memoState);
     if (r.memos != null) {
       setState(() {
         memo = r.memos!;

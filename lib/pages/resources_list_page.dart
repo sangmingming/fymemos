@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:fymemos/model/resources.dart';
 import 'package:fymemos/repo/repository.dart';
+import 'package:fymemos/widgets/memo.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ResourcesListPage extends StatefulWidget {
   const ResourcesListPage({Key? key}) : super(key: key);
@@ -12,13 +14,18 @@ class ResourcesListPage extends StatefulWidget {
 
 class _ResourcesListPageState extends State<ResourcesListPage> {
   List<MemoResource> resources = [];
-  Map<String, String> imageHeaders = {"Authorization": "Bearer $token"};
+  Map<String, String> imageHeaders = {};
   bool _isLoading = false;
+  String _token = "";
 
   @override
   void initState() {
     super.initState();
     _refreshData();
+    SharedPreferences.getInstance().then((prefs) {
+      _token = prefs.getString('accessToken') ?? "";
+      imageHeaders["Authorization"] = "Bearer $_token";
+    });
   }
 
   Future<void> _refreshData() async {
@@ -48,12 +55,8 @@ class _ResourcesListPageState extends State<ResourcesListPage> {
           crossAxisSpacing: 4,
           mainAxisSpacing: 4,
           itemCount: resources.length,
-          physics: const NeverScrollableScrollPhysics(),
           itemBuilder: (context, index) {
-            return Image.network(
-              resources[index].thumbnailUrl,
-              headers: imageHeaders,
-            );
+            return MemoImageItem(resource: resources[index]);
           },
         ),
       ),

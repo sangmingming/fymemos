@@ -9,11 +9,10 @@ import 'package:fymemos/model/users.dart';
 const int PAGE_SIZE = 20;
 
 final dio = Dio();
-final token =
-    "eyJhbGciOiJIUzI1NiIsImtpZCI6InYxIiwidHlwIjoiSldUIn0.eyJuYW1lIjoibGlubWluZzEwMDdAZ21haWwuY29tIiwiaXNzIjoibWVtb3MiLCJzdWIiOiIxIiwiYXVkIjpbInVzZXIuYWNjZXNzLXRva2VuIl0sImV4cCI6NDg5NDMxMjMwNiwiaWF0IjoxNzQwNzEyMzA2fQ.r0hg_ZmMLxqfy0nlYKxjxq5M9urU1MVe3es2ike5Xdw";
+final Map<String, String> requestHeaders = {};
 
-void initDio() {
-  dio.options.baseUrl = "https://memos.isming.info";
+void initDio({required baseUrl, required token}) {
+  dio.options.baseUrl = baseUrl;
   dio.interceptors.add(
     InterceptorsWrapper(
       onRequest: (RequestOptions options, RequestInterceptorHandler handler) {
@@ -22,13 +21,26 @@ void initDio() {
       },
     ),
   );
+  requestHeaders["Authorization"] = "Bearer $token";
+  dio.interceptors.add(
+    LogInterceptor(
+      responseBody: true,
+      requestHeader: false,
+      logPrint: (o) => debugPrint(o.toString()),
+    ),
+  );
   dio.transformer = DefaultTransformer()..jsonDecodeCallback = parseJson;
 }
 
-Future<MemosResponse> fetchMemos({String? pageToken, String? state}) async {
+Future<MemosResponse> fetchMemos({
+  String? parent,
+  String? pageToken,
+  String? state,
+}) async {
   final res = await dio.get(
     "/api/v1/memos",
     queryParameters: {
+      if (parent != null) 'parent': parent,
       if (pageToken != null) 'pageToken': pageToken,
       if (state != null) 'state': state,
       'pageSize': PAGE_SIZE,
@@ -55,6 +67,11 @@ Future<Memo?> createMemo(CreateMemoRequest request) async {
       },
     ),
   );
+  return Memo.fromJson(res.data as Map<String, dynamic>);
+}
+
+Future<Memo?> getMemo(String name) async {
+  final res = await dio.get("/api/v1/$name");
   return Memo.fromJson(res.data as Map<String, dynamic>);
 }
 

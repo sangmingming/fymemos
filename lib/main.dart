@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:fymemos/model/users.dart';
 import 'package:fymemos/pages/archived_memo_list_page.dart';
-import 'package:fymemos/pages/create_memo_page.dart';
+import 'package:fymemos/pages/login_page.dart';
+import 'package:fymemos/pages/memo_detail_page.dart';
 import 'package:fymemos/pages/memo_list_page.dart';
 import 'package:fymemos/pages/resources_list_page.dart';
 import 'package:fymemos/repo/repository.dart';
 import 'package:fymemos/widgets/statics.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,16 +18,73 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    initDio();
-
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
         fontFamily: "Noto",
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const NavigationDrawerHomePage(),
+      initialRoute: '/',
+      onGenerateRoute: (settings) {
+        final uri = Uri.parse(settings.name!);
+        print(
+          "jump uri: $uri  first : ${uri.pathSegments.first} count: ${uri.pathSegments.length}",
+        );
+        if (uri.pathSegments.length == 2 && uri.pathSegments.first == "memos") {
+          return MaterialPageRoute(
+            builder: (context) {
+              return MemoDetailPage(resourceName: uri.pathSegments[1]);
+            },
+          );
+        }
+        return MaterialPageRoute(
+          builder: (context) {
+            return const CheckLoginPage();
+          },
+        );
+      },
+      routes: {
+        '/': (context) => const CheckLoginPage(),
+        '/home': (context) => const NavigationDrawerHomePage(),
+        '/login': (context) => const LoginPage(),
+      },
     );
+  }
+}
+
+class CheckLoginPage extends StatefulWidget {
+  const CheckLoginPage({super.key});
+
+  @override
+  State<CheckLoginPage> createState() => _CheckLoginPageState();
+}
+
+class _CheckLoginPageState extends State<CheckLoginPage> {
+  @override
+  void initState() {
+    super.initState();
+    _checkLogin();
+  }
+
+  void _checkLogin() async {
+    final prefs = await SharedPreferences.getInstance();
+    final baseUrl = prefs.getString('baseUrl');
+    final accessToken = prefs.getString('accessToken');
+
+    if (baseUrl != null && accessToken != null) {
+      initDio(baseUrl: baseUrl, token: accessToken);
+      getAuthStatus().then((user) {
+        prefs.setString("user", user.name);
+        Navigator.of(context).pushReplacementNamed('/home');
+      });
+    } else {
+      Navigator.of(context).pushReplacementNamed('/login');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(body: Center(child: CircularProgressIndicator()));
   }
 }
 
