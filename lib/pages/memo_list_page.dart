@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:fymemos/data/services/api/api_client.dart';
+import 'package:fymemos/data/services/shared_preference_service.dart';
 import 'package:fymemos/model/memos.dart';
 import 'package:fymemos/pages/create_memo_page.dart';
+import 'package:fymemos/utils/load_state.dart';
+import 'package:fymemos/utils/result.dart';
 import 'package:fymemos/widgets/memo.dart';
-import 'package:fymemos/repo/repository.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:refena_flutter/refena_flutter.dart';
 
 class MemoListPage extends StatefulWidget {
   final String? memoState;
@@ -13,8 +16,9 @@ class MemoListPage extends StatefulWidget {
   State<MemoListPage> createState() => _MemoListPageState(memoState: memoState);
 }
 
-class _MemoListPageState extends State<MemoListPage> {
-  List<Memo> memo = [];
+class _MemoListPageState extends State<MemoListPage> with Refena {
+  List<Memo> _memoData = [];
+  LoadState<List<Memo>> memo = LoadState.loading();
   final ScrollController _scrollController = ScrollController();
   bool _isLoadingMore = false;
   String? _nextPageToken;
@@ -39,15 +43,30 @@ class _MemoListPageState extends State<MemoListPage> {
 
   Future<void> loadData() async {
     if (user == null) {
-      final sp = await SharedPreferences.getInstance();
-      user = await sp.getString("user");
+      final userResult = await SharedPreferencesService.instance.fetchUser();
+      if (userResult is Ok) {
+        user = (userResult as Ok).value;
+      }
     }
-    MemosResponse r = await fetchMemos(parent: user, state: memoState);
-    if (r.memos != null) {
-      setState(() {
-        memo = r.memos!;
-        _nextPageToken = r.nextPageToken;
-      });
+    LoadState<MemosResponse> r = await ApiClient.instance.fetchUserMemos(
+      user: user,
+      state: memoState,
+    );
+    switch (r) {
+      case Loading():
+        setState(() {
+          memo = LoadState.loading();
+        });
+      case ErrorState():
+        setState(() {
+          memo = LoadState.error(r.error);
+        });
+      case Success():
+        setState(() {
+          _memoData = r.value.memos!;
+          memo = LoadState.success(_memoData);
+          _nextPageToken = r.value.nextPageToken;
+        });
     }
   }
 
@@ -58,26 +77,30 @@ class _MemoListPageState extends State<MemoListPage> {
       _isLoadingMore = true;
     });
 
-    MemosResponse r = await fetchMemos(
-      pageToken: _nextPageToken!,
+    LoadState<MemosResponse> r = await ApiClient.instance.fetchUserMemos(
+      user: user,
+      pageToken: _nextPageToken,
       state: memoState,
     );
-    print(r.nextPageToken ?? "is null");
-    if (r.memos != null) {
-      setState(() {
-        memo.addAll(r.memos!);
-        if (r.nextPageToken != null && r.nextPageToken!.isNotEmpty) {
-          _nextPageToken = r.nextPageToken;
-        } else {
-          _nextPageToken = null;
-        }
-        _isLoadingMore = false;
-      });
-    } else {
-      setState(() {
-        _isLoadingMore = false;
-        _nextPageToken = null;
-      });
+    switch (r) {
+      case Loading():
+        setState(() {
+          memo = LoadState.loading();
+        });
+      case ErrorState():
+        setState(() {
+          memo = LoadState.error(r.error);
+        });
+      case Success():
+        setState(() {
+          if (r.value.memos == null || r.value.memos!.isEmpty) {
+            _nextPageToken = null;
+          } else {
+            _memoData.addAll(r.value.memos!);
+            memo = LoadState.success(_memoData);
+            _nextPageToken = r.value.nextPageToken;
+          }
+        });
     }
   }
 
@@ -92,7 +115,8 @@ class _MemoListPageState extends State<MemoListPage> {
 
     if (newMemo != null) {
       setState(() {
-        memo.insert(0, newMemo);
+        _memoData.insert(0, newMemo);
+        memo = LoadState.success(_memoData);
       });
     }
   }
@@ -102,29 +126,39 @@ class _MemoListPageState extends State<MemoListPage> {
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: _refreshData,
-        child: ListView.builder(
-          controller: _scrollController,
-          itemCount: memo.length + 1,
-          itemBuilder: (context, index) {
-            if (index == memo.length) {
-              if (_isLoadingMore) {
-                return Center(child: CircularProgressIndicator());
-              } else if (_nextPageToken == null) {
-                return Center(child: Text('No more data'));
-              } else {
-                return SizedBox.shrink(); // Empty space when not loading more and not at the end
-              }
-            } else {
-              return MemoItem(memo: memo[index]);
-            }
-          },
-        ),
+        child: _buildResult(memo),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _createMemo,
         tooltip: 'Create Memo',
         child: const Icon(Icons.add),
       ),
+    );
+  }
+
+  Widget _buildResult(LoadState<List<Memo>> result) {
+    return buildPage(result, (item) {
+      return _buildList(item);
+    });
+  }
+
+  Widget _buildList(List<Memo> memos) {
+    return ListView.builder(
+      controller: _scrollController,
+      itemCount: memos.length + 1,
+      itemBuilder: (context, index) {
+        if (index == memos.length) {
+          if (_isLoadingMore) {
+            return Center(child: CircularProgressIndicator());
+          } else if (_nextPageToken == null) {
+            return Center(child: Text('No more data'));
+          } else {
+            return SizedBox.shrink(); // Empty space when not loading more and not at the end
+          }
+        } else {
+          return MemoItem(memo: memos[index]);
+        }
+      },
     );
   }
 }

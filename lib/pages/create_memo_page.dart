@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fymemos/data/services/api/api_client.dart';
 import 'package:fymemos/model/memos.dart';
-import 'package:fymemos/repo/repository.dart';
+import 'package:fymemos/utils/result.dart';
 
 class CreateMemoPage extends StatefulWidget {
   @override
@@ -23,10 +24,18 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
     }
 
     final request = CreateMemoRequest(content, _visibility);
-    final memo = await createMemo(request);
-
+    final memo = await ApiClient.instance.createMemo(request);
+    switch (memo) {
+      case Ok<Memo>():
+        Navigator.of(context).pop(memo);
+      case Error():
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('create memo failed: ${memo.error.toString()}'),
+          ),
+        );
+    }
     // Close the page after saving
-    Navigator.of(context).pop(memo);
   }
 
   @override

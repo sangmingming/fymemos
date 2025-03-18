@@ -16,6 +16,7 @@ class Memo {
   final List<Node> nodes;
   final String snippet;
   final List<Relation> relations;
+  final MemoState state;
 
   Memo(
     this.name,
@@ -30,6 +31,7 @@ class Memo {
     this.nodes,
     this.snippet,
     this.relations,
+    this.state,
   );
 
   factory Memo.fromJson(Map<String, dynamic> json) {
@@ -52,6 +54,7 @@ class Memo {
       (json['relations'] as List<dynamic>? ?? [])
           .map((item) => Relation.fromJson(item as Map<String, dynamic>))
           .toList(),
+      MemoState.fromString(json['state']),
     );
   }
 
@@ -75,11 +78,15 @@ class Memo {
 
 class Relation {
   final RelatedMemo relatedMemo;
+  final RelatedMemo memo;
 
-  Relation(this.relatedMemo);
+  Relation(this.memo, this.relatedMemo);
 
   factory Relation.fromJson(Map<String, dynamic> json) {
-    return Relation(RelatedMemo.fromJson(json['relatedMemo']));
+    return Relation(
+      RelatedMemo.fromJson(json['memo']),
+      RelatedMemo.fromJson(json['relatedMemo']),
+    );
   }
 }
 
@@ -107,6 +114,26 @@ class CreateMemoRequest {
 
   Map<String, dynamic> toJson() {
     return {'content': content, 'visibility': visibility.name};
+  }
+}
+
+enum MemoState {
+  normal("NORMAL"),
+  archived("ARCHIVED");
+
+  final String value;
+
+  const MemoState(this.value);
+
+  factory MemoState.fromString(String? value) {
+    switch (value) {
+      case "NORMAL":
+        return MemoState.normal;
+      case "ARCHIVED":
+        return MemoState.archived;
+      default:
+        return MemoState.normal;
+    }
   }
 }
 

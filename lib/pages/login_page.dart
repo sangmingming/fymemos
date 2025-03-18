@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:fymemos/repo/repository.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:fymemos/data/services/api/api_client.dart';
+import 'package:fymemos/data/services/shared_preference_service.dart';
+import 'package:fymemos/utils/result.dart';
+import 'package:refena_flutter/refena_flutter.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -9,7 +11,7 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends State<LoginPage> with Refena {
   final TextEditingController _baseUrlController = TextEditingController();
   final TextEditingController _accessTokenController = TextEditingController();
 
@@ -24,13 +26,28 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('baseUrl', baseUrl);
-    await prefs.setString('accessToken', accessToken);
-    initDio(baseUrl: baseUrl, token: accessToken);
-    final user = await getAuthStatus();
-    await prefs.setString("user", user.name);
-    Navigator.of(context).pushReplacementNamed('/home');
+    final prefs = SharedPreferencesService.instance;
+    await prefs.saveBaseUrl(baseUrl);
+    await prefs.saveToken(accessToken);
+
+    final apiClient = ApiClient.instance;
+    apiClient.initDio(baseUrl: baseUrl, token: accessToken);
+    final userResult = await apiClient.getAuthStatus();
+
+    // prefs.saveUser(user.name);
+    // Navigator.of(context).pushReplacementNamed('/home');
+
+    switch (userResult) {
+      case Ok():
+        prefs.saveUser(userResult.value.name);
+        Navigator.of(context).pushReplacementNamed('/home');
+        break;
+      case Error():
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Login failed: ${userResult.error}')),
+        );
+        break;
+    }
   }
 
   @override

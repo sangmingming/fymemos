@@ -4,11 +4,17 @@ import 'package:fymemos/model/memos.dart';
 
 class RelatedMemoItem extends StatelessWidget {
   final RelatedMemo memo;
+  final bool isReference;
 
-  const RelatedMemoItem({super.key, required this.memo});
+  const RelatedMemoItem({
+    super.key,
+    required this.memo,
+    required this.isReference,
+  });
 
   @override
   Widget build(BuildContext context) {
+    var icon = isReference ? Icons.arrow_outward : Icons.south_west;
     return Card.outlined(
       child: Padding(
         padding: const EdgeInsets.all(12.0),
@@ -21,13 +27,7 @@ class RelatedMemoItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Spacer(),
-                      Text(memo.name),
-                      Icon(Icons.arrow_outward),
-                    ],
-                  ),
+                  Row(children: [Spacer(), Text(memo.name), Icon(icon)]),
                   Text(memo.snippet, textAlign: TextAlign.start),
                 ],
               ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:fymemos/data/services/api/api_client.dart';
 import 'package:fymemos/model/memos.dart';
-import 'package:fymemos/repo/repository.dart';
+import 'package:fymemos/utils/load_state.dart';
 
 class EmbeddedMemoItem extends StatefulWidget {
   final String memoResourceName;
@@ -20,16 +20,19 @@ class _EmbeddedMemoItemState extends State<EmbeddedMemoItem> {
   void initState() {
     super.initState();
     memoResourceName = widget.memoResourceName;
-    getMemo(memoResourceName).then((memo) {
-      setState(() {
-        _memo = memo;
-      });
+    ApiClient.instance.getMemo(memoResourceName).then((memo) {
+      if (memo is Success<Memo>) {
+        setState(() {
+          _memo = memo.value;
+        });
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Card.outlined(
+    return Card(
+      elevation: 2.0,
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Column(
