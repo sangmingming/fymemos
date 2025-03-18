@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:fymemos/data/services/api/api_client.dart';
 import 'package:fymemos/model/memo_request.dart';
 import 'package:fymemos/model/memos.dart';
+import 'package:fymemos/pages/archivedlist/archived_memo_vm.dart';
 import 'package:refena_flutter/refena_flutter.dart';
 
 class MemoDetailVm {
@@ -80,6 +81,7 @@ final memoDetailProvider = ViewProvider.family<MemoDetailVm, String>((
         );
         await ApiClient.instance.updateMemo(request.name, request);
         ref.rebuild(memoDetailDataProvider(memoId));
+        ref.notifier(archivedMemoProvider).init();
       }
     },
     archiveMemo: () async {
@@ -90,6 +92,7 @@ final memoDetailProvider = ViewProvider.family<MemoDetailVm, String>((
         );
         await ApiClient.instance.updateMemo(request.name, request);
         ref.rebuild(memoDetailDataProvider(memoId));
+        ref.notifier(archivedMemoProvider).init();
       }
     },
     pinMemo: () async {

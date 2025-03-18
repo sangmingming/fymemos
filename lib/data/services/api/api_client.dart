@@ -89,6 +89,24 @@ class ApiClient {
     }
   }
 
+  Future<MemosResponse> fetchUserMemosDirect({
+    required user,
+    String? pageToken,
+    String? state,
+    String? filter,
+  }) async {
+    final res = await dio.get(
+      "/api/v1/$user/memos",
+      queryParameters: {
+        if (pageToken != null) 'pageToken': pageToken,
+        if (state != null) 'state': state,
+        if (filter != null) 'filter': filter,
+        'pageSize': PAGE_SIZE,
+      },
+    );
+    return MemosResponse.fromJson(res.data as Map<String, dynamic>);
+  }
+
   Future<List<MemoResource>> fetchMemoResources() async {
     final res = await dio.get("/api/v1/resources");
     return MemoResourcesResponse.fromJson(

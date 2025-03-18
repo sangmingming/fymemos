@@ -205,11 +205,15 @@ class ItalicNode extends BaseTextNode {
   }
 }
 
-class BoldNode extends BaseTextNode {
-  BoldNode({required super.content});
+class BoldNode {
+  final List<Node> children;
+  BoldNode({required this.children});
 
   factory BoldNode.fromJson(Map<String, dynamic> json) {
-    return BoldNode(content: json['content']);
+    return BoldNode(
+      children:
+          (json['children'] as List).map((i) => Node.fromJson(i)).toList(),
+    );
   }
 }
 

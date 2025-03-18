@@ -158,10 +158,13 @@ class NodeRenderer extends StatelessWidget {
     return TextSpan(text: node.content);
   }
 
-  TextSpan _renderBoldNode(BaseTextNode node, BuildContext context) {
+  TextSpan _renderBoldNode(BoldNode node, BuildContext context) {
     return TextSpan(
-      text: node.content,
       style: TextStyle(fontWeight: FontWeight.bold),
+      children:
+          node.children
+              .map((child) => _renderChildNode(child, context))
+              .toList(),
     );
   }
 

@@ -54,6 +54,6 @@ Widget buildAsyncDataPage<T>(AsyncValue<T> data, Function fct) {
   return data.when(
     data: (d) => fct(d),
     loading: () => LoadingPage(),
-    error: (err, stack) => ErrorPage(error: err.toString()),
+    error: (err, stack) => ErrorPage(error: err.toString() + stack.toString()),
   );
 }

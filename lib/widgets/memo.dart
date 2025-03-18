@@ -8,6 +8,7 @@ import 'package:fymemos/model/node_render.dart';
 import 'package:fymemos/model/resources.dart';
 import 'package:fymemos/utils/result.dart';
 import 'package:fymemos/widgets/related_memo.dart';
+import 'package:refena_flutter/refena_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -92,16 +93,10 @@ class MemoItem extends StatelessWidget {
                 Spacer(),
                 if (!isDetail)
                   PopupMenuButton(
-                    itemBuilder: createMemoBuilder(context, memo, () async {
-                      final result = await ApiClient.instance.deleteMemo(
-                        memo.name,
-                      );
-                      if (result is Ok) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Delete Success')),
-                        );
-                      }
-                    }),
+                    itemBuilder: createMemoOptionMenu(
+                      context: context,
+                      memo: memo,
+                    ),
                     icon: Icon(Icons.more_horiz_rounded),
                   ),
               ],

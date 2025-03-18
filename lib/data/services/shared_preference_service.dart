@@ -69,6 +69,12 @@ class SharedPreferencesService {
     }
   }
 
+  Future<String?> fetchUserDirect() async {
+    final sharedPreferences = await SharedPreferences.getInstance();
+    _log.finer('Got user from SharedPreferences');
+    return sharedPreferences.getString(_usernameKey);
+  }
+
   Future<Result<String?>> fetchUser() async {
     try {
       final sharedPreferences = await SharedPreferences.getInstance();
