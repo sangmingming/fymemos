@@ -5,6 +5,7 @@ import 'package:fymemos/model/users.dart';
 import 'package:fymemos/pages/archived_memo_list_page.dart';
 import 'package:fymemos/pages/memo_list_page.dart';
 import 'package:fymemos/pages/resourceslist/resources_list_page.dart';
+import 'package:fymemos/provider.dart';
 import 'package:fymemos/utils/result.dart';
 import 'package:fymemos/widgets/statics.dart';
 import 'package:refena_flutter/refena_flutter.dart';
@@ -20,7 +21,6 @@ class _CheckLoginPageState extends State<CheckLoginPage> {
   @override
   void initState() {
     super.initState();
-    _checkLogin();
   }
 
   void _checkLogin() async {
@@ -32,12 +32,13 @@ class _CheckLoginPageState extends State<CheckLoginPage> {
     if (baseUrl is Ok<String?> && accessToken is Ok<String?>) {
       apiClient.initDio(baseUrl: baseUrl.value, token: accessToken.value);
 
-      final r = await apiClient.getAuthStatus();
-      if (r is Ok<UserProfile>) {
-        sp.saveUser(r.value.name);
+      final data = context.watch(authProvider);
+      if (data.hasData) {
         Navigator.of(context).pushReplacementNamed('/home');
-      } else {
-        print(r.toString());
+      } else if (data.hasError) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('User status check failed: ${data.error}')),
+        );
       }
     } else {
       Navigator.of(context).pushReplacementNamed('/login');
@@ -71,7 +72,6 @@ const List<MemoDestination> destinations = <MemoDestination>[
     Icons.perm_media_outlined,
     Icons.perm_media_rounded,
   ),
-  MemoDestination("Settings", Icons.settings_outlined, Icons.settings_rounded),
 ];
 
 class NavigationDrawerHomePage extends StatefulWidget {
@@ -95,30 +95,10 @@ class _NavigationDrawerHomePageState extends State<NavigationDrawerHomePage>
   @override
   void initState() {
     super.initState();
-    _loadUserData();
-  }
-
-  void _loadUserData() async {
-    final apiClient = ApiClient.instance;
-    final Result<UserProfile> user = await apiClient.getAuthStatus();
-    if (user is Ok<UserProfile>) {
-      final stats = await apiClient.getUserStats(user.value.name);
-      print(user.value.name);
-      if (stats is Ok<UserStats>) {
-        setState(() {
-          userProfile = user.value;
-          userStats = stats.value;
-        });
-      }
-    }
   }
 
   void handleScreenChanged(int selectedScreen) {
     print("Selected screen: $selectedScreen");
-    if (selectedScreen == destinations.length - 1) {
-      Navigator.of(context).pushNamed("/settings");
-      return;
-    }
     setState(() {
       screenIndex = selectedScreen;
     });
@@ -152,8 +132,12 @@ class _NavigationDrawerHomePageState extends State<NavigationDrawerHomePage>
   }
 
   List<Widget> _buildNavigationItems(BuildContext context) {
+    final userData = context.watch(authProvider);
     return <Widget>[
-      UserStatisticWidget(user: userProfile, userStats: userStats),
+      UserStatisticWidget(
+        user: userData.data?.profile,
+        userStats: userData.data?.stats,
+      ),
       ...destinations.map(
         (MemoDestination destination) => NavigationDrawerDestination(
           label: Text(destination.label),
@@ -165,7 +149,7 @@ class _NavigationDrawerHomePageState extends State<NavigationDrawerHomePage>
         padding: EdgeInsets.fromLTRB(28, 16, 28, 10),
         child: Divider(),
       ),
-      ...userStats?.tagCount.entries
+      ...userData.data?.stats.tagCount.entries
               .map(
                 (entity) => ListTile(
                   onTap: () {

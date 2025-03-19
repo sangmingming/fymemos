@@ -21,10 +21,21 @@ class UserStatisticWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(height: 12),
-          Text(
-            user?.nickname ?? "User",
-            style: Theme.of(context).textTheme.headlineLarge,
-            textAlign: TextAlign.start,
+          Row(
+            children: [
+              Text(
+                user?.nickname ?? "User",
+                style: Theme.of(context).textTheme.headlineLarge,
+                textAlign: TextAlign.start,
+              ),
+              Spacer(),
+              IconButton(
+                icon: Icon(Icons.settings_outlined),
+                onPressed: () {
+                  Navigator.of(context).pushNamed('/settings');
+                },
+              ),
+            ],
           ),
           SizedBox(height: 12),
           Row(

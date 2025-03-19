@@ -36,9 +36,7 @@ class MemoDetailPage extends StatelessWidget {
     if (confirmed == true && context.mounted) {
       await vm.deleteMemo();
       if (context.mounted) {
-        Navigator.of(context)
-          ..pop() // 关闭菜单
-          ..pop(); // 返回上级页面
+        Navigator.of(context)..pop(); // 返回上级页面
       }
     }
   }

@@ -6,6 +6,7 @@ import 'package:fymemos/data/services/api/api_client.dart';
 import 'package:fymemos/model/memo_request.dart';
 import 'package:fymemos/model/node_render.dart';
 import 'package:fymemos/model/resources.dart';
+import 'package:fymemos/pages/memolist/memo_list_vm.dart';
 import 'package:fymemos/utils/result.dart';
 import 'package:fymemos/widgets/related_memo.dart';
 import 'package:refena_flutter/refena_flutter.dart';
@@ -96,6 +97,36 @@ class MemoItem extends StatelessWidget {
                     itemBuilder: createMemoOptionMenu(
                       context: context,
                       memo: memo,
+                      onDeleteClick: () async {
+                        final confirmed = await showDialog<bool>(
+                          context: context,
+                          builder:
+                              (context) => AlertDialog(
+                                content: Text('Are you sure delete this memo?'),
+                                actions: [
+                                  TextButton(
+                                    onPressed:
+                                        () => Navigator.pop(context, false),
+                                    child: Text('Cancel'),
+                                  ),
+                                  TextButton(
+                                    onPressed:
+                                        () => Navigator.pop(context, true),
+                                    child: Text(
+                                      'Delete',
+                                      style: TextStyle(color: Colors.red),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                        );
+
+                        if (confirmed == true && context.mounted) {
+                          await context
+                              .notifier(userMemoProvider)
+                              .deleteMemo(memo);
+                        }
+                      },
                     ),
                     icon: Icon(Icons.more_horiz_rounded),
                   ),

@@ -164,6 +164,16 @@ class ApiClient {
     }
   }
 
+  Future<UserStats> getUserStatsDirect(String name) async {
+    final res = await dio.get("/api/v1/$name/stats");
+    return UserStats.fromJson(res.data as Map<String, dynamic>);
+  }
+
+  Future<UserProfile> getAuthStatusDirect() async {
+    final res = await dio.post("/api/v1/auth/status");
+    return UserProfile.fromJson(res.data as Map<String, dynamic>);
+  }
+
   Map<String, dynamic> _parseAndDecode(String response) {
     return jsonDecode(response) as Map<String, dynamic>;
   }
