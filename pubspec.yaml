@@ -49,6 +49,9 @@ dependencies:
   logging: ^1.3.0
   device_info_plus: ^11.3.3
   refena_flutter: ^3.1.0
+  image_picker: ^1.1.2
+  permission_handler: ^11.4.0
+  flutter_keyboard_visibility: ^6.0.0
 
 dev_dependencies:
   flutter_test:

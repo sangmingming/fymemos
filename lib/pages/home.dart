@@ -30,6 +30,10 @@ class _CheckLoginPageState extends State<CheckLoginPage> {
     final apiClient = ApiClient.instance;
 
     if (baseUrl is Ok<String?> && accessToken is Ok<String?>) {
+      if (baseUrl.value == null || accessToken.value == null) {
+        Navigator.of(context).pushReplacementNamed('/login');
+        return;
+      }
       apiClient.initDio(baseUrl: baseUrl.value, token: accessToken.value);
 
       final data = context.watch(authProvider);

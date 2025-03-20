@@ -164,6 +164,11 @@ class ApiClient {
     }
   }
 
+  Future<UserSttings> getUserSettings(String name) async {
+    final res = await dio.get("/api/v1/$name/setting");
+    return UserSttings.fromJson(res.data as Map<String, dynamic>);
+  }
+
   Future<UserStats> getUserStatsDirect(String name) async {
     final res = await dio.get("/api/v1/$name/stats");
     return UserStats.fromJson(res.data as Map<String, dynamic>);

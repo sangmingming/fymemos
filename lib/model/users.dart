@@ -1,3 +1,4 @@
+import 'package:fymemos/model/memos.dart';
 import 'package:fymemos/utils/datetime.dart';
 
 class UserStats {
@@ -76,6 +77,18 @@ class UserProfile {
           json['updateTime'] == null
               ? null
               : DateTime.parse(json['updateTime'] as String),
+    );
+  }
+}
+
+class UserSttings {
+  final MemoVisibility memoVisibility;
+
+  UserSttings({required this.memoVisibility});
+
+  factory UserSttings.fromJson(Map<String, dynamic> json) {
+    return UserSttings(
+      memoVisibility: MemoVisibility.fromString(json['memoVisibility']),
     );
   }
 }
