@@ -4,7 +4,7 @@ class MemoResource {
   final String filename;
   final String type;
   final String size;
-  final String memo;
+  final String? memo;
 
   String get imageUrl {
     return "https://memos.isming.info/file/$name/$filename";
@@ -30,8 +30,18 @@ class MemoResource {
       filename: json['filename'] as String,
       type: json['type'] as String,
       size: json['size'] as String,
-      memo: json['memo'] as String,
+      memo: json['memo'] as String?,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'filename': filename,
+      'type': type,
+      'size': size,
+      if (memo != null) 'memo': memo,
+    };
   }
 }
 

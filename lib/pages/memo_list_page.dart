@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fymemos/data/services/api/api_client.dart';
 import 'package:fymemos/data/services/shared_preference_service.dart';
 import 'package:fymemos/model/memos.dart';
-import 'package:fymemos/pages/create_memo_page.dart';
+import 'package:fymemos/pages/memoedit/create_memo_page.dart';
 import 'package:fymemos/pages/memolist/memo_list_vm.dart';
 import 'package:fymemos/utils/load_state.dart';
 import 'package:fymemos/utils/result.dart';
@@ -42,6 +42,9 @@ class _MemoListPageState extends State<MemoListPage> with Refena {
     final newMemo = await Navigator.of(
       context,
     ).push<Memo>(MaterialPageRoute(builder: (context) => CreateMemoPage()));
+    if (newMemo != null) {
+      context.notifier(userMemoProvider).addMemo(newMemo);
+    }
   }
 
   @override

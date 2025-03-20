@@ -47,6 +47,14 @@ class MemoListController extends AsyncNotifier<List<Memo>> {
       return snapshot.curr?.where((element) => element != memo).toList() ?? [];
     });
   }
+
+  Future<void> addMemo(Memo memo) async {
+    setState((snapshot) async {
+      final list = snapshot.curr ?? [];
+      list.insert(0, memo);
+      return list;
+    });
+  }
 }
 
 final userMemoProvider = AsyncNotifierProvider<MemoListController, List<Memo>>(

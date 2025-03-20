@@ -109,11 +109,17 @@ class RelatedMemo {
 class CreateMemoRequest {
   late final String content;
   late final MemoVisibility visibility;
+  final List<MemoResource> resource;
 
-  CreateMemoRequest(this.content, this.visibility);
+  CreateMemoRequest(this.content, this.visibility, this.resource);
 
   Map<String, dynamic> toJson() {
-    return {'content': content, 'visibility': visibility.name};
+    return {
+      'content': content,
+      'visibility': visibility.name,
+      if (resource.isNotEmpty)
+        'resources': resource.map((e) => e.toJson()).toList(),
+    };
   }
 }
 

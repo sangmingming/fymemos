@@ -115,6 +115,23 @@ class ApiClient {
         [];
   }
 
+  Future<MemoResource> createResource(CreateResourceRequest request) async {
+    final res = await dio.post(
+      "/api/v1/resources",
+      data: jsonEncode(request.toJson()), // Ensure the data is JSON encoded
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json', // Set the content type to JSON
+        },
+      ),
+    );
+    return MemoResource.fromJson(res.data as Map<String, dynamic>);
+  }
+
+  Future<void> deleteResource(String id) async {
+    await dio.delete("/api/v1/resources/$id");
+  }
+
   Future<Result<Memo>> createMemo(CreateMemoRequest request) async {
     try {
       final res = await dio.post(

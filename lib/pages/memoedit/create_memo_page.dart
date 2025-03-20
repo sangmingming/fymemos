@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fymemos/data/services/api/api_client.dart';
 import 'package:fymemos/model/memos.dart';
+import 'package:fymemos/pages/memoedit/memo_edit_vm.dart';
 import 'package:fymemos/provider.dart';
 import 'package:fymemos/utils/result.dart';
 import 'package:image_picker/image_picker.dart';
@@ -40,15 +41,15 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
       ).showSnackBar(SnackBar(content: Text('Content cannot be empty')));
       return;
     }
-
-    final request = CreateMemoRequest(
-      content,
-      _visibility ?? MemoVisibility.Public,
-    );
-    final memo = await ApiClient.instance.createMemo(request);
+    context.notifier(memoEditVMProvider).updateContent(content);
+    final memo = await context.notifier(memoEditVMProvider).saveMemo();
     switch (memo) {
       case Ok<Memo>():
-        Navigator.of(context).pop(memo.value);
+        {
+          context.notifier(memoEditVMProvider).clear();
+          Navigator.of(context).pop(memo.value);
+        }
+        break;
       case Error():
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -68,7 +69,7 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
     return status.isGranted;
   }
 
-  Future<File?> _takePhoto() async {
+  void _takePhoto() async {
     final hasPermission = await checkCameraPermission();
     if (!hasPermission) {
       return null;
@@ -80,62 +81,27 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
       maxHeight: 1200, // 最大高度
     );
 
-    if (pickedFile != null) {
-      return File(pickedFile.path);
-      // 处理获取到的图片文件
-      //_uploadImage(imageFile);
+    if (!context.mounted) {
+      return;
     }
-    return null;
+    if (pickedFile != null) {
+      context.notifier(memoEditVMProvider).addImage(File(pickedFile.path));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final userSettings = context.watch(userSettingProvider);
-    if (_visibility == null && userSettings.data != null) {
-      setState(() {
-        _visibility = userSettings.data?.memoVisibility;
-      });
+    if (userSettings.data != null) {
+      context
+          .notifier(memoEditVMProvider)
+          .updateVisibility(userSettings.data!.memoVisibility);
     }
+    final images = context.watch(memoEditVMProvider).images;
     return Scaffold(
       appBar: AppBar(title: Text('Create Memo')),
       resizeToAvoidBottomInset: true,
-      bottomNavigationBar: Transform.translate(
-        offset: Offset(0, -MediaQuery.of(context).viewInsets.bottom),
-        child: BottomAppBar(
-          child: Row(
-            children: [
-              _buildMemoVisibilityButton(),
-              IconButton(
-                onPressed: () {
-                  _contentController.text += '#';
-                  _showTagDialog(context);
-                },
-                icon: Icon(Icons.tag_outlined),
-              ),
-              IconButton(
-                onPressed: () {
-                  final file = _takePhoto();
-                  if (file != null) {
-                    file.then((value) {
-                      if (value != null) {
-                        _contentController.text =
-                            _contentController.text + '\n![](${value.path})';
-                      }
-                    });
-                  }
-                },
-                icon: Icon(Icons.photo_camera_outlined),
-              ),
-              Spacer(),
-              FilledButton.icon(
-                onPressed: _saveMemo,
-                label: Text('Save'),
-                icon: Icon(Icons.send_outlined),
-              ),
-            ],
-          ),
-        ),
-      ),
+      bottomNavigationBar: _buildBottomAppbar(context),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -182,6 +148,99 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
                 },
               ),
             ),
+            SizedBox(height: 8),
+            _buildImageList(images),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildImageList(List<MemoImage> images) {
+    if (images.isEmpty) {
+      return SizedBox.shrink();
+    } else {
+      return Expanded(
+        child: ListView.separated(
+          separatorBuilder: (context, index) => SizedBox(width: 8),
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (context, index) {
+            return SizedBox(
+              width: 120,
+              height: 120,
+              child: Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child:
+                        images[index].file != null
+                            ? Image.file(
+                              images[index].file!,
+                              fit: BoxFit.cover,
+                              width: 120,
+                              height: 120,
+                            )
+                            : Image.network(
+                              images[index].memoResource?.thumbnailUrl ?? "",
+                              fit: BoxFit.cover,
+                              width: 120,
+                              height: 120,
+                              headers: ApiClient.instance.requestHeaders,
+                            ),
+                  ),
+
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: IconButton.filled(
+                      padding: EdgeInsets.zero,
+                      style: IconButton.styleFrom(backgroundColor: Colors.grey),
+                      onPressed: () {
+                        context
+                            .notifier(memoEditVMProvider)
+                            .deleteImage(images[index]);
+                      },
+                      icon: Icon(Icons.close),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+          itemCount: images.length,
+        ),
+      );
+    }
+  }
+
+  Widget _buildBottomAppbar(BuildContext context) {
+    return Transform.translate(
+      offset: Offset(0, -MediaQuery.of(context).viewInsets.bottom),
+      child: BottomAppBar(
+        child: Row(
+          children: [
+            _buildMemoVisibilityButton(),
+            IconButton(
+              onPressed: () {
+                _contentController.text += '#';
+                _showTagDialog(context);
+              },
+              icon: Icon(Icons.tag_outlined),
+            ),
+            IconButton(
+              onPressed: _takePhoto,
+              icon: Icon(Icons.photo_camera_outlined),
+            ),
+            IconButton(
+              icon: Icon(Icons.image_outlined),
+              onPressed: _pickFromGallery,
+            ),
+            Spacer(),
+            FilledButton.icon(
+              onPressed: _saveMemo,
+              label: Text('Save'),
+              icon: Icon(Icons.send_outlined),
+            ),
           ],
         ),
       ),
@@ -189,9 +248,11 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
   }
 
   Widget _buildMemoVisibilityButton() {
+    final currentVisibility = context.watch(memoEditVMProvider).visibility;
     return PopupMenuButton(
       requestFocus: false,
       position: PopupMenuPosition.under,
+      initialValue: context.watch(memoEditVMProvider).visibility,
       offset: Offset(0, -MediaQuery.of(context).viewInsets.bottom + 120),
       itemBuilder: (context) {
         return MemoVisibility.values.map((MemoVisibility visibility) {
@@ -207,16 +268,10 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
           );
         }).toList();
       },
-      icon: SvgPicture.asset(
-        _visibility?.icon ?? 'assets/icons/public.svg',
-        width: 14,
-        height: 14,
-      ),
+      icon: SvgPicture.asset(currentVisibility.icon, width: 14, height: 14),
       onCanceled: () => isShowDialog = false,
       onSelected: (MemoVisibility value) {
-        setState(() {
-          _visibility = value;
-        });
+        context.notifier(memoEditVMProvider).updateVisibility(value);
       },
       onOpened: () => isShowDialog = true,
     );
@@ -278,5 +333,35 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
     _contentController.selection = TextSelection.collapsed(
       offset: cursorPos + tag.length + 1,
     );
+  }
+
+  // 添加相册权限检查
+  Future<bool> checkStoragePermission() async {
+    final status = await Permission.photos.status;
+    if (status.isDenied) {
+      final result = await Permission.photos.request();
+      return result.isGranted;
+    }
+    return status.isGranted;
+  }
+
+  // 添加相册选择方法
+  void _pickFromGallery() async {
+    final hasPermission = await checkStoragePermission();
+    if (!hasPermission) return null;
+
+    final pickedFile = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 85,
+      maxWidth: 1200,
+      maxHeight: 1200,
+    );
+
+    if (!context.mounted) {
+      return;
+    }
+    if (pickedFile != null) {
+      context.notifier(memoEditVMProvider).addImage(File(pickedFile.path));
+    }
   }
 }

@@ -1,6 +1,29 @@
 import 'package:fymemos/model/memos.dart';
 import 'package:fymemos/model/resources.dart';
 
+class CreateResourceRequest {
+  final String filename;
+  final String content;
+  final String type;
+  final String? memo;
+
+  CreateResourceRequest({
+    required this.filename,
+    required this.content,
+    required this.type,
+    this.memo,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'filename': filename,
+      'content': content,
+      'type': type,
+      if (memo != null) 'memo': memo,
+    };
+  }
+}
+
 class UpdateMemoRequest {
   final String name;
   String? content;
