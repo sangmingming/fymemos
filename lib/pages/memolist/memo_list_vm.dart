@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:fymemos/data/services/api/api_client.dart';
 import 'package:fymemos/data/services/shared_preference_service.dart';
 import 'package:fymemos/model/memo_request.dart';
@@ -68,6 +69,57 @@ class MemoListController extends AsyncNotifier<List<Memo>> {
     setState((snapshot) async {
       return snapshot.curr?.where((element) => element != memo).toList() ?? [];
     });
+  }
+
+  Future<void> archiveMemo(Memo memo) async {
+    final request = UpdateMemoRequest.copyFromMemo(memo, state: "ARCHIVED");
+    final res = await ApiClient.instance.updateMemo(memo.name, request);
+    if (res is Ok<Memo>) {
+      setState((snapshot) async {
+        final list = snapshot.curr ?? [];
+        list.removeWhere((element) => element.name == memo.name);
+        return list;
+      });
+      ref.notifier(archivedMemoProvider).refresh();
+    }
+  }
+
+  Future<void> restoreMemo(Memo memo) async {
+    final request = UpdateMemoRequest.copyFromMemo(memo, state: "NORMAL");
+    final res = await ApiClient.instance.updateMemo(memo.name, request);
+    if (res is Ok<Memo>) {
+      setState((snapshot) async {
+        final list = snapshot.curr ?? [];
+        list.insert(0, res.value);
+        return list;
+      });
+    }
+    ref.notifier(archivedMemoProvider).refresh();
+  }
+
+  Future<void> pinMemo(Memo memo) async {
+    final request = UpdateMemoRequest.copyFromMemo(memo, pinned: true);
+    debugPrint("pin memo $request");
+    await updateMemoWitRequest(request);
+  }
+
+  Future<void> unpinMemo(Memo memo) async {
+    final request = UpdateMemoRequest.copyFromMemo(memo, pinned: false);
+    await updateMemoWitRequest(request);
+  }
+
+  Future<void> updateMemoWitRequest(UpdateMemoRequest request) async {
+    final res = await ApiClient.instance.updateMemo(request.name, request);
+    if (res is Ok<Memo>) {
+      setState((snapshot) async {
+        final list = snapshot.curr ?? [];
+        final index = list.indexWhere(
+          (element) => element.name == request.name,
+        );
+        list[index] = res.value;
+        return list;
+      });
+    }
   }
 
   Future<void> updateMemo(Memo memo) async {

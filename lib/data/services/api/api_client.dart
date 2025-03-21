@@ -31,7 +31,8 @@ class ApiClient {
     dio.interceptors.add(
       LogInterceptor(
         responseBody: true,
-        requestHeader: false,
+        requestHeader: true,
+        requestBody: true,
         logPrint: (o) => debugPrint(o.toString()),
       ),
     );

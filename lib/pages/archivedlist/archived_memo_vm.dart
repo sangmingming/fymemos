@@ -43,6 +43,12 @@ class ArchivedMemoNotifier extends AsyncNotifier<List<Memo>> {
       state.data?.addAll(result.memos!);
     }
   }
+
+  void refresh() async {
+    setState((snapshot) async {
+      return await init();
+    });
+  }
 }
 
 final archivedMemoProvider =

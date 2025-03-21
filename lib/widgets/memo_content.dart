@@ -1,15 +1,35 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:fymemos/model/memo_nodes.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/gestures.dart';
 import 'package:fymemos/widgets/embedded_memo.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class NodeRenderer extends StatelessWidget {
+class MemoContent extends StatelessWidget {
+  final List<Node> nodes;
+  final Function onCheckClicked;
+  const MemoContent({
+    super.key,
+    required this.nodes,
+    required this.onCheckClicked,
+  });
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        ...nodes.map((node) {
+          return _NodeRenderer(node: node, onCheckClicked: onCheckClicked);
+        }),
+      ],
+    );
+  }
+}
+
+class _NodeRenderer extends StatelessWidget {
   final Node node;
   final Function? onCheckClicked;
 
-  const NodeRenderer({required this.node, this.onCheckClicked});
+  const _NodeRenderer({required this.node, this.onCheckClicked});
 
   @override
   Widget build(BuildContext context) {
@@ -174,7 +194,7 @@ class NodeRenderer extends StatelessWidget {
           node.children
               .map(
                 (child) =>
-                    NodeRenderer(node: child, onCheckClicked: onCheckClicked),
+                    _NodeRenderer(node: child, onCheckClicked: onCheckClicked),
               )
               .toList(),
     );

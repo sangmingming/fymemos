@@ -3,7 +3,7 @@ import 'package:fymemos/data/services/api/api_client.dart';
 import 'package:fymemos/data/services/shared_preference_service.dart';
 import 'package:fymemos/model/users.dart';
 import 'package:fymemos/pages/archived_memo_list_page.dart';
-import 'package:fymemos/pages/memo_list_page.dart';
+import 'package:fymemos/pages/memolist/memo_list_page.dart';
 import 'package:fymemos/pages/resourceslist/resources_list_page.dart';
 import 'package:fymemos/provider.dart';
 import 'package:fymemos/utils/result.dart';

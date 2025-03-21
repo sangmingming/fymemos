@@ -1,17 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fymemos/data/services/api/api_client.dart';
-import 'package:fymemos/model/memo_request.dart';
-import 'package:fymemos/model/node_render.dart';
 import 'package:fymemos/model/resources.dart';
 import 'package:fymemos/pages/memolist/memo_list_vm.dart';
-import 'package:fymemos/utils/result.dart';
+import 'package:fymemos/widgets/memo_content.dart';
 import 'package:fymemos/widgets/related_memo.dart';
 import 'package:refena_flutter/refena_flutter.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../model/memos.dart';
 
@@ -77,99 +72,137 @@ class MemoItem extends StatelessWidget {
   const MemoItem({required this.memo, this.isDetail = false, super.key});
   final Memo memo;
   final bool isDetail;
+
+  Widget _buildMemoContent(BuildContext context, Memo memo, bool isDetail) {
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              SvgPicture.asset(memo.visibility.icon, width: 14, height: 14),
+              SizedBox(width: 5),
+              Text(
+                memo.getFormattedDisplayTime(),
+                style: Theme.of(context).textTheme.labelMedium,
+              ),
+              Spacer(),
+              if (!isDetail)
+                PopupMenuButton(
+                  itemBuilder: createMemoOptionMenu(
+                    context: context,
+                    memo: memo,
+                    onArchiveClick: () async {
+                      await context
+                          .notifier(userMemoProvider)
+                          .archiveMemo(memo);
+                    },
+                    onRestoreClick: () async {
+                      await context
+                          .notifier(userMemoProvider)
+                          .restoreMemo(memo);
+                    },
+                    onPinClick: () async {
+                      await context.notifier(userMemoProvider).pinMemo(memo);
+                    },
+                    onUnpinClick: () async {
+                      await context.notifier(userMemoProvider).unpinMemo(memo);
+                    },
+                    onDeleteClick: () async {
+                      final confirmed = await showDialog<bool>(
+                        context: context,
+                        builder:
+                            (context) => AlertDialog(
+                              content: Text('Are you sure delete this memo?'),
+                              actions: [
+                                TextButton(
+                                  onPressed:
+                                      () => Navigator.pop(context, false),
+                                  child: Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context, true),
+                                  child: Text(
+                                    'Delete',
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                ),
+                              ],
+                            ),
+                      );
+
+                      if (confirmed == true && context.mounted) {
+                        await context
+                            .notifier(userMemoProvider)
+                            .deleteMemo(memo);
+                      }
+                    },
+                  ),
+                  icon: Icon(Icons.more_horiz_rounded),
+                ),
+            ],
+          ),
+          SizedBox(height: 5),
+          MemoContent(
+            nodes: memo.nodes,
+            onCheckClicked: () => onCheckChecked(context, memo),
+          ),
+          SizedBox(height: 5),
+          if (memo.resources.isNotEmpty)
+            MemoResourceCard(
+              resources: memo.resources,
+              onResourceTap: (resource) {
+                showImageDialog(context, resource);
+              },
+            ),
+          _buildRelatedMemoCards(context, memo, isDetail),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRelatedMemoCards(
+    BuildContext context,
+    Memo memo,
+    bool isDetail,
+  ) {
+    if (memo.relations.isNotEmpty && !isDetail) {
+      return RelatedMemoSimpleWidget(memo: memo);
+    } else if (memo.relations.isNotEmpty && isDetail) {
+      return Column(
+        children:
+            memo.relations.map((relation) {
+              return RelatedMemoItem(
+                memo:
+                    memo.name == relation.memo.name
+                        ? relation.relatedMemo
+                        : relation.memo,
+                isReference: memo.name == relation.memo.name,
+              );
+            }).toList(),
+      );
+    } else {
+      return SizedBox.shrink();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Card.filled(
+      borderOnForeground: true,
       margin: EdgeInsets.symmetric(vertical: 5, horizontal: 16),
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                SvgPicture.asset(memo.visibility.icon, width: 14, height: 14),
-                SizedBox(width: 5),
-                Text(
-                  memo.getFormattedDisplayTime(),
-                  style: Theme.of(context).textTheme.labelMedium,
-                ),
-                Spacer(),
-                if (!isDetail)
-                  PopupMenuButton(
-                    itemBuilder: createMemoOptionMenu(
-                      context: context,
-                      memo: memo,
-                      onDeleteClick: () async {
-                        final confirmed = await showDialog<bool>(
-                          context: context,
-                          builder:
-                              (context) => AlertDialog(
-                                content: Text('Are you sure delete this memo?'),
-                                actions: [
-                                  TextButton(
-                                    onPressed:
-                                        () => Navigator.pop(context, false),
-                                    child: Text('Cancel'),
-                                  ),
-                                  TextButton(
-                                    onPressed:
-                                        () => Navigator.pop(context, true),
-                                    child: Text(
-                                      'Delete',
-                                      style: TextStyle(color: Colors.red),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                        );
-
-                        if (confirmed == true && context.mounted) {
-                          await context
-                              .notifier(userMemoProvider)
-                              .deleteMemo(memo);
-                        }
-                      },
-                    ),
-                    icon: Icon(Icons.more_horiz_rounded),
-                  ),
-              ],
-            ),
-            SizedBox(height: 5),
-            ...memo.nodes.map((node) {
-              return NodeRenderer(
-                node: node,
-                onCheckClicked: () => onCheckChecked(context, memo),
-              );
-            }),
-            SizedBox(height: 5),
-
-            if (memo.resources.isNotEmpty)
-              MemoResourceCard(
-                resources: memo.resources,
-                onResourceTap: (resource) {
-                  showImageDialog(context, resource);
-                },
-              ),
-
-            if (memo.relations.isNotEmpty && !isDetail)
-              RelatedMemoSimpleWidget(memo: memo),
-            if (memo.relations.isNotEmpty && isDetail)
-              Column(
-                children:
-                    memo.relations.map((relation) {
-                      return RelatedMemoItem(
-                        memo:
-                            memo.name == relation.memo.name
-                                ? relation.relatedMemo
-                                : relation.memo,
-                        isReference: memo.name == relation.memo.name,
-                      );
-                    }).toList(),
-              ),
-          ],
+      shape: RoundedRectangleBorder(
+        // 新增边框形状
+        side: BorderSide(
+          color:
+              memo.pinned ? colorScheme.outline : colorScheme.surface, // 使用主题颜色
+          width: 1,
         ),
+        borderRadius: BorderRadius.circular(12), // 保持与卡片原有圆角一致
       ),
+      child: _buildMemoContent(context, memo, isDetail),
     );
   }
 }
@@ -257,69 +290,6 @@ class RelatedMemoSimpleWidget extends StatelessWidget {
   }
 }
 
-PopupMenuItemBuilder createMemoBuilder(
-  BuildContext context,
-  Memo memo,
-  Function onDeleteClick,
-) {
-  return (context) {
-    return <PopupMenuEntry>[
-      PopupMenuItem(
-        child: ListTile(
-          leading: Icon(Icons.push_pin_outlined),
-          title: Text('Pin'),
-          onTap: () {
-            final request = UpdateMemoRequest(name: memo.name, pinned: true);
-            ApiClient.instance.updateMemo(request.name, request).then((value) {
-              Navigator.pop(context);
-            });
-          },
-        ),
-      ),
-      PopupMenuItem(
-        child: ListTile(
-          leading: Icon(Icons.share_outlined),
-          title: Text('Share'),
-          onTap: () {
-            Share.share(memo.content);
-            Navigator.pop(context);
-          },
-        ),
-      ),
-      PopupMenuItem(
-        child: ListTile(
-          leading: Icon(Icons.archive_outlined),
-          title: Text('Archive'),
-          onTap: () {
-            final request = UpdateMemoRequest(
-              name: memo.name,
-              state: "ARCHIVED",
-            );
-            ApiClient.instance.updateMemo(request.name, request).then((value) {
-              Navigator.pop(context);
-            });
-          },
-        ),
-      ),
-      PopupMenuItem(
-        child: ListTile(
-          leading: Icon(Icons.delete_outline, color: Colors.red),
-          title: Text(
-            'Delete',
-            style: Theme.of(
-              context,
-            ).textTheme.bodyLarge!.copyWith(color: Colors.red),
-          ),
-          onTap: () {
-            onDeleteClick();
-            Navigator.pop(context);
-          },
-        ),
-      ),
-    ];
-  };
-}
-
 PopupMenuItemBuilder createMemoOptionMenu({
   required context,
   required memo,
@@ -335,14 +305,14 @@ PopupMenuItemBuilder createMemoOptionMenu({
     return <PopupMenuEntry>[
       memo.pinned
           ? PopupMenuItem(
-            onTap: () => onPinClick?.call(),
+            onTap: () => onUnpinClick?.call(),
             child: ListTile(
               leading: Icon(Icons.pin_drop_outlined),
               title: Text('Unpin'),
             ),
           )
           : PopupMenuItem(
-            onTap: () => onUnpinClick?.call(),
+            onTap: () => onPinClick?.call(),
             child: ListTile(
               leading: Icon(Icons.push_pin_outlined),
               title: Text('Pin'),

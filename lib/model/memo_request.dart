@@ -68,4 +68,9 @@ class UpdateMemoRequest {
       if (pinned != null) 'pinned': pinned,
     };
   }
+
+  @override
+  String toString() {
+    return toJson().entries.join("");
+  }
 }

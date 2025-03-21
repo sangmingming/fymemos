@@ -1,5 +1,4 @@
 // ignore: constant_identifier_names
-import 'package:flutter/material.dart';
 
 enum NodeType {
   PARAGRAPH,
