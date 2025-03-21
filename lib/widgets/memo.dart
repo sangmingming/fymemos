@@ -56,14 +56,17 @@ class MemoImageItem extends StatelessWidget {
   final BoxFit? fit;
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => showImageDialog(context, resource),
-      child: Hero(
-        tag: resource.name,
-        child: CachedNetworkImage(
-          imageUrl: resource.thumbnailUrl,
-          fit: fit,
-          httpHeaders: ApiClient.instance.requestHeaders,
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(6),
+      child: GestureDetector(
+        onTap: () => showImageDialog(context, resource),
+        child: Hero(
+          tag: resource.name,
+          child: CachedNetworkImage(
+            imageUrl: resource.thumbnailUrl,
+            fit: fit,
+            httpHeaders: ApiClient.instance.requestHeaders,
+          ),
         ),
       ),
     );
@@ -134,7 +137,10 @@ class MemoItem extends StatelessWidget {
             ),
             SizedBox(height: 5),
             ...memo.nodes.map((node) {
-              return NodeRenderer(node: node);
+              return NodeRenderer(
+                node: node,
+                onCheckClicked: () => onCheckChecked(context, memo),
+              );
             }),
             SizedBox(height: 5),
 
@@ -166,6 +172,10 @@ class MemoItem extends StatelessWidget {
       ),
     );
   }
+}
+
+void onCheckChecked(BuildContext context, Memo memo) async {
+  await context.notifier(userMemoProvider).updateMemo(memo);
 }
 
 void showImageDialog(BuildContext context, MemoResource resource) {

@@ -5,7 +5,6 @@ import 'package:fymemos/model/memos.dart';
 import 'package:fymemos/pages/memoedit/create_memo_page.dart';
 import 'package:fymemos/pages/memolist/memo_list_vm.dart';
 import 'package:fymemos/utils/load_state.dart';
-import 'package:fymemos/utils/result.dart';
 import 'package:fymemos/widgets/memo.dart';
 import 'package:refena_flutter/refena_flutter.dart';
 
@@ -14,26 +13,29 @@ class MemoListPage extends StatefulWidget {
   const MemoListPage({super.key, this.memoState});
 
   @override
-  State<MemoListPage> createState() => _MemoListPageState(memoState: memoState);
+  State<MemoListPage> createState() => _MemoListPageState();
 }
 
 class _MemoListPageState extends State<MemoListPage> with Refena {
   final ScrollController _scrollController = ScrollController();
   bool _isLoadingMore = false;
 
-  final String? memoState;
+  String? memoState;
 
-  _MemoListPageState({this.memoState});
+  _MemoListPageState();
 
   @override
   void initState() {
     super.initState();
+    memoState = widget.memoState;
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
               _scrollController.position.maxScrollExtent &&
           !_isLoadingMore) {
         _isLoadingMore = true;
-        context.notifier(userMemoProvider).loadMore();
+        context.notifier(userMemoProvider).loadMore().then((value) {
+          _isLoadingMore = false;
+        });
       }
     });
   }
@@ -54,7 +56,7 @@ class _MemoListPageState extends State<MemoListPage> with Refena {
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: () async {
-          context.notifier(userMemoProvider).init();
+          await context.notifier(userMemoProvider).refresh();
         },
         child: buildAsyncDataPage(memo, (item) {
           return _buildList(item);

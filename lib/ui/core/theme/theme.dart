@@ -38,7 +38,7 @@ ThemeData getTheme(Brightness brightness, DynamicColors? dynamicColors) {
         ),
       ),
     ),
-    fontFamily: "Noto",
+    //   fontFamily: "Noto",
   );
 }
 

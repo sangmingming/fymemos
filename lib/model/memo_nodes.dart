@@ -9,14 +9,19 @@ enum NodeType {
   LINE_BREAK,
   HORIZONTAL_RULE,
   TASK_LIST_ITEM,
-  LIST,
   BOLD,
   ITALIC,
   STRIKETHROUGH,
+  SPOILER,
   HEADING,
   CODE_BLOCK,
   LINK,
   EMBEDDED_CONTENT,
+  LIST,
+  UNORDERED_LIST_ITEM,
+  ORDERED_LIST_ITEM,
+  IMAGE,
+  CODE,
 }
 
 extension NodeTypeExtension on NodeType {
@@ -33,6 +38,11 @@ class Node {
   final dynamic node;
 
   Node({required this.type, required this.node});
+
+  @override
+  String toString() {
+    return node.toString();
+  }
 
   factory Node.fromJson(Map<String, dynamic> json) {
     NodeType type = NodeTypeExtension.fromString(json['type']);
@@ -68,6 +78,16 @@ class Node {
           type: type,
           node: TaskListItemNode.fromJson(json['taskListItemNode']),
         );
+      case NodeType.SPOILER:
+        return Node(
+          type: type,
+          node: SpoilerNode.fromJson(json['spoilerNode']),
+        );
+      case NodeType.UNORDERED_LIST_ITEM:
+        return Node(
+          type: type,
+          node: UnorderedListItemNode.fromJson(json['unorderedListItemNode']),
+        );
       case NodeType.BOLD:
         return Node(type: type, node: BoldNode.fromJson(json['boldNode']));
       case NodeType.ITALIC:
@@ -94,9 +114,47 @@ class Node {
           type: type,
           node: EmbeddedContentNode.fromJson(json['embeddedContentNode']),
         );
+      case NodeType.IMAGE:
+        return Node(type: type, node: ImageNode.fromJson(json['imageNode']));
+      case NodeType.CODE:
+        return Node(
+          type: type,
+          node: InlineCodeNode.fromJson(json['codeNode']),
+        );
+      case NodeType.ORDERED_LIST_ITEM:
+        return Node(
+          type: type,
+          node: OrderedListItemNode.fromJson(json['orderedListItemNode']),
+        );
       default:
         throw Exception('Unknown node type');
     }
+  }
+}
+
+class InlineCodeNode extends BaseTextNode {
+  InlineCodeNode({required super.content});
+
+  factory InlineCodeNode.fromJson(Map<String, dynamic> json) {
+    return InlineCodeNode(content: json['content']);
+  }
+
+  @override
+  String toString() {
+    return "`$content`";
+  }
+}
+
+class SpoilerNode extends BaseTextNode {
+  SpoilerNode({required super.content});
+
+  factory SpoilerNode.fromJson(Map<String, dynamic> json) {
+    return SpoilerNode(content: json['content']);
+  }
+
+  @override
+  String toString() {
+    return "||$content||";
   }
 }
 
@@ -108,6 +166,26 @@ class LinkNode {
 
   factory LinkNode.fromJson(Map<String, dynamic> json) {
     return LinkNode(url: json['url'], text: json['text']);
+  }
+
+  @override
+  String toString() {
+    return "[$text]($url)";
+  }
+}
+
+class ImageNode {
+  final String url;
+  final String alt;
+  ImageNode({required this.url, required this.alt});
+
+  factory ImageNode.fromJson(Map<String, dynamic> json) {
+    return ImageNode(url: json['url'], alt: json['altText']);
+  }
+
+  @override
+  String toString() {
+    return "![$alt]($url)";
   }
 }
 
@@ -121,6 +199,64 @@ class EmbeddedContentNode {
     return EmbeddedContentNode(
       resourceName: json['resourceName'],
       params: json['params'],
+    );
+  }
+
+  @override
+  String toString() {
+    return "![[$resourceName]]";
+  }
+}
+
+class OrderedListItemNode {
+  final List<Node> children;
+  final String number;
+  final int indent;
+
+  OrderedListItemNode({
+    required this.children,
+    required this.number,
+    required this.indent,
+  });
+
+  @override
+  String toString() {
+    final indentSpace = " " * indent;
+    return "$indentSpace$number. ${children.join('')}";
+  }
+
+  factory OrderedListItemNode.fromJson(Map<String, dynamic> json) {
+    return OrderedListItemNode(
+      children:
+          (json['children'] as List).map((i) => Node.fromJson(i)).toList(),
+      number: json['number'],
+      indent: json['indent'],
+    );
+  }
+}
+
+class UnorderedListItemNode {
+  final List<Node> children;
+  final String symbol;
+  final int indent;
+  UnorderedListItemNode({
+    required this.children,
+    required this.symbol,
+    required this.indent,
+  });
+
+  @override
+  String toString() {
+    final indentSpace = " " * indent;
+    return "$indentSpace$symbol ${children.join('')}";
+  }
+
+  factory UnorderedListItemNode.fromJson(Map<String, dynamic> json) {
+    return UnorderedListItemNode(
+      children:
+          (json['children'] as List).map((i) => Node.fromJson(i)).toList(),
+      symbol: json['symbol'],
+      indent: json['indent'],
     );
   }
 }
@@ -138,6 +274,11 @@ class HeadingNode {
           (json['children'] as List).map((i) => Node.fromJson(i)).toList(),
     );
   }
+
+  @override
+  String toString() {
+    return "${"#" * level} ${children.join('')}";
+  }
 }
 
 class CodeBlockNode {
@@ -148,6 +289,11 @@ class CodeBlockNode {
 
   factory CodeBlockNode.fromJson(Map<String, dynamic> json) {
     return CodeBlockNode(language: json['language'], content: json['content']);
+  }
+
+  @override
+  String toString() {
+    return "```$language\n$content\n```";
   }
 }
 
@@ -161,6 +307,11 @@ class ParagraphNode {
       children:
           (json['children'] as List).map((i) => Node.fromJson(i)).toList(),
     );
+  }
+
+  @override
+  String toString() {
+    return children.join('');
   }
 }
 
@@ -179,6 +330,10 @@ class ListNode {
           (json['children'] as List).map((i) => Node.fromJson(i)).toList(),
     );
   }
+  @override
+  String toString() {
+    return ' ' * indent + children.join('');
+  }
 }
 
 class TagNode extends BaseTextNode {
@@ -186,6 +341,11 @@ class TagNode extends BaseTextNode {
 
   factory TagNode.fromJson(Map<String, dynamic> json) {
     return TagNode(content: json['content']);
+  }
+
+  @override
+  String toString() {
+    return "#$content";
   }
 }
 
@@ -203,6 +363,11 @@ class ItalicNode extends BaseTextNode {
   factory ItalicNode.fromJson(Map<String, dynamic> json) {
     return ItalicNode(content: json['content']);
   }
+
+  @override
+  String toString() {
+    return "*$content*";
+  }
 }
 
 class BoldNode {
@@ -215,6 +380,11 @@ class BoldNode {
           (json['children'] as List).map((i) => Node.fromJson(i)).toList(),
     );
   }
+
+  @override
+  String toString() {
+    return "**${children.join('')}**";
+  }
 }
 
 class StrikethroughNode extends BaseTextNode {
@@ -223,12 +393,22 @@ class StrikethroughNode extends BaseTextNode {
   factory StrikethroughNode.fromJson(Map<String, dynamic> json) {
     return StrikethroughNode(content: json['content']);
   }
+
+  @override
+  String toString() {
+    return "~~$content~~";
+  }
 }
 
 class BaseTextNode {
   final String content;
 
   BaseTextNode({required this.content});
+
+  @override
+  String toString() {
+    return content;
+  }
 }
 
 class AutoLinkNode {
@@ -240,6 +420,11 @@ class AutoLinkNode {
   factory AutoLinkNode.fromJson(Map<String, dynamic> json) {
     return AutoLinkNode(url: json['url'], isRawText: json['isRawText']);
   }
+
+  @override
+  String toString() {
+    return url;
+  }
 }
 
 class LineBreakNode {
@@ -247,6 +432,11 @@ class LineBreakNode {
 
   factory LineBreakNode.fromJson(Map<String, dynamic> json) {
     return LineBreakNode();
+  }
+
+  @override
+  String toString() {
+    return "\n";
   }
 }
 
@@ -263,7 +453,7 @@ class HorizontalRuleNode {
 class TaskListItemNode {
   final String symbol;
   final int indent;
-  final bool complete;
+  bool complete;
   final List<Node> children;
 
   TaskListItemNode({
@@ -272,6 +462,12 @@ class TaskListItemNode {
     required this.complete,
     required this.children,
   });
+
+  @override
+  String toString() {
+    final indentSpaces = ' ' * indent;
+    return "$indentSpaces$symbol ${complete ? '[x]' : '[ ]'} ${children.join('')}";
+  }
 
   factory TaskListItemNode.fromJson(Map<String, dynamic> json) {
     return TaskListItemNode(

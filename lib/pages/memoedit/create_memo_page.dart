@@ -171,7 +171,7 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
               child: Stack(
                 children: [
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(6),
                     child:
                         images[index].file != null
                             ? Image.file(

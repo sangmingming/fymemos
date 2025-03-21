@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:fymemos/model/memo_nodes.dart';
@@ -6,8 +7,9 @@ import 'package:url_launcher/url_launcher.dart';
 
 class NodeRenderer extends StatelessWidget {
   final Node node;
+  final Function? onCheckClicked;
 
-  const NodeRenderer({required this.node});
+  const NodeRenderer({required this.node, this.onCheckClicked});
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +40,18 @@ class NodeRenderer extends StatelessWidget {
           node.node as EmbeddedContentNode,
           context,
         );
+      case NodeType.UNORDERED_LIST_ITEM:
+        return _renderUnorderedListItemNode(
+          node.node as UnorderedListItemNode,
+          context,
+        );
+      case NodeType.ORDERED_LIST_ITEM:
+        return _renderOrderedListItemNode(
+          node.node as OrderedListItemNode,
+          context,
+        );
+      case NodeType.IMAGE:
+        return _renderImageNode(node.node as ImageNode, context);
       default:
         throw Exception('Unknown node type: ${node.type}');
     }
@@ -60,11 +74,40 @@ class NodeRenderer extends StatelessWidget {
           node.node as StrikethroughNode,
           context,
         );
+      case NodeType.IMAGE:
+        return WidgetSpan(
+          child: _renderImageNode(node.node as ImageNode, context),
+        );
       case NodeType.LINK:
         return _renderLinkNode(node.node as LinkNode, context);
+      case NodeType.SPOILER:
+        return _renderSpoilerNode(node.node as SpoilerNode, context);
+      case NodeType.CODE:
+        return _renderInlineCodeNode(node.node as InlineCodeNode, context);
       default:
         throw Exception('Unknown node type: ${node.type}');
     }
+  }
+
+  InlineSpan _renderInlineCodeNode(InlineCodeNode node, BuildContext context) {
+    return TextSpan(
+      text: ' ${node.content} ',
+      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+        backgroundColor: Colors.grey[400],
+        fontFamily: 'monospace',
+      ),
+    );
+  }
+
+  Widget _renderImageNode(ImageNode node, BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(6),
+      child: CachedNetworkImage(imageUrl: node.url),
+    );
+  }
+
+  InlineSpan _renderSpoilerNode(SpoilerNode node, BuildContext context) {
+    return WidgetSpan(child: _SpoilerText(text: node.content));
   }
 
   Widget _renderEmbeddedContentNode(
@@ -128,7 +171,12 @@ class NodeRenderer extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children:
-          node.children.map((child) => NodeRenderer(node: child)).toList(),
+          node.children
+              .map(
+                (child) =>
+                    NodeRenderer(node: child, onCheckClicked: onCheckClicked),
+              )
+              .toList(),
     );
   }
 
@@ -218,12 +266,21 @@ class NodeRenderer extends StatelessWidget {
   }
 
   Widget _renderTaskListItemNode(TaskListItemNode node, BuildContext context) {
+    final textStyle =
+        !node.complete
+            ? Theme.of(context).textTheme.bodyLarge
+            : Theme.of(context).textTheme.bodyLarge?.copyWith(
+              decoration: TextDecoration.lineThrough,
+            );
     return Row(
       children: [
         Checkbox(
           value: node.complete,
+          visualDensity: VisualDensity.compact,
+          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
           onChanged: (bool? value) {
-            // Handle checkbox change
+            node.complete = value ?? node.complete;
+            onCheckClicked?.call();
           },
         ),
         Expanded(
@@ -233,11 +290,81 @@ class NodeRenderer extends StatelessWidget {
                   node.children
                       .map((child) => _renderChildNode(child, context))
                       .toList(),
+              style: textStyle,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _renderListItemNode(
+    BuildContext context,
+    String symbol,
+    List<Node> children,
+  ) {
+    return Row(
+      children: [
+        Expanded(
+          child: RichText(
+            text: TextSpan(
+              children: <InlineSpan>[
+                TextSpan(
+                  text: symbol,
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: Theme.of(context).primaryColor,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                ...children.map((child) => _renderChildNode(child, context)),
+              ],
               style: Theme.of(context).textTheme.bodyLarge,
             ),
           ),
         ),
       ],
+    );
+  }
+
+  Widget _renderUnorderedListItemNode(
+    UnorderedListItemNode node,
+    BuildContext context,
+  ) {
+    return _renderListItemNode(context, "• ", node.children);
+  }
+
+  Widget _renderOrderedListItemNode(
+    OrderedListItemNode node,
+    BuildContext context,
+  ) {
+    return _renderListItemNode(context, "${node.number}. ", node.children);
+  }
+}
+
+class _SpoilerText extends StatefulWidget {
+  final String text;
+  const _SpoilerText({required this.text});
+  @override
+  _SpoilerTextState createState() => _SpoilerTextState();
+}
+
+class _SpoilerTextState extends State<_SpoilerText> {
+  bool _isVisible = false;
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _isVisible = !_isVisible;
+        });
+      },
+      child: Text(
+        widget.text,
+        style: TextStyle(
+          color: _isVisible ? Colors.black : Colors.grey,
+          backgroundColor: _isVisible ? Colors.transparent : Colors.grey,
+        ),
+      ),
     );
   }
 }
