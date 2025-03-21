@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fymemos/data/services/api/api_client.dart';
 import 'package:fymemos/model/memos.dart';
 import 'package:fymemos/pages/memoedit/memo_edit_vm.dart';
@@ -18,7 +17,6 @@ class CreateMemoPage extends StatefulWidget {
 
 class _CreateMemoPageState extends State<CreateMemoPage> {
   final TextEditingController _contentController = TextEditingController();
-  MemoVisibility? _visibility;
   final FocusNode _contentFocusNode = FocusNode();
   final GlobalKey _textFieldKey = GlobalKey();
 
@@ -98,60 +96,62 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
           .updateVisibility(userSettings.data!.memoVisibility);
     }
     final images = context.watch(memoEditVMProvider).images;
-    return Scaffold(
-      appBar: AppBar(title: Text('Create Memo')),
-      resizeToAvoidBottomInset: true,
-      bottomNavigationBar: _buildBottomAppbar(context),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: TextField(
-                key: _textFieldKey,
-                controller: _contentController,
-                focusNode: _contentFocusNode,
-                expands: true,
-                minLines: null,
-                maxLines: null,
-                textAlign: TextAlign.start,
-                textAlignVertical: TextAlignVertical.top,
-                autofocus: true,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  isCollapsed: false,
-                  labelText: 'Content',
-                ),
-                onChanged: (text) {
-                  if (isShowDialog) {
-                    Navigator.of(context).pop();
-                    isShowDialog = false;
-                  }
-                  final cursorPos = _contentController.selection.baseOffset;
-                  if (cursorPos > 0) {
-                    final lastChar = text.substring(cursorPos - 1, cursorPos);
-
-                    if (lastChar == '#') {
-                      if (cursorPos > 1) {
-                        final prevChar = text.substring(
-                          cursorPos - 2,
-                          cursorPos - 1,
-                        );
-                        if (prevChar == '#') {
-                          return;
-                        }
-                      }
-                      _showTagDialog(context);
-                    }
-                  }
-                },
-              ),
+    return Container(
+      padding: MediaQuery.of(context).viewInsets,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: const EdgeInsets.only(
+              top: 24,
+              left: 12,
+              right: 12,
+              bottom: 8,
             ),
-            SizedBox(height: 8),
-            _buildImageList(images),
-          ],
-        ),
+            child: TextField(
+              key: _textFieldKey,
+              controller: _contentController,
+              focusNode: _contentFocusNode,
+              maxLines: 5,
+              minLines: 5,
+              keyboardType: TextInputType.multiline,
+              textAlign: TextAlign.start,
+              textAlignVertical: TextAlignVertical.top,
+              autofocus: true,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                isCollapsed: false,
+                labelText: 'Content',
+              ),
+              onChanged: (text) {
+                if (isShowDialog) {
+                  Navigator.of(context).pop();
+                  isShowDialog = false;
+                }
+                final cursorPos = _contentController.selection.baseOffset;
+                if (cursorPos > 0) {
+                  final lastChar = text.substring(cursorPos - 1, cursorPos);
+
+                  if (lastChar == '#') {
+                    if (cursorPos > 1) {
+                      final prevChar = text.substring(
+                        cursorPos - 2,
+                        cursorPos - 1,
+                      );
+                      if (prevChar == '#') {
+                        return;
+                      }
+                    }
+                    _showTagDialog(context);
+                  }
+                }
+              },
+            ),
+          ),
+          _buildImageList(images),
+          _buildBottomRow(context),
+        ],
       ),
     );
   }
@@ -160,9 +160,14 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
     if (images.isEmpty) {
       return SizedBox.shrink();
     } else {
-      return Expanded(
+      return Container(
+        height: 120,
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        width: double.infinity,
+        margin: EdgeInsets.only(top: 8),
         child: ListView.separated(
           separatorBuilder: (context, index) => SizedBox(width: 8),
+          shrinkWrap: true,
           scrollDirection: Axis.horizontal,
           itemBuilder: (context, index) {
             return SizedBox(
@@ -213,36 +218,41 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
     }
   }
 
-  Widget _buildBottomAppbar(BuildContext context) {
-    return Transform.translate(
-      offset: Offset(0, -MediaQuery.of(context).viewInsets.bottom),
-      child: BottomAppBar(
-        child: Row(
-          children: [
-            _buildMemoVisibilityButton(),
-            IconButton(
-              onPressed: () {
-                _contentController.text += '#';
-                _showTagDialog(context);
-              },
-              icon: Icon(Icons.tag_outlined),
-            ),
-            IconButton(
-              onPressed: _takePhoto,
-              icon: Icon(Icons.photo_camera_outlined),
-            ),
-            IconButton(
-              icon: Icon(Icons.image_outlined),
-              onPressed: _pickFromGallery,
-            ),
-            Spacer(),
-            FilledButton.icon(
-              onPressed: _saveMemo,
-              label: Text('Save'),
-              icon: Icon(Icons.send_outlined),
-            ),
-          ],
-        ),
+  Widget _buildBottomRow(BuildContext context) {
+    final theme = BottomAppBarTheme.of(context);
+    final color = ElevationOverlay.applySurfaceTint(
+      theme.color ?? Colors.transparent,
+      theme.surfaceTintColor,
+      1.0,
+    );
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+      decoration: BoxDecoration(color: color),
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          _buildMemoVisibilityButton(),
+          IconButton(
+            onPressed: () {
+              _showTagDialog(context);
+            },
+            icon: Icon(Icons.tag_outlined),
+          ),
+          IconButton(
+            onPressed: _takePhoto,
+            icon: Icon(Icons.photo_camera_outlined),
+          ),
+          IconButton(
+            icon: Icon(Icons.image_outlined),
+            onPressed: _pickFromGallery,
+          ),
+          Spacer(),
+          FilledButton.icon(
+            onPressed: _saveMemo,
+            label: Text('Save'),
+            icon: Icon(Icons.send_outlined),
+          ),
+        ],
       ),
     );
   }
@@ -260,7 +270,7 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
             value: visibility,
             child: Row(
               children: [
-                SvgPicture.asset(visibility.icon, width: 24, height: 24),
+                Icon(visibility.systemIcon),
                 SizedBox(width: 5),
                 Text(visibility.displayText),
               ],
@@ -268,7 +278,7 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
           );
         }).toList();
       },
-      icon: SvgPicture.asset(currentVisibility.icon, width: 14, height: 14),
+      icon: Icon(currentVisibility.systemIcon),
       onCanceled: () => isShowDialog = false,
       onSelected: (MemoVisibility value) {
         context.notifier(memoEditVMProvider).updateVisibility(value);
@@ -328,10 +338,15 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
   void _insertTag(String tag) {
     final text = _contentController.text;
     final cursorPos = _contentController.selection.baseOffset;
-    final newText = text.replaceRange(cursorPos, cursorPos, '$tag ');
+    final addStr =
+        (cursorPos == 0 || text.substring(cursorPos - 1, cursorPos) != '#')
+            ? '#$tag '
+            : '$tag ';
+
+    final newText = text.replaceRange(cursorPos, cursorPos, addStr);
     _contentController.text = newText;
     _contentController.selection = TextSelection.collapsed(
-      offset: cursorPos + tag.length + 1,
+      offset: cursorPos + addStr.length,
     );
   }
 
@@ -364,4 +379,16 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
       context.notifier(memoEditVMProvider).addImage(File(pickedFile.path));
     }
   }
+}
+
+Future<Memo?> showCreateMemoPage(BuildContext context) async {
+  return await showModalBottomSheet<Memo>(
+    context: context,
+    enableDrag: false,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(18.0)),
+    ),
+    isScrollControlled: true, // 允许内容滚动
+    builder: (context) => CreateMemoPage(),
+  );
 }

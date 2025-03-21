@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:fymemos/model/memo_nodes.dart';
 import 'package:fymemos/model/resources.dart';
 import 'package:intl/intl.dart';
@@ -148,27 +149,32 @@ enum MemoVisibility {
     icon: "assets/image/memo_public.svg",
     name: "PUBLIC",
     displayText: "公开",
+    systemIcon: Icons.public_outlined,
   ),
   Private(
     icon: "assets/image/memo_private.svg",
     name: "PRIVATE",
     displayText: "仅自己可见",
+    systemIcon: Icons.lock_outline,
   ),
   Protected(
     icon: "assets/image/memo_workspace.svg",
     name: "PROTECTED",
     displayText: "工作空间可见",
+    systemIcon: Icons.group_outlined,
   );
 
   const MemoVisibility({
     required this.icon,
     required this.name,
     required this.displayText,
+    required this.systemIcon,
   });
 
   final String icon;
   final String name;
   final String displayText;
+  final IconData systemIcon;
 
   factory MemoVisibility.fromString(String name) {
     switch (name) {

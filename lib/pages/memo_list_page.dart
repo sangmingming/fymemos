@@ -41,9 +41,10 @@ class _MemoListPageState extends State<MemoListPage> with Refena {
   }
 
   void _createMemo() async {
-    final newMemo = await Navigator.of(
-      context,
-    ).push<Memo>(MaterialPageRoute(builder: (context) => CreateMemoPage()));
+    final newMemo = await showCreateMemoPage(context);
+    // final newMemo = await Navigator.of(
+    //   context,
+    // ).push<Memo>(MaterialPageRoute(builder: (context) => CreateMemoPage()));
     if (newMemo != null) {
       context.notifier(userMemoProvider).addMemo(newMemo);
     }
