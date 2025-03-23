@@ -11,6 +11,7 @@ class MemoListController extends AsyncNotifier<List<Memo>> {
   String? _nextPageToken;
   String? user;
   bool isLoading = false;
+  bool isSearchMode = false;
 
   @override
   Future<List<Memo>> init() async {
@@ -24,6 +25,30 @@ class MemoListController extends AsyncNotifier<List<Memo>> {
       _nextPageToken = result.nextPageToken;
     }
     return result.memos?.toList() ?? [];
+  }
+
+  void search(String query) async {
+    if (isLoading) {
+      return;
+    }
+    isLoading = true;
+    if (user == null) {
+      final userResult =
+          await SharedPreferencesService.instance.fetchUserDirect();
+      user = userResult;
+    }
+
+    final result = await ApiClient.instance.fetchUserMemosDirect(
+      user: user,
+      filter: 'content.contains("$query")',
+    );
+    if (result.memos == null || result.memos!.isEmpty) {
+      _nextPageToken = null;
+    } else {
+      _nextPageToken = result.nextPageToken;
+    }
+    isLoading = false;
+    state = AsyncValue.data(result.memos?.toList() ?? []);
   }
 
   Future<void> refresh() async {

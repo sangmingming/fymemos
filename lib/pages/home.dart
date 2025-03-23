@@ -4,6 +4,7 @@ import 'package:fymemos/data/services/shared_preference_service.dart';
 import 'package:fymemos/model/users.dart';
 import 'package:fymemos/pages/archived_memo_list_page.dart';
 import 'package:fymemos/pages/memolist/memo_list_page.dart';
+import 'package:fymemos/pages/memolist/memo_list_vm.dart';
 import 'package:fymemos/pages/resourceslist/resources_list_page.dart';
 import 'package:fymemos/provider.dart';
 import 'package:fymemos/utils/result.dart';
@@ -95,6 +96,7 @@ class _NavigationDrawerHomePageState extends State<NavigationDrawerHomePage>
   String title = destinations[0].label;
   UserProfile? userProfile;
   UserStats? userStats;
+  bool isSearching = false;
 
   @override
   void initState() {
@@ -103,16 +105,18 @@ class _NavigationDrawerHomePageState extends State<NavigationDrawerHomePage>
 
   void handleScreenChanged(int selectedScreen) {
     print("Selected screen: $selectedScreen");
+    if (isSearching) {
+      ref.notifier(userMemoProvider).refresh();
+    }
     setState(() {
       screenIndex = selectedScreen;
+      isSearching = false;
     });
   }
 
   void handleDrawerScreenChanged(int selectedScreen) {
     print("Selected screen: $selectedScreen");
-    setState(() {
-      screenIndex = selectedScreen;
-    });
+    handleScreenChanged(selectedScreen);
     scaffoldKey.currentState!.closeDrawer();
   }
 
@@ -123,14 +127,23 @@ class _NavigationDrawerHomePageState extends State<NavigationDrawerHomePage>
   }
 
   Widget buildWithNavigationDrawer(BuildContext context) {
-    return Scaffold(
-      key: scaffoldKey,
-      appBar: AppBar(title: Text(destinations[screenIndex].label)),
-      body: SafeArea(bottom: false, top: false, child: getCurrentPage()),
-      drawer: NavigationDrawer(
-        onDestinationSelected: handleDrawerScreenChanged,
-        selectedIndex: screenIndex,
-        children: _buildNavigationItems(context),
+    return PopScope(
+      canPop: !isSearching,
+      onPopInvokedWithResult: (didPop, result) {
+        setState(() {
+          isSearching = false;
+        });
+        ref.notifier(userMemoProvider).refresh();
+      },
+      child: Scaffold(
+        key: scaffoldKey,
+        appBar: _buildAppBar(context),
+        body: SafeArea(bottom: false, top: false, child: getCurrentPage()),
+        drawer: NavigationDrawer(
+          onDestinationSelected: handleDrawerScreenChanged,
+          selectedIndex: screenIndex,
+          children: _buildNavigationItems(context),
+        ),
       ),
     );
   }
@@ -178,23 +191,96 @@ class _NavigationDrawerHomePageState extends State<NavigationDrawerHomePage>
     ];
   }
 
-  Widget buildWithNavigationRail(BuildContext context) {
-    return Scaffold(
-      key: scaffoldKey,
-      body: SafeArea(
-        bottom: false,
-        top: false,
-        child: Row(
-          children: <Widget>[
-            NavigationDrawer(
-              backgroundColor: Theme.of(context).canvasColor,
-              onDestinationSelected: handleScreenChanged,
-              selectedIndex: screenIndex,
-              children: _buildNavigationItems(context),
-            ),
+  AppBar _buildAppBar(BuildContext context) {
+    return AppBar(
+      leading:
+          isSearching
+              ? IconButton(
+                onPressed: () {
+                  setState(() {
+                    isSearching = false;
+                  });
+                  ref.notifier(userMemoProvider).refresh();
+                },
+                icon: Icon(Icons.arrow_back),
+              )
+              : null,
+      title: AnimatedSize(
+        duration: Duration(milliseconds: 300),
+        child:
+            isSearching
+                ? TextField(
+                  autofocus: true,
+                  textAlignVertical: TextAlignVertical.center,
+                  decoration: InputDecoration(
+                    hintText: 'Search Memos...',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ), // 移除边框
+                    isDense: true,
+                    alignLabelWithHint: true,
+                    prefixIcon: Icon(Icons.search),
+                    contentPadding: EdgeInsets.only(left: 0),
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.clear),
+                      onPressed: () {
+                        setState(() {
+                          isSearching = false;
+                        });
+                        ref.notifier(userMemoProvider).refresh();
+                      },
+                    ),
+                  ),
+                  onChanged: (value) {
+                    ref.notifier(userMemoProvider).search(value);
+                  },
+                )
+                : Text(destinations[screenIndex].label),
+      ),
+      actions: [
+        if (screenIndex == 0 && !isSearching)
+          IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () {
+              setState(() {
+                isSearching = true;
+              });
+            },
+          ),
+      ],
+    );
+  }
 
-            Expanded(child: getCurrentPage()),
-          ],
+  Widget buildWithNavigationRail(BuildContext context) {
+    return PopScope(
+      canPop: !isSearching,
+      onPopInvokedWithResult: (didPop, result) {
+        setState(() {
+          isSearching = false;
+        });
+        ref.notifier(userMemoProvider).refresh();
+      },
+      child: Scaffold(
+        key: scaffoldKey,
+        body: SafeArea(
+          bottom: false,
+          top: false,
+          child: Row(
+            children: <Widget>[
+              NavigationDrawer(
+                backgroundColor: Theme.of(context).canvasColor,
+                onDestinationSelected: handleScreenChanged,
+                selectedIndex: screenIndex,
+                children: _buildNavigationItems(context),
+              ),
+              Expanded(
+                child: Scaffold(
+                  appBar: _buildAppBar(context),
+                  body: getCurrentPage(),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

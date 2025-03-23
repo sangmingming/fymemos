@@ -20,7 +20,7 @@ class SettingsPage extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: Icon(Icons.info_rounded),
+            leading: Icon(Icons.info_outline_rounded),
             title: Text('About'),
             onTap: () {
               showAboutDialog(
