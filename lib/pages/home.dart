@@ -183,12 +183,130 @@ class _NavigationDrawerHomePageState extends State<NavigationDrawerHomePage>
                       ),
                     ],
                   ),
-                  trailing: Icon(Icons.more_horiz_rounded),
+                  trailing: PopupMenuButton(
+                    itemBuilder: (context) {
+                      return [
+                        PopupMenuItem(
+                          child: Text("Rename"),
+                          onTap: () {
+                            _renameTag(context, entity.key);
+                          },
+                        ),
+                        PopupMenuItem(
+                          child: Text(
+                            "Delete",
+                            style: TextStyle(color: Colors.red),
+                          ),
+                          onTap: () {
+                            _deleteTag(context, entity.key);
+                          },
+                        ),
+                      ];
+                    },
+                    icon: Icon(Icons.more_horiz_rounded),
+                  ),
                 ),
               )
               .toList() ??
           [],
     ];
+  }
+
+  void _renameTag(BuildContext context, String tag) async {
+    final TextEditingController controller = TextEditingController(text: tag);
+    final newTag = await showDialog<String>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Rename Tag"),
+          content: TextField(
+            autofocus: true,
+            controller: controller,
+            textAlignVertical: TextAlignVertical.center,
+            decoration: InputDecoration(
+              hintText: 'New tag name',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text("Cancel"),
+            ),
+            FilledButton(
+              onPressed: () {
+                Navigator.pop(context, controller.text.trim());
+              },
+              child: Text("Finish"),
+            ),
+          ],
+        );
+      },
+    );
+    if (newTag != null) {
+      final renameResult = await ApiClient.instance.renameTag(tag, newTag);
+      if (renameResult is Ok) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Tag renamed")));
+        ref.rebuild(authProvider);
+      } else if (renameResult is Error) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(renameResult.error.toString())));
+      }
+    }
+  }
+
+  void _deleteTag(BuildContext context, String tag) async {
+    //show confirm dialog ,then delete tag
+    bool? r = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Delete Tag"),
+          content: Text(
+            "Are you sure you want to delete this tag? This will remove all memos related to #$tag.",
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+              child: Text("Cancel"),
+            ),
+            FilledButton(
+              style: FilledButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.error,
+                foregroundColor: Theme.of(context).colorScheme.onError,
+              ),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+              child: Text("Delete"),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (r == true) {
+      final deleteResult = await ApiClient.instance.deleteTag(tag);
+      if (deleteResult is Ok) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Tag deleted")));
+        ref.rebuild(authProvider);
+      } else if (deleteResult is Error) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(deleteResult.error.toString())));
+      }
+    }
   }
 
   AppBar _buildAppBar(BuildContext context) {

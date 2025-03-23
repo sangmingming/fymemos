@@ -133,6 +133,35 @@ class ApiClient {
     await dio.delete("/api/v1/resources/$id");
   }
 
+  Future<Result<void>> deleteTag(String name) async {
+    try {
+      await dio.delete("/api/v1/memos/-/tags/$name");
+      return Result.ok(null);
+    } on DioException catch (e) {
+      return Result.error(e);
+    }
+  }
+
+  Future<Result<void>> renameTag(String oldName, String newName) async {
+    try {
+      await dio.patch(
+        "/api/v1/memos/-/tags:rename",
+        data: jsonEncode({
+          "oldTag": oldName,
+          "newTag": newName,
+        }), // Ensure the data is JSON encoded
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json', // Set the content type to JSON
+          },
+        ),
+      );
+      return Result.ok(null);
+    } on DioException catch (e) {
+      return Result.error(e);
+    }
+  }
+
   Future<Result<Memo>> createMemo(CreateMemoRequest request) async {
     try {
       final res = await dio.post(

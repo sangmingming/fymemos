@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fymemos/model/memos.dart';
 import 'package:fymemos/pages/memodetail/memo_detail_vm.dart';
 import 'package:fymemos/utils/strings.dart';
 import 'package:refena_flutter/refena_flutter.dart';
@@ -49,7 +48,7 @@ class _EmbeddedMemoItemState extends State<EmbeddedMemoItem> {
                               children: [
                                 Text(memo.getFormattedDisplayTime()),
                                 Spacer(),
-                                Text(memo.name),
+                                Text(memo.name.id),
                                 Icon(Icons.arrow_outward),
                               ],
                             ),
