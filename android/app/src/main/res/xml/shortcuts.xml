@@ -1,0 +1,13 @@
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="create_memo"
+        android:enabled="true"
+        android:icon="@drawable/ic_create"
+        android:shortcutShortLabel="@string/create_short_label">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="me.isming.fymemos"
+            android:targetClass="com.example.fymemos.MainActivity"
+            android:data="/create_memo" />
+    </shortcut>
+</shortcuts>

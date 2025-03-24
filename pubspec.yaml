@@ -53,6 +53,7 @@ dependencies:
   permission_handler: ^11.4.0
   flutter_keyboard_visibility: ^6.0.0
   path: ^1.9.1
+  quick_actions: ^1.1.0
 
 dev_dependencies:
   flutter_test:
