@@ -56,6 +56,8 @@ dependencies:
   quick_actions: ^1.1.0
   go_router: ^14.8.1
   share_handler: ^0.0.22
+  mime: ^2.0.0
+  desktop_drop: ^0.5.0
 
 dev_dependencies:
   flutter_test:

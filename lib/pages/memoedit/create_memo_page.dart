@@ -6,10 +6,10 @@ import 'package:fymemos/model/memos.dart';
 import 'package:fymemos/pages/memoedit/memo_edit_vm.dart';
 import 'package:fymemos/provider.dart';
 import 'package:fymemos/utils/result.dart';
-import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:refena_flutter/refena_flutter.dart';
+import 'package:desktop_drop/desktop_drop.dart';
 
 class CreateMemoPage extends StatefulWidget {
   final Map<String, String?> params;
@@ -117,62 +117,69 @@ class _CreateMemoPageState extends State<CreateMemoPage> with Refena {
     }
     final images = context.watch(memoEditVMProvider).images;
     _initData();
-    return Container(
-      padding: MediaQuery.of(context).viewInsets,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            padding: const EdgeInsets.only(
-              top: 24,
-              left: 12,
-              right: 12,
-              bottom: 8,
-            ),
-            child: TextField(
-              key: _textFieldKey,
-              controller: _contentController,
-              focusNode: _contentFocusNode,
-              maxLines: 5,
-              minLines: 5,
-              keyboardType: TextInputType.multiline,
-              textAlign: TextAlign.start,
-              textAlignVertical: TextAlignVertical.top,
-              autofocus: true,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                isCollapsed: false,
-                labelText: 'Content',
+    return DropTarget(
+      onDragDone: (data) async {
+        data.files.forEach((file) async {
+          ref.notifier(memoEditVMProvider).addImage(File(file.path));
+        });
+      },
+      child: Container(
+        padding: MediaQuery.of(context).viewInsets,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.only(
+                top: 24,
+                left: 12,
+                right: 12,
+                bottom: 8,
               ),
-              onChanged: (text) {
-                if (isShowDialog) {
-                  Navigator.of(context).pop();
-                  isShowDialog = false;
-                }
-                final cursorPos = _contentController.selection.baseOffset;
-                if (cursorPos > 0) {
-                  final lastChar = text.substring(cursorPos - 1, cursorPos);
-
-                  if (lastChar == '#') {
-                    if (cursorPos > 1) {
-                      final prevChar = text.substring(
-                        cursorPos - 2,
-                        cursorPos - 1,
-                      );
-                      if (prevChar == '#') {
-                        return;
-                      }
-                    }
-                    _showTagDialog(context);
+              child: TextField(
+                key: _textFieldKey,
+                controller: _contentController,
+                focusNode: _contentFocusNode,
+                maxLines: 5,
+                minLines: 5,
+                keyboardType: TextInputType.multiline,
+                textAlign: TextAlign.start,
+                textAlignVertical: TextAlignVertical.top,
+                autofocus: true,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  isCollapsed: false,
+                  labelText: 'Content',
+                ),
+                onChanged: (text) {
+                  if (isShowDialog) {
+                    Navigator.of(context).pop();
+                    isShowDialog = false;
                   }
-                }
-              },
+                  final cursorPos = _contentController.selection.baseOffset;
+                  if (cursorPos > 0) {
+                    final lastChar = text.substring(cursorPos - 1, cursorPos);
+
+                    if (lastChar == '#') {
+                      if (cursorPos > 1) {
+                        final prevChar = text.substring(
+                          cursorPos - 2,
+                          cursorPos - 1,
+                        );
+                        if (prevChar == '#') {
+                          return;
+                        }
+                      }
+                      _showTagDialog(context);
+                    }
+                  }
+                },
+              ),
             ),
-          ),
-          _buildImageList(images),
-          _buildBottomRow(context),
-        ],
+            _buildImageList(images),
+            _buildBottomRow(context),
+          ],
+        ),
       ),
     );
   }

@@ -8,6 +8,7 @@ import 'package:fymemos/model/memos.dart';
 import 'package:fymemos/model/resources.dart';
 import 'package:fymemos/utils/result.dart';
 import 'package:fymemos/utils/strings.dart';
+import 'package:mime/mime.dart';
 import 'package:refena_flutter/refena_flutter.dart';
 
 final memoEditVMProvider = NotifierProvider<MemoEditVM, MemoEditData>(
@@ -46,9 +47,17 @@ class MemoEditVM extends Notifier<MemoEditData> {
     );
   }
 
+  bool _isImageFile(File file) {
+    final mimeType = lookupMimeType(file.path);
+    return mimeType?.startsWith('image/') ?? false;
+  }
+
   void addImage(File image) async {
     print("image: ${image.path}");
     final images = state.images ?? [];
+    if (!_isImageFile(image)) {
+      return;
+    }
     images.add(MemoImage(file: image));
     state = state.copyWith(image: images);
     final res = await _uploadImage(image);
