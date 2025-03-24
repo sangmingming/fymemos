@@ -2,12 +2,13 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:fymemos/config/init.dart';
+import 'package:fymemos/data/services/settings_provider.dart';
 import 'package:fymemos/pages/bottom_sheet_page.dart';
 import 'package:fymemos/pages/home.dart';
 import 'package:fymemos/pages/login_page.dart';
 import 'package:fymemos/pages/memodetail/memo_detail_page.dart';
 import 'package:fymemos/pages/memoedit/create_memo_page.dart';
-import 'package:fymemos/pages/settings_page.dart';
+import 'package:fymemos/pages/settings/settings_page.dart';
 import 'package:fymemos/pages/tag_memo_list_page.dart';
 import 'package:fymemos/provider.dart';
 import 'package:fymemos/ui/core/theme/dynamic_colors.dart';
@@ -103,11 +104,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final ref = context.ref;
     final dynamicColors = ref.watch(dynamicColorsProvider);
+    final themMode = ref.watch(settingsProvider.select((s) => s.themeMode));
     return MaterialApp.router(
       title: 'Flutter Demo',
       theme: getTheme(Brightness.light, dynamicColors),
       darkTheme: getTheme(Brightness.dark, dynamicColors),
-      themeMode: ThemeMode.system, // Use system theme mode
+      themeMode: themMode, // Use system theme mode
       routerConfig: _router,
     );
   }

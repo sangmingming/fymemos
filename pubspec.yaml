@@ -58,6 +58,7 @@ dependencies:
   share_handler: ^0.0.22
   mime: ^2.0.0
   desktop_drop: ^0.5.0
+  collection: ^1.19.1
 
 dev_dependencies:
   flutter_test:
