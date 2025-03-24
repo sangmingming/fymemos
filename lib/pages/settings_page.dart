@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -16,7 +17,7 @@ class SettingsPage extends StatelessWidget {
             onTap: () async {
               final prefs = await SharedPreferences.getInstance();
               await prefs.clear();
-              Navigator.of(context).pushReplacementNamed('/login');
+              context.pushReplacement('/login');
             },
           ),
           ListTile(

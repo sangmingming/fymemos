@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:fymemos/model/memos.dart';
+import 'package:go_router/go_router.dart';
 
 class RelatedMemoItem extends StatelessWidget {
   final RelatedMemo memo;
@@ -22,7 +22,7 @@ class RelatedMemoItem extends StatelessWidget {
           children: [
             GestureDetector(
               behavior: HitTestBehavior.opaque,
-              onTap: () => {Navigator.pushNamed(context, '/${memo.name}')},
+              onTap: () => {context.go('/${memo.name}')},
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,

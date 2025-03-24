@@ -4,6 +4,7 @@ import 'package:fymemos/pages/memoedit/create_memo_page.dart';
 import 'package:fymemos/pages/memolist/memo_list_vm.dart';
 import 'package:fymemos/utils/load_state.dart';
 import 'package:fymemos/widgets/memo.dart';
+import 'package:go_router/go_router.dart';
 import 'package:refena_flutter/refena_flutter.dart';
 
 class MemoListPage extends StatefulWidget {
@@ -39,7 +40,7 @@ class _MemoListPageState extends State<MemoListPage> with Refena {
   }
 
   void _createMemo() async {
-    final newMemo = await showCreateMemoPage(context);
+    final newMemo = await context.push<Memo>("/create_memo");
     if (newMemo != null) {
       context.notifier(userMemoProvider).addMemo(newMemo);
     }

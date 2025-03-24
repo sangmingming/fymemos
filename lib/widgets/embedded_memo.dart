@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fymemos/pages/memodetail/memo_detail_vm.dart';
 import 'package:fymemos/utils/strings.dart';
+import 'package:go_router/go_router.dart';
 import 'package:refena_flutter/refena_flutter.dart';
 
 class EmbeddedMemoItem extends StatefulWidget {
@@ -36,10 +37,7 @@ class _EmbeddedMemoItemState extends State<EmbeddedMemoItem> {
                   data:
                       (memo) => GestureDetector(
                         behavior: HitTestBehavior.opaque,
-                        onTap:
-                            () => {
-                              Navigator.pushNamed(context, '/${memo.name}'),
-                            },
+                        onTap: () => {context.go('/${memo.name}')},
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,

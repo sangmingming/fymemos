@@ -17,7 +17,7 @@ class ApiClient {
   final dio = Dio();
   final Map<String, String> requestHeaders = {};
 
-  void initDio({required baseUrl, required token}) {
+  void initDio({required String baseUrl, required String token}) {
     dio.options.baseUrl = baseUrl;
     dio.interceptors.add(
       InterceptorsWrapper(

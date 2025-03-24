@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fymemos/data/services/api/api_client.dart';
 import 'package:fymemos/data/services/shared_preference_service.dart';
+import 'package:fymemos/provider.dart';
 import 'package:fymemos/utils/result.dart';
+import 'package:go_router/go_router.dart';
 import 'package:refena_flutter/refena_flutter.dart';
 
 class LoginPage extends StatefulWidget {
@@ -39,8 +41,9 @@ class _LoginPageState extends State<LoginPage> with Refena {
 
     switch (userResult) {
       case Ok():
+        context.rebuild(authProvider);
         prefs.saveUser(userResult.value.name);
-        Navigator.of(context).pushReplacementNamed('/home');
+        context.pushReplacement('/');
         break;
       case Error():
         ScaffoldMessenger.of(context).showSnackBar(

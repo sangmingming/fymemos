@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:fymemos/config/init.dart';
+import 'package:fymemos/pages/bottom_sheet_page.dart';
 import 'package:fymemos/pages/home.dart';
 import 'package:fymemos/pages/login_page.dart';
 import 'package:fymemos/pages/memodetail/memo_detail_page.dart';
+import 'package:fymemos/pages/memoedit/create_memo_page.dart';
 import 'package:fymemos/pages/settings_page.dart';
 import 'package:fymemos/pages/tag_memo_list_page.dart';
+import 'package:fymemos/provider.dart';
 import 'package:fymemos/ui/core/theme/dynamic_colors.dart';
 import 'package:fymemos/ui/core/theme/theme.dart';
+import 'package:go_router/go_router.dart';
 import 'package:refena_flutter/refena_flutter.dart';
 
 Future<void> main(List<String> args) async {
@@ -19,6 +23,71 @@ Future<void> main(List<String> args) async {
   runApp(RefenaScope.withContainer(container: container, child: const MyApp()));
 }
 
+final _router = GoRouter(
+  redirect: (context, state) async {
+    try {
+      final authState = await context.future(authProvider);
+    } catch (e) {
+      return '/login';
+    }
+    print("redirect: ${state.fullPath} ${state.uri}");
+
+    return null;
+  },
+  routes: [
+    GoRoute(
+      path: "/search_memo",
+      redirect: (context, state) {
+        return '/?action=search';
+      },
+    ),
+    GoRoute(
+      path: '/',
+      builder:
+          (context, state) => NavigationDrawerHomePage(
+            action: state.uri.queryParameters['action'],
+          ),
+      routes: [
+        ShellRoute(
+          pageBuilder:
+              (context, state, child) =>
+                  BottomSheetPage(child: child, key: state.pageKey),
+          routes: [
+            GoRoute(
+              path: 'create_memo',
+              builder: (context, state) => CreateMemoPage(),
+            ),
+          ],
+        ),
+      ],
+    ),
+    GoRoute(
+      path: '/memos/:memoId',
+      builder:
+          (context, state) => MemoDetailPage(
+            resourceName: state.pathParameters['memoId'] ?? '',
+          ),
+    ),
+    GoRoute(
+      path: '/tags/:tagId',
+      builder:
+          (context, state) =>
+              TagMemoListPage(memoTag: state.pathParameters['tagId'] ?? ''),
+    ),
+
+    GoRoute(
+      path: '/home',
+      builder: (context, state) => const NavigationDrawerHomePage(),
+    ),
+    GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
+    GoRoute(
+      path: '/settings',
+      builder: (context, state) => const SettingsPage(),
+    ),
+  ],
+  initialLocation: '/',
+);
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -26,43 +95,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final ref = context.ref;
     final dynamicColors = ref.watch(dynamicColorsProvider);
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Flutter Demo',
       theme: getTheme(Brightness.light, dynamicColors),
       darkTheme: getTheme(Brightness.dark, dynamicColors),
       themeMode: ThemeMode.system, // Use system theme mode
-      initialRoute: '/',
-      onGenerateRoute: (settings) {
-        final uri = Uri.parse(settings.name!);
-        print(
-          "jump uri: $uri  first : ${uri.pathSegments.first} count: ${uri.pathSegments.length}",
-        );
-        if (uri.pathSegments.length == 2 && uri.pathSegments.first == "memos") {
-          return MaterialPageRoute(
-            builder: (context) {
-              return MemoDetailPage(resourceName: uri.pathSegments[1]);
-            },
-          );
-        } else if (uri.pathSegments.length == 2 &&
-            uri.pathSegments.first == "tags") {
-          return MaterialPageRoute(
-            builder: (context) {
-              return TagMemoListPage(memoTag: uri.pathSegments[1]);
-            },
-          );
-        }
-        return MaterialPageRoute(
-          builder: (context) {
-            return const CheckLoginPage();
-          },
-        );
-      },
-      routes: {
-        '/': (context) => const CheckLoginPage(),
-        '/home': (context) => const NavigationDrawerHomePage(),
-        '/login': (context) => const LoginPage(),
-        '/settings': (context) => const SettingsPage(),
-      },
+      routerConfig: _router,
     );
   }
 }

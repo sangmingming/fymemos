@@ -2,6 +2,7 @@ import 'package:fymemos/data/services/api/api_client.dart';
 import 'package:fymemos/data/services/shared_preference_service.dart';
 import 'package:fymemos/model/memos.dart';
 import 'package:fymemos/model/users.dart';
+import 'package:fymemos/utils/result.dart';
 import 'package:refena_flutter/refena_flutter.dart';
 
 final memoDetailsProvider = FutureProvider.family<Memo, String>((
@@ -19,6 +20,20 @@ class AuthInfo {
 }
 
 final authProvider = FutureProvider((ref) async {
+  final sp = SharedPreferencesService.instance;
+  final (baseUrl, accessToken) =
+      await (sp.fetchBaseUrl(), sp.fetchToken()).wait;
+  if (baseUrl is Error || accessToken is Error) {
+    throw Exception('user not login');
+  }
+  if ((baseUrl as Ok<String?>).value == null ||
+      (accessToken as Ok<String?>).value == null) {
+    throw Exception('user not login');
+  }
+  ApiClient.instance.initDio(
+    baseUrl: baseUrl.value!,
+    token: accessToken.value!,
+  );
   final profile = await ApiClient.instance.getAuthStatusDirect();
   final userId = await SharedPreferencesService.instance.fetchUserDirect();
   if (userId == null) {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fymemos/model/users.dart';
 import 'package:fymemos/utils/datetime.dart';
 import 'package:fymemos/widgets/heatmap.dart';
+import 'package:go_router/go_router.dart';
 
 class UserStatisticWidget extends StatelessWidget {
   final UserProfile? user;
@@ -32,7 +33,7 @@ class UserStatisticWidget extends StatelessWidget {
               IconButton(
                 icon: Icon(Icons.settings_outlined),
                 onPressed: () {
-                  Navigator.of(context).pushNamed('/settings');
+                  context.push('/settings');
                 },
               ),
             ],

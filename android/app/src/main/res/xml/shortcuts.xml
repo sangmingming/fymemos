@@ -10,4 +10,16 @@
             android:targetClass="com.example.fymemos.MainActivity"
             android:data="/create_memo" />
     </shortcut>
+
+    <shortcut
+        android:shortcutId="search_memo"
+        android:enabled="true"
+        android:icon="@drawable/ic_search"
+        android:shortcutShortLabel="@string/search_short_label">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="me.isming.fymemos"
+            android:targetClass="com.example.fymemos.MainActivity"
+            android:data="/search_memo" />
+    </shortcut>
 </shortcuts>

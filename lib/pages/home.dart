@@ -9,53 +9,8 @@ import 'package:fymemos/pages/resourceslist/resources_list_page.dart';
 import 'package:fymemos/provider.dart';
 import 'package:fymemos/utils/result.dart';
 import 'package:fymemos/widgets/statics.dart';
+import 'package:go_router/go_router.dart';
 import 'package:refena_flutter/refena_flutter.dart';
-
-class CheckLoginPage extends StatefulWidget {
-  const CheckLoginPage({super.key});
-
-  @override
-  State<CheckLoginPage> createState() => _CheckLoginPageState();
-}
-
-class _CheckLoginPageState extends State<CheckLoginPage> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  void _checkLogin() async {
-    final sp = SharedPreferencesService.instance;
-    final baseUrl = await sp.fetchBaseUrl();
-    final accessToken = await sp.fetchToken();
-    final apiClient = ApiClient.instance;
-
-    if (baseUrl is Ok<String?> && accessToken is Ok<String?>) {
-      if (baseUrl.value == null || accessToken.value == null) {
-        Navigator.of(context).pushReplacementNamed('/login');
-        return;
-      }
-      apiClient.initDio(baseUrl: baseUrl.value, token: accessToken.value);
-
-      final data = context.watch(authProvider);
-      if (data.hasData) {
-        Navigator.of(context).pushReplacementNamed('/home');
-      } else if (data.hasError) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('User status check failed: ${data.error}')),
-        );
-      }
-    } else {
-      Navigator.of(context).pushReplacementNamed('/login');
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    _checkLogin();
-    return Scaffold(body: Center(child: CircularProgressIndicator()));
-  }
-}
 
 class MemoDestination {
   const MemoDestination(this.label, this.icon, this.selectedIcon);
@@ -80,7 +35,8 @@ const List<MemoDestination> destinations = <MemoDestination>[
 ];
 
 class NavigationDrawerHomePage extends StatefulWidget {
-  const NavigationDrawerHomePage({super.key});
+  final String? action;
+  const NavigationDrawerHomePage({super.key, this.action});
 
   @override
   State<NavigationDrawerHomePage> createState() =>
@@ -101,6 +57,13 @@ class _NavigationDrawerHomePageState extends State<NavigationDrawerHomePage>
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.action == "search") {
+        setState(() {
+          isSearching = true;
+        });
+      }
+    });
   }
 
   void handleScreenChanged(int selectedScreen) {
@@ -170,7 +133,7 @@ class _NavigationDrawerHomePageState extends State<NavigationDrawerHomePage>
               .map(
                 (entity) => ListTile(
                   onTap: () {
-                    Navigator.of(context).pushNamed("/tags/${entity.key}");
+                    context.push("/tags/${entity.key}");
                   },
                   leading: Icon(Icons.tag),
                   title: Row(

@@ -6,6 +6,7 @@ import 'package:fymemos/model/resources.dart';
 import 'package:fymemos/pages/memolist/memo_list_vm.dart';
 import 'package:fymemos/widgets/memo_content.dart';
 import 'package:fymemos/widgets/related_memo.dart';
+import 'package:go_router/go_router.dart';
 import 'package:refena_flutter/refena_flutter.dart';
 
 import '../model/memos.dart';
@@ -261,7 +262,7 @@ class RelatedMemoSimpleWidget extends StatelessWidget {
       }
       return GestureDetector(
         onTap: () {
-          Navigator.pushNamed(context, '/${memo.name}');
+          context.go('/${memo.name}');
         },
         child: Row(
           children: [
@@ -276,7 +277,7 @@ class RelatedMemoSimpleWidget extends StatelessWidget {
       var text = "Referencing with ${memo.relations.length} memos";
       return GestureDetector(
         onTap: () {
-          Navigator.pushNamed(context, '/${memo.name}');
+          context.go('/${memo.name}');
         },
         child: Row(
           children: [

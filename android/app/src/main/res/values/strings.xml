@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FyMemos</string>
+    <string name="create_short_label">Create Memo</string>
+    <string name="search_short_label">Search Memos</string>
+    <string name="edit_short_label">Edit</string>
+    <string name="delete_short_label">Delete</string>
+</resources>

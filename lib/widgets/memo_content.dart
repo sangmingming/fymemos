@@ -3,6 +3,7 @@ import 'package:fymemos/model/memo_nodes.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:fymemos/widgets/embedded_memo.dart';
+import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MemoContent extends StatelessWidget {
@@ -204,7 +205,7 @@ class _NodeRenderer extends StatelessWidget {
     return WidgetSpan(
       child: GestureDetector(
         onTap: () {
-          Navigator.of(context).pushNamed("/tags/${node.content}");
+          context.go("/tags/${node.content}");
         },
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
