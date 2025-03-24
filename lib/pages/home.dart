@@ -11,6 +11,7 @@ import 'package:fymemos/utils/result.dart';
 import 'package:fymemos/widgets/statics.dart';
 import 'package:go_router/go_router.dart';
 import 'package:refena_flutter/refena_flutter.dart';
+import 'package:share_handler/share_handler.dart';
 
 class MemoDestination {
   const MemoDestination(this.label, this.icon, this.selectedIcon);
@@ -53,6 +54,7 @@ class _NavigationDrawerHomePageState extends State<NavigationDrawerHomePage>
   UserProfile? userProfile;
   UserStats? userStats;
   bool isSearching = false;
+  SharedMedia? sharedMedia;
 
   @override
   void initState() {
@@ -64,6 +66,46 @@ class _NavigationDrawerHomePageState extends State<NavigationDrawerHomePage>
         });
       }
     });
+    initPlatformState();
+  }
+
+  Future<void> initPlatformState() async {
+    final handler = ShareHandlerPlatform.instance;
+    sharedMedia = await handler.getInitialSharedMedia();
+
+    handler.sharedMediaStream.listen((SharedMedia media) {
+      if (!mounted) return;
+      sharedMedia?.attachments?.forEach((element) {
+        print("object ${element?.path}");
+      });
+      final image = sharedMedia?.attachments?.firstWhere(
+        (element) => element?.type == SharedAttachmentType.image,
+      );
+
+      print("object image ${image?.path}");
+      final imageFile = image?.path ?? sharedMedia?.imageFilePath;
+      print("object image path ${imageFile}");
+      context.go(
+        "/create_memo",
+        extra: {"content": media.content, "image": imageFile},
+      );
+    });
+    if (!mounted) return;
+    if (sharedMedia != null) {
+      final image = sharedMedia?.attachments?.firstWhere(
+        (element) => element?.type == SharedAttachmentType.image,
+      );
+      sharedMedia?.attachments?.forEach((element) {
+        print("init object ${element?.path}");
+      });
+      print("init object image ${sharedMedia?.imageFilePath}");
+      final imageFile = image?.path ?? sharedMedia?.imageFilePath;
+
+      context.go(
+        "/create_memo",
+        extra: {"content": sharedMedia!.content, "image": imageFile},
+      );
+    }
   }
 
   void handleScreenChanged(int selectedScreen) {

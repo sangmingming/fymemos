@@ -55,7 +55,13 @@ final _router = GoRouter(
           routes: [
             GoRoute(
               path: 'create_memo',
-              builder: (context, state) => CreateMemoPage(),
+              builder:
+                  (context, state) => CreateMemoPage(
+                    params:
+                        state.extra is Map<String, String?>
+                            ? (state.extra as Map<String, String?>)
+                            : <String, String?>{},
+                  ),
             ),
           ],
         ),

@@ -47,6 +47,7 @@ class MemoEditVM extends Notifier<MemoEditData> {
   }
 
   void addImage(File image) async {
+    print("image: ${image.path}");
     final images = state.images ?? [];
     images.add(MemoImage(file: image));
     state = state.copyWith(image: images);

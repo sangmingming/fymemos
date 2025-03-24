@@ -6,16 +6,19 @@ import 'package:fymemos/model/memos.dart';
 import 'package:fymemos/pages/memoedit/memo_edit_vm.dart';
 import 'package:fymemos/provider.dart';
 import 'package:fymemos/utils/result.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:refena_flutter/refena_flutter.dart';
 
 class CreateMemoPage extends StatefulWidget {
+  final Map<String, String?> params;
+  CreateMemoPage({this.params = const {}});
   @override
   _CreateMemoPageState createState() => _CreateMemoPageState();
 }
 
-class _CreateMemoPageState extends State<CreateMemoPage> {
+class _CreateMemoPageState extends State<CreateMemoPage> with Refena {
   final TextEditingController _contentController = TextEditingController();
   final FocusNode _contentFocusNode = FocusNode();
   final GlobalKey _textFieldKey = GlobalKey();
@@ -30,6 +33,23 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
     });
   }
 
+  void _initData() {
+    widget.params.forEach((key, value) {
+      switch (key) {
+        case 'content':
+          _contentController.text = value ?? '';
+          break;
+        case 'image':
+          if (value == null) {
+            return;
+          }
+          ref.notifier(memoEditVMProvider).addImage(File(value));
+          break;
+      }
+    });
+    widget.params.clear();
+  }
+
   void _saveMemo() async {
     final content = _contentController.text;
     if (content.isEmpty) {
@@ -39,7 +59,7 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
       ).showSnackBar(SnackBar(content: Text('Content cannot be empty')));
       return;
     }
-    context.notifier(memoEditVMProvider).updateContent(content);
+    ref.notifier(memoEditVMProvider).updateContent(content);
     final memo = await context.notifier(memoEditVMProvider).saveMemo();
     switch (memo) {
       case Ok<Memo>():
@@ -96,6 +116,7 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
           .updateVisibility(userSettings.data!.memoVisibility);
     }
     final images = context.watch(memoEditVMProvider).images;
+    _initData();
     return Container(
       padding: MediaQuery.of(context).viewInsets,
       child: Column(
