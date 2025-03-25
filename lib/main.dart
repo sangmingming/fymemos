@@ -68,30 +68,25 @@ final _router = GoRouter(
             ),
           ],
         ),
+        GoRoute(
+          path: 'memos/:memoId',
+          builder:
+              (context, state) => MemoDetailPage(
+                resourceName: state.pathParameters['memoId'] ?? '',
+              ),
+        ),
+        GoRoute(
+          path: 'tags/:tagId',
+          builder:
+              (context, state) =>
+                  TagMemoListPage(memoTag: state.pathParameters['tagId'] ?? ''),
+        ),
+        GoRoute(path: 'login', builder: (context, state) => const LoginPage()),
+        GoRoute(
+          path: 'settings',
+          builder: (context, state) => const SettingsPage(),
+        ),
       ],
-    ),
-    GoRoute(
-      path: '/memos/:memoId',
-      builder:
-          (context, state) => MemoDetailPage(
-            resourceName: state.pathParameters['memoId'] ?? '',
-          ),
-    ),
-    GoRoute(
-      path: '/tags/:tagId',
-      builder:
-          (context, state) =>
-              TagMemoListPage(memoTag: state.pathParameters['tagId'] ?? ''),
-    ),
-
-    GoRoute(
-      path: '/home',
-      builder: (context, state) => const NavigationDrawerHomePage(),
-    ),
-    GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
-    GoRoute(
-      path: '/settings',
-      builder: (context, state) => const SettingsPage(),
     ),
   ],
   initialLocation: '/',

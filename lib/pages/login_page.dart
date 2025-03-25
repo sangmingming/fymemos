@@ -36,9 +36,6 @@ class _LoginPageState extends State<LoginPage> with Refena {
     apiClient.initDio(baseUrl: baseUrl, token: accessToken);
     final userResult = await apiClient.getAuthStatus();
 
-    // prefs.saveUser(user.name);
-    // Navigator.of(context).pushReplacementNamed('/home');
-
     switch (userResult) {
       case Ok():
         context.rebuild(authProvider);
