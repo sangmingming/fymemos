@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fymemos/data/services/api/api_client.dart';
 import 'package:fymemos/model/resources.dart';
 import 'package:fymemos/pages/memolist/memo_list_vm.dart';
+import 'package:fymemos/utils/l10n.dart';
 import 'package:fymemos/widgets/memo_content.dart';
 import 'package:fymemos/widgets/related_memo.dart';
 import 'package:go_router/go_router.dart';
@@ -115,19 +116,22 @@ class MemoItem extends StatelessWidget {
                         context: context,
                         builder:
                             (context) => AlertDialog(
-                              content: Text('Are you sure delete this memo?'),
+                              content: Text(context.intl.delete_memo_confirm),
                               actions: [
                                 TextButton(
                                   onPressed:
                                       () => Navigator.pop(context, false),
-                                  child: Text('Cancel'),
+                                  child: Text(context.intl.button_cancel),
                                 ),
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context, true),
-                                  child: Text(
-                                    'Delete',
-                                    style: TextStyle(color: Colors.red),
+                                FilledButton(
+                                  style: FilledButton.styleFrom(
+                                    backgroundColor:
+                                        Theme.of(context).colorScheme.error,
+                                    foregroundColor:
+                                        Theme.of(context).colorScheme.onError,
                                   ),
+                                  onPressed: () => Navigator.pop(context, true),
+                                  child: Text(context.intl.edit_delete),
                                 ),
                               ],
                             ),
@@ -309,14 +313,14 @@ PopupMenuItemBuilder createMemoOptionMenu({
             onTap: () => onUnpinClick?.call(),
             child: ListTile(
               leading: Icon(Icons.pin_drop_outlined),
-              title: Text('Unpin'),
+              title: Text(context.intl.edit_Unpin),
             ),
           )
           : PopupMenuItem(
             onTap: () => onPinClick?.call(),
             child: ListTile(
               leading: Icon(Icons.push_pin_outlined),
-              title: Text('Pin'),
+              title: Text(context.intl.edit_pin),
             ),
           ),
       if (memo.state == MemoState.normal)
@@ -324,7 +328,7 @@ PopupMenuItemBuilder createMemoOptionMenu({
           onTap: () => onShareClick?.call(),
           child: ListTile(
             leading: Icon(Icons.share_outlined),
-            title: Text('Share'),
+            title: Text(context.intl.share),
           ),
         ),
       memo.state == MemoState.archived
@@ -332,14 +336,14 @@ PopupMenuItemBuilder createMemoOptionMenu({
             onTap: () => onRestoreClick?.call(),
             child: ListTile(
               leading: Icon(Icons.restore_from_trash_outlined),
-              title: Text('Restore'),
+              title: Text(context.intl.edit_restore),
             ),
           )
           : PopupMenuItem(
             onTap: () => onArchiveClick?.call(),
             child: ListTile(
               leading: Icon(Icons.archive_outlined),
-              title: Text('Archive'),
+              title: Text(context.intl.edit_archive),
             ),
           ),
       PopupMenuItem(
@@ -347,7 +351,7 @@ PopupMenuItemBuilder createMemoOptionMenu({
         child: ListTile(
           leading: Icon(Icons.delete_outline, color: Colors.red),
           title: Text(
-            'Delete',
+            context.intl.edit_delete,
             style: Theme.of(
               context,
             ).textTheme.bodyLarge!.copyWith(color: Colors.red),

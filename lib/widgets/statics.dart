@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fymemos/model/users.dart';
 import 'package:fymemos/utils/datetime.dart';
+import 'package:fymemos/utils/l10n.dart';
 import 'package:fymemos/widgets/heatmap.dart';
 import 'package:go_router/go_router.dart';
 
@@ -48,7 +49,10 @@ class UserStatisticWidget extends StatelessWidget {
                     userStats?.memoTimes.length.toString() ?? "-",
                     style: Theme.of(context).textTheme.headlineMedium,
                   ),
-                  Text('Memos', style: Theme.of(context).textTheme.bodyMedium),
+                  Text(
+                    context.intl.memo_memos(userStats?.memoTimes.length ?? 0),
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
                 ],
               ),
               Column(
@@ -57,7 +61,10 @@ class UserStatisticWidget extends StatelessWidget {
                     userStats?.tagCount.length.toString() ?? "-",
                     style: Theme.of(context).textTheme.headlineMedium,
                   ),
-                  Text('Tags', style: Theme.of(context).textTheme.bodyMedium),
+                  Text(
+                    context.intl.memo_tags(userStats?.tagCount.length ?? 0),
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
                 ],
               ),
               Column(
@@ -66,7 +73,10 @@ class UserStatisticWidget extends StatelessWidget {
                     user?.createTime?.daysToToday.toString() ?? "-",
                     style: Theme.of(context).textTheme.headlineMedium,
                   ),
-                  Text('Days', style: Theme.of(context).textTheme.bodyMedium),
+                  Text(
+                    context.intl.memo_days(user?.createTime?.daysToToday ?? 0),
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
                 ],
               ),
             ],

@@ -17,6 +17,7 @@ class MemoContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ...nodes.map((node) {
           return _NodeRenderer(node: node, onCheckClicked: onCheckClicked);

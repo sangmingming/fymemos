@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:fymemos/data/services/api/api_client.dart';
-import 'package:fymemos/data/services/shared_preference_service.dart';
+import 'package:fymemos/generated/l10n.dart';
 import 'package:fymemos/model/users.dart';
 import 'package:fymemos/pages/archived_memo_list_page.dart';
 import 'package:fymemos/pages/memolist/memo_list_page.dart';
 import 'package:fymemos/pages/memolist/memo_list_vm.dart';
 import 'package:fymemos/pages/resourceslist/resources_list_page.dart';
 import 'package:fymemos/provider.dart';
+import 'package:fymemos/utils/l10n.dart';
 import 'package:fymemos/utils/result.dart';
 import 'package:fymemos/widgets/statics.dart';
 import 'package:go_router/go_router.dart';
@@ -22,14 +23,18 @@ class MemoDestination {
 }
 
 const List<MemoDestination> destinations = <MemoDestination>[
-  MemoDestination('Memos', Icons.workspaces_outline, Icons.workspaces_filled),
   MemoDestination(
-    'Archived',
+    'title_home',
+    Icons.workspaces_outline,
+    Icons.workspaces_filled,
+  ),
+  MemoDestination(
+    'title_archived',
     Icons.inventory_2_outlined,
     Icons.inventory_2_rounded,
   ),
   MemoDestination(
-    'Resources',
+    'title_resources',
     Icons.perm_media_outlined,
     Icons.perm_media_rounded,
   ),
@@ -50,7 +55,6 @@ class _NavigationDrawerHomePageState extends State<NavigationDrawerHomePage>
 
   int screenIndex = 0;
   late bool showNavigationRail;
-  String title = destinations[0].label;
   UserProfile? userProfile;
   UserStats? userStats;
   bool isSearching = false;
@@ -162,7 +166,7 @@ class _NavigationDrawerHomePageState extends State<NavigationDrawerHomePage>
       ),
       ...destinations.map(
         (MemoDestination destination) => NavigationDrawerDestination(
-          label: Text(destination.label),
+          label: Text(context.intl[destination.label]),
           icon: Icon(destination.icon),
           selectedIcon: Icon(destination.selectedIcon),
         ),
@@ -192,14 +196,14 @@ class _NavigationDrawerHomePageState extends State<NavigationDrawerHomePage>
                     itemBuilder: (context) {
                       return [
                         PopupMenuItem(
-                          child: Text("Rename"),
+                          child: Text(context.intl.edit_rename),
                           onTap: () {
                             _renameTag(context, entity.key);
                           },
                         ),
                         PopupMenuItem(
                           child: Text(
-                            "Delete",
+                            context.intl.edit_delete,
                             style: TextStyle(color: Colors.red),
                           ),
                           onTap: () {
@@ -273,16 +277,14 @@ class _NavigationDrawerHomePageState extends State<NavigationDrawerHomePage>
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text("Delete Tag"),
-          content: Text(
-            "Are you sure you want to delete this tag? This will remove all memos related to #$tag.",
-          ),
+          title: Text(context.intl.title_delete_tag),
+          content: Text(context.intl.delete_tag_confirm(tag)),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(false);
               },
-              child: Text("Cancel"),
+              child: Text(context.intl.button_cancel),
             ),
             FilledButton(
               style: FilledButton.styleFrom(
@@ -292,7 +294,7 @@ class _NavigationDrawerHomePageState extends State<NavigationDrawerHomePage>
               onPressed: () {
                 Navigator.of(context).pop(true);
               },
-              child: Text("Delete"),
+              child: Text(context.intl.edit_delete),
             ),
           ],
         );
@@ -336,7 +338,7 @@ class _NavigationDrawerHomePageState extends State<NavigationDrawerHomePage>
                   autofocus: true,
                   textAlignVertical: TextAlignVertical.center,
                   decoration: InputDecoration(
-                    hintText: 'Search Memos...',
+                    hintText: context.intl.hint_search,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ), // 移除边框
@@ -358,7 +360,7 @@ class _NavigationDrawerHomePageState extends State<NavigationDrawerHomePage>
                     ref.notifier(userMemoProvider).search(value);
                   },
                 )
-                : Text(destinations[screenIndex].label),
+                : Text(context.intl[destinations[screenIndex].label]),
       ),
       actions: [
         if (screenIndex == 0 && !isSearching)

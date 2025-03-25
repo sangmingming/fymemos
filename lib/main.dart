@@ -1,8 +1,7 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:fymemos/config/init.dart';
 import 'package:fymemos/data/services/settings_provider.dart';
+import 'package:fymemos/generated/l10n.dart';
 import 'package:fymemos/pages/bottom_sheet_page.dart';
 import 'package:fymemos/pages/home.dart';
 import 'package:fymemos/pages/login_page.dart';
@@ -15,6 +14,7 @@ import 'package:fymemos/ui/core/theme/dynamic_colors.dart';
 import 'package:fymemos/ui/core/theme/theme.dart';
 import 'package:go_router/go_router.dart';
 import 'package:refena_flutter/refena_flutter.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 Future<void> main(List<String> args) async {
   final RefenaContainer container;
@@ -101,7 +101,19 @@ class MyApp extends StatelessWidget {
     final dynamicColors = ref.watch(dynamicColorsProvider);
     final themMode = ref.watch(settingsProvider.select((s) => s.themeMode));
     return MaterialApp.router(
-      title: 'Flutter Demo',
+      title: 'FyMemos',
+      localizationsDelegates: [
+        S.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: [
+        Locale('en'), // English
+        Locale('zh'),
+        Locale('zh', 'CN'), // Chinese
+      ],
+      locale: Locale('zh'),
       theme: getTheme(Brightness.light, dynamicColors),
       darkTheme: getTheme(Brightness.dark, dynamicColors),
       themeMode: themMode, // Use system theme mode

@@ -30,7 +30,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  
+
   flutter_localizations:
     sdk: flutter
 
@@ -59,6 +59,7 @@ dependencies:
   mime: ^2.0.0
   desktop_drop: ^0.5.0
   collection: ^1.19.1
+  intl_translation: ^0.20.1
 
 dev_dependencies:
   flutter_test:
@@ -71,13 +72,14 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
   build_runner: ^2.4.15
-  custom_lint: ^0.7.5
+  #custom_lint: ^0.7.5
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
-
 # The following section is specific to Flutter packages.
 flutter:
+
+  generate: true
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
@@ -89,13 +91,10 @@ flutter:
     - assets/image/memo_public.svg
     - assets/image/memo_private.svg
     - assets/image/memo_workspace.svg
-
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
-
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/to/asset-from-package
-
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a
@@ -115,3 +114,5 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+flutter_intl:
+  enabled: true

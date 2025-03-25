@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fymemos/data/services/api/api_client.dart';
 import 'package:fymemos/data/services/shared_preference_service.dart';
+import 'package:fymemos/generated/l10n.dart';
 import 'package:fymemos/provider.dart';
 import 'package:fymemos/utils/result.dart';
 import 'package:go_router/go_router.dart';
@@ -53,7 +54,7 @@ class _LoginPageState extends State<LoginPage> with Refena {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Login')),
+      appBar: AppBar(title: Text(S.of(context).title_login)),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -72,7 +73,10 @@ class _LoginPageState extends State<LoginPage> with Refena {
             ),
             SizedBox(height: 16),
             Expanded(child: Container()),
-            FilledButton(onPressed: _login, child: Text('Login')),
+            FilledButton(
+              onPressed: _login,
+              child: Text(S.of(context).button_login),
+            ),
           ],
         ),
       ),

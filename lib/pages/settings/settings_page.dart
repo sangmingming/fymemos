@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fymemos/generated/l10n.dart';
 import 'package:fymemos/pages/settings/setting_vm.dart';
 import 'package:fymemos/pages/settings/settings_controller.dart';
 import 'package:go_router/go_router.dart';
@@ -11,12 +12,12 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Settings')),
+      appBar: AppBar(title: Text(S.of(context).title_settings)),
       body: ListView(
         children: [
           ListTile(
             leading: Icon(Icons.contrast),
-            title: Text('Theme Mode'),
+            title: Text(S.of(context).title_theme),
             trailing: DropdownButton<ThemeMode>(
               value:
                   context.watch(settingsControllerProvider).settings.themeMode,
@@ -31,16 +32,22 @@ class SettingsPage extends StatelessWidget {
               items: [
                 DropdownMenuItem(
                   value: ThemeMode.system,
-                  child: Text('System'),
+                  child: Text(S.of(context).theme_system),
                 ),
-                DropdownMenuItem(value: ThemeMode.light, child: Text('Light')),
-                DropdownMenuItem(value: ThemeMode.dark, child: Text('Dark')),
+                DropdownMenuItem(
+                  value: ThemeMode.light,
+                  child: Text(S.of(context).theme_light),
+                ),
+                DropdownMenuItem(
+                  value: ThemeMode.dark,
+                  child: Text(S.of(context).theme_dark),
+                ),
               ],
             ),
           ),
           ListTile(
             leading: Icon(Icons.info_outline_rounded),
-            title: Text('About'),
+            title: Text(S.of(context).title_about),
             onTap: () {
               showAboutDialog(
                 context: context,
@@ -52,7 +59,7 @@ class SettingsPage extends StatelessWidget {
           ),
           ListTile(
             leading: Icon(Icons.logout_rounded),
-            title: Text('Logout'),
+            title: Text(S.of(context).button_logout),
             onTap: () async {
               final prefs = await SharedPreferences.getInstance();
               await prefs.clear();

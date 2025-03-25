@@ -3,6 +3,7 @@ import 'package:fymemos/data/services/api/api_client.dart';
 import 'package:fymemos/data/services/shared_preference_service.dart';
 import 'package:fymemos/model/memos.dart';
 import 'package:fymemos/provider.dart';
+import 'package:fymemos/utils/l10n.dart';
 import 'package:fymemos/utils/load_state.dart';
 import 'package:fymemos/utils/result.dart';
 import 'package:fymemos/widgets/memo.dart';
@@ -172,16 +173,14 @@ class _TagMemoListPageState extends State<TagMemoListPage> with Refena {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text("Delete Tag"),
-          content: Text(
-            "Are you sure you want to delete this tag? This will remove all memos related to #$tag.",
-          ),
+          title: Text(context.intl.title_delete_tag),
+          content: Text(context.intl.delete_tag_confirm(tag)),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(false);
               },
-              child: Text("Cancel"),
+              child: Text(context.intl.button_cancel),
             ),
             FilledButton(
               style: FilledButton.styleFrom(
@@ -191,7 +190,7 @@ class _TagMemoListPageState extends State<TagMemoListPage> with Refena {
               onPressed: () {
                 Navigator.of(context).pop(true);
               },
-              child: Text("Delete"),
+              child: Text(context.intl.edit_delete),
             ),
           ],
         );
