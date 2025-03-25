@@ -28,7 +28,7 @@ jobs:
       - name: Setup Keystore
         shell: bash
         run: |
-          echo ${{ secrets.BASE64_KEYSTORE }} | base64 --decode > android/app/keystore.jks
+          echo "${{ secrets.BASE64_KEYSTORE }}" | base64 --decode > android/app/keystore.jks
 
       - name: Build APK
         run: |
