@@ -1,4 +1,4 @@
-name: Build Android APK
+name: 🔨Build Android APK
 
 on:
   workflow_dispatch:
@@ -28,7 +28,6 @@ jobs:
       - name: Setup Keystore
         run: |
           echo ${{ secrets.BASE64_KEYSTORE }} | base64 -d > android/app/keystore.jks
-          chmod 644 android/app/keystore.jks
 
       - name: Build APK
         run: |
