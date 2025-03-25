@@ -31,11 +31,12 @@ jobs:
           echo "${{ secrets.BASE64_KEYSTORE }}" | base64 --decode > android/app/keystore.jks
 
       - name: Build APK
+        env:
+           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+           STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
         run: |
-          flutter build apk --release --split-per-abi \
-            --dart-define=STORE_PASSWORD=${{ secrets.STORE_PASSWORD }} \
-            --dart-define=KEY_PASSWORD=${{ secrets.KEY_PASSWORD }} \
-            --dart-define=KEY_ALIAS=${{ secrets.KEY_ALIAS }}
+          flutter build apk --release --split-per-abi
 
       - uses: actions/upload-artifact@v4
         with:

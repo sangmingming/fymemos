@@ -29,15 +29,15 @@ jobs:
 
       - name: Setup Keystore
         run: |
-          echo ${{ secrets.BASE64_KEYSTORE }} | base64 -d > android/app/keystore.jks
-          chmod 644 android/app/keystore.jks
+          echo "${{ secrets.BASE64_KEYSTORE }}" | base64 --decode > android/app/keystore.jks
 
       - name: Build APK
+        env:
+           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+           STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
         run: |
-          flutter build apk --release --split-per-abi \
-            --dart-define=STORE_PASSWORD=${{ secrets.STORE_PASSWORD }} \
-            --dart-define=KEY_PASSWORD=${{ secrets.KEY_PASSWORD }} \
-            --dart-define=KEY_ALIAS=${{ secrets.KEY_ALIAS }}
+          flutter build apk --release --split-per-abi
 
       - name: Generate Changelog
         run: |
