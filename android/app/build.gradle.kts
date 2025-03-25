@@ -41,9 +41,9 @@ android {
         create("release") {
             if (System.getenv("GITHUB_ACTIONS") == "true") {
                 storeFile = file("keystore.jks")
-                storePassword = System.getenv["STORE_PASSWORD"] as String?
-                keyAlias = System.getenv["KEY_ALIAS"] as String?
-                keyPassword = System.getenv["KEY_PASSWORD"] as String?
+                storePassword = System.getenv("STORE_PASSWORD")
+                keyAlias = System.getenv("KEY_ALIAS")
+                keyPassword = System.getenv("KEY_PASSWORD")
             }
         }
     }
