@@ -37,12 +37,25 @@ android {
         //}
     }
 
+    signingConfigs {
+        create("release") {
+            if (System.getenv("GITHUB_ACTIONS") == "true") {
+                storeFile = file("keystore.jks")
+                storePassword = project.properties["STORE_PASSWORD"] as String?
+                keyAlias = project.properties["KEY_ALIAS"] as String?
+                keyPassword = project.properties["KEY_PASSWORD"] as String?
+            }
+        }
+    }
+
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = if (System.getenv("GITHUB_ACTIONS") == "true") {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("debug")
+            }
         }
     }
 }
