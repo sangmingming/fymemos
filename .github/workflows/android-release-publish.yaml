@@ -1,7 +1,9 @@
-name: Build Android APK
+name: Publish Android APK
 
 on:
-  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
 
 env:
   FLUTTER_VERSION: "3.29.1"
@@ -37,7 +39,18 @@ jobs:
             --dart-define=KEY_PASSWORD=${{ secrets.KEY_PASSWORD }} \
             --dart-define=KEY_ALIAS=${{ secrets.KEY_ALIAS }}
 
-      - uses: actions/upload-artifact@v3
+      - name: Generate Changelog
+        run: |
+          git fetch --prune --unshallow  # 确保获取完整提交历史
+          echo "CHANGELOG=$(git log --pretty=format:'- %s (%h)' $(git describe --tags --abbrev=0 HEAD^)..HEAD)" >> $GITHUB_ENV
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
         with:
-          name: release-apks
-          path: build/**/outputs/apk/release/*.apk
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          body: |
+            🚀 New Features & Changes:
+            ${{ env.CHANGELOG }}
+          files: |
+            build/**/outputs/apk/release/*.apk
