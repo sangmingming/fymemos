@@ -28,7 +28,7 @@ class ArchivedMemoNotifier extends AsyncNotifier<List<Memo>> {
   }
 
   void loadMore() async {
-    if (_nextPageToken == null) {
+    if (_nextPageToken == null || _nextPageToken == '') {
       return;
     }
     final result = await ApiClient.instance.fetchUserMemosDirect(

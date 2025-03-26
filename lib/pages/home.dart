@@ -113,7 +113,7 @@ class _NavigationDrawerHomePageState extends State<NavigationDrawerHomePage>
   void handleScreenChanged(int selectedScreen) {
     print("Selected screen: $selectedScreen");
     if (isSearching) {
-      ref.notifier(userMemoProvider).refresh();
+      ref.redux(userMemoProvider).dispatch(RefreshMemoAction());
     }
     setState(() {
       screenIndex = selectedScreen;
@@ -140,7 +140,7 @@ class _NavigationDrawerHomePageState extends State<NavigationDrawerHomePage>
         setState(() {
           isSearching = false;
         });
-        ref.notifier(userMemoProvider).refresh();
+        ref.redux(userMemoProvider).dispatch(RefreshMemoAction());
       },
       child: Scaffold(
         key: scaffoldKey,
@@ -228,7 +228,7 @@ class _NavigationDrawerHomePageState extends State<NavigationDrawerHomePage>
                   setState(() {
                     isSearching = false;
                   });
-                  ref.notifier(userMemoProvider).refresh();
+                  ref.redux(userMemoProvider).dispatch(RefreshMemoAction());
                 },
                 icon: Icon(Icons.arrow_back),
               )
@@ -255,12 +255,16 @@ class _NavigationDrawerHomePageState extends State<NavigationDrawerHomePage>
                         setState(() {
                           isSearching = false;
                         });
-                        ref.notifier(userMemoProvider).refresh();
+                        ref
+                            .redux(userMemoProvider)
+                            .dispatch(RefreshMemoAction());
                       },
                     ),
                   ),
                   onChanged: (value) {
-                    ref.notifier(userMemoProvider).search(value);
+                    ref
+                        .redux(userMemoProvider)
+                        .dispatchAsync(SearchMemoAction(value));
                   },
                 )
                 : Text(context.intl[destinations[screenIndex].label]),
@@ -286,7 +290,7 @@ class _NavigationDrawerHomePageState extends State<NavigationDrawerHomePage>
         setState(() {
           isSearching = false;
         });
-        ref.notifier(userMemoProvider).refresh();
+        ref.redux(userMemoProvider).dispatch(RefreshMemoAction());
       },
       child: Scaffold(
         key: scaffoldKey,

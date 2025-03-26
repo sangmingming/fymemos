@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fymemos/model/memos.dart';
 import 'package:fymemos/pages/memolist/memo_list_vm.dart';
-import 'package:fymemos/utils/load_state.dart';
 import 'package:fymemos/widgets/memo.dart';
 import 'package:go_router/go_router.dart';
 import 'package:refena_flutter/refena_flutter.dart';
@@ -16,7 +15,6 @@ class MemoListPage extends StatefulWidget {
 
 class _MemoListPageState extends State<MemoListPage> with Refena {
   final ScrollController _scrollController = ScrollController();
-  bool _isLoadingMore = false;
 
   String? memoState;
 
@@ -28,12 +26,8 @@ class _MemoListPageState extends State<MemoListPage> with Refena {
     memoState = widget.memoState;
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
-              _scrollController.position.maxScrollExtent &&
-          !_isLoadingMore) {
-        _isLoadingMore = true;
-        context.notifier(userMemoProvider).loadMore().then((value) {
-          _isLoadingMore = false;
-        });
+          _scrollController.position.maxScrollExtent) {
+        context.redux(userMemoProvider).dispatch(LoadMoreMemoAction());
       }
     });
   }
@@ -41,22 +35,20 @@ class _MemoListPageState extends State<MemoListPage> with Refena {
   void _createMemo() async {
     final newMemo = await context.push<Memo>("/create_memo");
     if (newMemo != null) {
-      context.notifier(userMemoProvider).addMemo(newMemo);
+      context.redux(userMemoProvider).dispatchAsync(AddMemoAction(newMemo));
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final memo = context.watch(userMemoProvider);
+    final vm = context.watch(userMemoProvider);
 
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: () async {
-          await context.notifier(userMemoProvider).refresh();
+          await context.redux(userMemoProvider).dispatch(RefreshMemoAction());
         },
-        child: buildAsyncDataPage(memo, (item) {
-          return _buildList(item);
-        }),
+        child: _buildList(vm),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _createMemo,
@@ -66,20 +58,19 @@ class _MemoListPageState extends State<MemoListPage> with Refena {
     );
   }
 
-  Widget _buildList(List<Memo> memos) {
+  Widget _buildList(MemoListVm vm) {
     return ListView.builder(
       controller: _scrollController,
-      itemCount: memos.length + 1,
+      itemCount: vm.memos.length + 1,
       itemBuilder: (context, index) {
-        if (index == memos.length) {
-          if (_isLoadingMore) {
+        if (index == vm.memos.length) {
+          if (vm.isLoading) {
             return Center(child: CircularProgressIndicator());
-          }
-          {
+          } else {
             return SizedBox.shrink(); // Empty space when not loading more and not at the end
           }
         } else {
-          return MemoItem(memo: memos[index]);
+          return MemoItem(memo: vm.memos[index]);
         }
       },
     );

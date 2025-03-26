@@ -97,19 +97,23 @@ class MemoItem extends StatelessWidget {
                     memo: memo,
                     onArchiveClick: () async {
                       await context
-                          .notifier(userMemoProvider)
-                          .archiveMemo(memo);
+                          .redux(userMemoProvider)
+                          .dispatchAsync(ArchiveMemoAction(memo, context));
                     },
                     onRestoreClick: () async {
                       await context
-                          .notifier(userMemoProvider)
-                          .restoreMemo(memo);
+                          .redux(userMemoProvider)
+                          .dispatchAsync(RestoreMemoAction(memo, context));
                     },
                     onPinClick: () async {
-                      await context.notifier(userMemoProvider).pinMemo(memo);
+                      await context
+                          .redux(userMemoProvider)
+                          .dispatchAsync(PinMemoAction(memo));
                     },
                     onUnpinClick: () async {
-                      await context.notifier(userMemoProvider).unpinMemo(memo);
+                      await context
+                          .redux(userMemoProvider)
+                          .dispatchAsync(UnpinMemoAction(memo));
                     },
                     onDeleteClick: () async {
                       final confirmed = await showDialog<bool>(
@@ -139,8 +143,8 @@ class MemoItem extends StatelessWidget {
 
                       if (confirmed == true && context.mounted) {
                         await context
-                            .notifier(userMemoProvider)
-                            .deleteMemo(memo);
+                            .redux(userMemoProvider)
+                            .dispatchAsync(DeleteMemoAction(memo, context));
                       }
                     },
                   ),
@@ -213,7 +217,7 @@ class MemoItem extends StatelessWidget {
 }
 
 void onCheckChecked(BuildContext context, Memo memo) async {
-  await context.notifier(userMemoProvider).updateMemo(memo);
+  await context.redux(userMemoProvider).dispatchAsync(UpdateMemoAction(memo));
 }
 
 void showImageDialog(BuildContext context, MemoResource resource) {
