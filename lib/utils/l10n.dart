@@ -14,6 +14,12 @@ extension L10nExtension2 on S {
         return title_archived;
       case 'title_resources':
         return title_resources;
+      case 'visibility_public':
+        return visibility_public;
+      case 'visibility_private':
+        return visibility_private;
+      case 'visibility_workspace':
+        return visibility_workspace;
       // 添加其他 key 的 case
       default:
         throw FlutterError('Localization key "$key" not support [] load');

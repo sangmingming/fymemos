@@ -113,7 +113,6 @@ class MyApp extends StatelessWidget {
         Locale('zh'),
         Locale('zh', 'CN'), // Chinese
       ],
-      locale: Locale('zh'),
       theme: getTheme(Brightness.light, dynamicColors),
       darkTheme: getTheme(Brightness.dark, dynamicColors),
       themeMode: themMode, // Use system theme mode

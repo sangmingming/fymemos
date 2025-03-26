@@ -117,101 +117,6 @@ class _TagMemoListPageState extends State<TagMemoListPage> with Refena {
     await loadData();
   }
 
-  void _renameTag(BuildContext context, String tag) async {
-    final TextEditingController controller = TextEditingController(text: tag);
-    final newTag = await showDialog<String>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text("Rename Tag"),
-          content: TextField(
-            autofocus: true,
-            controller: controller,
-            textAlignVertical: TextAlignVertical.center,
-            decoration: InputDecoration(
-              hintText: 'New tag name',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text("Cancel"),
-            ),
-            FilledButton(
-              onPressed: () {
-                Navigator.pop(context, controller.text.trim());
-              },
-              child: Text("Finish"),
-            ),
-          ],
-        );
-      },
-    );
-    if (newTag != null) {
-      final renameResult = await ApiClient.instance.renameTag(tag, newTag);
-      if (renameResult is Ok) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("Tag renamed")));
-        ref.rebuild(authProvider);
-      } else if (renameResult is Error) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(renameResult.error.toString())));
-      }
-    }
-  }
-
-  void _deleteTag(BuildContext context, String tag) async {
-    //show confirm dialog ,then delete tag
-    bool? r = await showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(context.intl.title_delete_tag),
-          content: Text(context.intl.delete_tag_confirm(tag)),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(false);
-              },
-              child: Text(context.intl.button_cancel),
-            ),
-            FilledButton(
-              style: FilledButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.error,
-                foregroundColor: Theme.of(context).colorScheme.onError,
-              ),
-              onPressed: () {
-                Navigator.of(context).pop(true);
-              },
-              child: Text(context.intl.edit_delete),
-            ),
-          ],
-        );
-      },
-    );
-
-    if (r == true) {
-      final deleteResult = await ApiClient.instance.deleteTag(tag);
-      if (deleteResult is Ok) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("Tag deleted")));
-        ref.rebuild(authProvider);
-      } else if (deleteResult is Error) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(deleteResult.error.toString())));
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -220,13 +125,13 @@ class _TagMemoListPageState extends State<TagMemoListPage> with Refena {
         actions: [
           IconButton(
             onPressed: () {
-              _renameTag(context, widget.memoTag);
+              renameTag(context, widget.memoTag);
             },
             icon: Icon(Icons.edit),
           ),
           IconButton(
             onPressed: () {
-              _deleteTag(context, widget.memoTag);
+              deleteTag(context, widget.memoTag);
             },
             icon: Icon(Icons.delete),
           ),
@@ -263,5 +168,98 @@ class _TagMemoListPageState extends State<TagMemoListPage> with Refena {
         }
       },
     );
+  }
+}
+
+void renameTag(BuildContext context, String tag) async {
+  final TextEditingController controller = TextEditingController(text: tag);
+  final newTag = await showDialog<String>(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: Text(context.intl.title_rename_tag),
+        content: TextField(
+          autofocus: true,
+          controller: controller,
+          textAlignVertical: TextAlignVertical.center,
+          decoration: InputDecoration(
+            hintText: context.intl.hint_new_tag,
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text(context.intl.button_cancel),
+          ),
+          FilledButton(
+            onPressed: () {
+              Navigator.pop(context, controller.text.trim());
+            },
+            child: Text(context.intl.button_finish),
+          ),
+        ],
+      );
+    },
+  );
+  if (newTag != null) {
+    final renameResult = await ApiClient.instance.renameTag(tag, newTag);
+    if (renameResult is Ok) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.intl.msg_tag_rename)));
+      context.rebuild(authProvider);
+    } else if (renameResult is Error) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(renameResult.error.toString())));
+    }
+  }
+}
+
+void deleteTag(BuildContext context, String tag) async {
+  //show confirm dialog ,then delete tag
+  bool? r = await showDialog<bool>(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: Text(context.intl.title_delete_tag),
+        content: Text(context.intl.delete_tag_confirm(tag)),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(false);
+            },
+            child: Text(context.intl.button_cancel),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.error,
+              foregroundColor: Theme.of(context).colorScheme.onError,
+            ),
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+            child: Text(context.intl.edit_delete),
+          ),
+        ],
+      );
+    },
+  );
+
+  if (r == true) {
+    final deleteResult = await ApiClient.instance.deleteTag(tag);
+    if (deleteResult is Ok) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.intl.msg_tag_delete)));
+      context.ref.rebuild(authProvider);
+    } else if (deleteResult is Error) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(deleteResult.error.toString())));
+    }
   }
 }

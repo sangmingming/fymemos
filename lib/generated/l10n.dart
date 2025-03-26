@@ -248,6 +248,124 @@ class S {
       args: [tag],
     );
   }
+
+  /// `Public`
+  String get visibility_public {
+    return Intl.message(
+      'Public',
+      name: 'visibility_public',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Private`
+  String get visibility_private {
+    return Intl.message(
+      'Private',
+      name: 'visibility_private',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Workspace`
+  String get visibility_workspace {
+    return Intl.message(
+      'Workspace',
+      name: 'visibility_workspace',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Referencing 1 memo: {snippet}`
+  String memo_reference_one(String snippet) {
+    return Intl.message(
+      'Referencing 1 memo: $snippet',
+      name: 'memo_reference_one',
+      desc: 'A message with a single parameter',
+      args: [snippet],
+    );
+  }
+
+  /// `Referenced by 1 memo: {snippet}`
+  String memo_reference_by_one(String snippet) {
+    return Intl.message(
+      'Referenced by 1 memo: $snippet',
+      name: 'memo_reference_by_one',
+      desc: 'A message with a single parameter',
+      args: [snippet],
+    );
+  }
+
+  /// `{count, plural, =0{Referencing with 0 memo} =1{Referencing with 1 memo} other{Referencing with {count} memos}}`
+  String memo_references(num count) {
+    return Intl.plural(
+      count,
+      zero: 'Referencing with 0 memo',
+      one: 'Referencing with 1 memo',
+      other: 'Referencing with $count memos',
+      name: 'memo_references',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Memo Detail`
+  String get memo_title_detail {
+    return Intl.message(
+      'Memo Detail',
+      name: 'memo_title_detail',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Rename Tag`
+  String get title_rename_tag {
+    return Intl.message(
+      'Rename Tag',
+      name: 'title_rename_tag',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Finish`
+  String get button_finish {
+    return Intl.message('Finish', name: 'button_finish', desc: '', args: []);
+  }
+
+  /// `New tag name`
+  String get hint_new_tag {
+    return Intl.message(
+      'New tag name',
+      name: 'hint_new_tag',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tag renamed`
+  String get msg_tag_rename {
+    return Intl.message(
+      'Tag renamed',
+      name: 'msg_tag_rename',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tag deleted`
+  String get msg_tag_delete {
+    return Intl.message(
+      'Tag deleted',
+      name: 'msg_tag_delete',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

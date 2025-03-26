@@ -1,4 +1,5 @@
 {
+    "@@locale": "en",
     "title_memo": "Memo",
     "title_settings": "Settings",
     "title_archived": "Archived",
@@ -36,6 +37,37 @@
       "example": "Bob"
     }
   }
-}
+  
+},
+"visibility_public": "Public",
+  "visibility_private": "Private",
+  "visibility_workspace": "Workspace",
+  "memo_reference_one": "Referencing 1 memo: {snippet}",
+  "@memo_reference_one": {
+    "description": "A message with a single parameter",
+    "placeholders": {
+      "snippet": {
+        "type": "String",
+        "example": "Bob"
+      }
+    }
+  },
+    "memo_reference_by_one": "Referenced by 1 memo: {snippet}",
+    "@memo_reference_by_one": {
+    "description": "A message with a single parameter",
+    "placeholders": {
+      "snippet": {
+        "type": "String",
+        "example": "Bob"
+      }
+    }
+  },
+  "memo_references": "{count, plural, =0{Referencing with 0 memo} =1{Referencing with 1 memo} other{Referencing with {count} memos}}",
+  "memo_title_detail": "Memo Detail",
+  "title_rename_tag": "Rename Tag",
+  "button_finish": "Finish",
+  "hint_new_tag": "New tag name",
+  "msg_tag_rename": "Tag renamed",
+  "msg_tag_delete": "Tag deleted"
 
   }

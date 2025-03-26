@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fymemos/data/services/api/api_client.dart';
 import 'package:fymemos/model/memos.dart';
 import 'package:fymemos/pages/archivedlist/archived_memo_vm.dart';
 import 'package:fymemos/utils/load_state.dart';

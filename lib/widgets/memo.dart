@@ -258,11 +258,14 @@ class RelatedMemoSimpleWidget extends StatelessWidget {
       return SizedBox.shrink();
     } else if (memo.relations.length == 1) {
       var arrowIcon = Icons.north_west_rounded;
-      var text =
-          "Referencing 1 memo: ${memo.relations.first.relatedMemo.snippet}";
+      var text = context.intl.memo_reference_one(
+        memo.relations.first.relatedMemo.snippet,
+      );
       if (memo.relations.first.memo.name != memo.name) {
         arrowIcon = Icons.south_east_rounded;
-        text = "Referenced by 1 memo: ${memo.relations.first.memo.snippet}";
+        text = context.intl.memo_reference_by_one(
+          memo.relations.first.relatedMemo.snippet,
+        );
       }
       return GestureDetector(
         onTap: () {
@@ -278,7 +281,7 @@ class RelatedMemoSimpleWidget extends StatelessWidget {
       );
     } else {
       var arrowIcon = Icons.link_rounded;
-      var text = "Referencing with ${memo.relations.length} memos";
+      var text = context.intl.memo_references(memo.relations.length);
       return GestureDetector(
         onTap: () {
           context.go('/${memo.name}');

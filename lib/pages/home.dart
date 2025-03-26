@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:fymemos/data/services/api/api_client.dart';
-import 'package:fymemos/generated/l10n.dart';
 import 'package:fymemos/model/users.dart';
 import 'package:fymemos/pages/archived_memo_list_page.dart';
 import 'package:fymemos/pages/memolist/memo_list_page.dart';
 import 'package:fymemos/pages/memolist/memo_list_vm.dart';
 import 'package:fymemos/pages/resourceslist/resources_list_page.dart';
+import 'package:fymemos/pages/tag_memo_list_page.dart';
 import 'package:fymemos/provider.dart';
 import 'package:fymemos/utils/l10n.dart';
-import 'package:fymemos/utils/result.dart';
 import 'package:fymemos/widgets/statics.dart';
 import 'package:go_router/go_router.dart';
 import 'package:refena_flutter/refena_flutter.dart';
@@ -198,7 +196,7 @@ class _NavigationDrawerHomePageState extends State<NavigationDrawerHomePage>
                         PopupMenuItem(
                           child: Text(context.intl.edit_rename),
                           onTap: () {
-                            _renameTag(context, entity.key);
+                            renameTag(context, entity.key);
                           },
                         ),
                         PopupMenuItem(
@@ -207,7 +205,7 @@ class _NavigationDrawerHomePageState extends State<NavigationDrawerHomePage>
                             style: TextStyle(color: Colors.red),
                           ),
                           onTap: () {
-                            _deleteTag(context, entity.key);
+                            deleteTag(context, entity.key);
                           },
                         ),
                       ];
@@ -219,101 +217,6 @@ class _NavigationDrawerHomePageState extends State<NavigationDrawerHomePage>
               .toList() ??
           [],
     ];
-  }
-
-  void _renameTag(BuildContext context, String tag) async {
-    final TextEditingController controller = TextEditingController(text: tag);
-    final newTag = await showDialog<String>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text("Rename Tag"),
-          content: TextField(
-            autofocus: true,
-            controller: controller,
-            textAlignVertical: TextAlignVertical.center,
-            decoration: InputDecoration(
-              hintText: 'New tag name',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text("Cancel"),
-            ),
-            FilledButton(
-              onPressed: () {
-                Navigator.pop(context, controller.text.trim());
-              },
-              child: Text("Finish"),
-            ),
-          ],
-        );
-      },
-    );
-    if (newTag != null) {
-      final renameResult = await ApiClient.instance.renameTag(tag, newTag);
-      if (renameResult is Ok) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("Tag renamed")));
-        ref.rebuild(authProvider);
-      } else if (renameResult is Error) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(renameResult.error.toString())));
-      }
-    }
-  }
-
-  void _deleteTag(BuildContext context, String tag) async {
-    //show confirm dialog ,then delete tag
-    bool? r = await showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(context.intl.title_delete_tag),
-          content: Text(context.intl.delete_tag_confirm(tag)),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(false);
-              },
-              child: Text(context.intl.button_cancel),
-            ),
-            FilledButton(
-              style: FilledButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.error,
-                foregroundColor: Theme.of(context).colorScheme.onError,
-              ),
-              onPressed: () {
-                Navigator.of(context).pop(true);
-              },
-              child: Text(context.intl.edit_delete),
-            ),
-          ],
-        );
-      },
-    );
-
-    if (r == true) {
-      final deleteResult = await ApiClient.instance.deleteTag(tag);
-      if (deleteResult is Ok) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("Tag deleted")));
-        ref.rebuild(authProvider);
-      } else if (deleteResult is Error) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(deleteResult.error.toString())));
-      }
-    }
   }
 
   AppBar _buildAppBar(BuildContext context) {

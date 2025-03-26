@@ -1,4 +1,5 @@
 {
+  "@@locale": "zh_CN",
   "title_memo": "笔记",
   "title_settings": "设置",
   "title_archived": "归档",
@@ -27,5 +28,17 @@
     "hint_search": "搜索笔记...",
     "delete_memo_confirm": "你确定要删除这篇笔记吗? ⚠️此操作不可撤销",
     "title_delete_tag": "删除标签",
-    "delete_tag_confirm": "确定要删除这个标签吗? 这同时会删除所有关联到 #{tag}的笔记。"
+    "delete_tag_confirm": "确定要删除这个标签吗? 这同时会删除所有关联到 #{tag}的笔记。",
+    "visibility_public": "公开",
+      "visibility_private": "仅自己可见",
+      "visibility_workspace": "工作空间可见",
+      "memo_reference_one": "引用一条笔记: {snippet}",
+        "memo_reference_by_one": "被一条笔记引用: {snippet}",
+      "memo_references": "{count, plural, =0{没有与任何笔记关联} =1{与一条笔记关联} other{与{count}条笔记关联}}",
+      "memo_title_detail": "笔记详情",
+      "title_rename_tag": "标签改名",
+  "button_finish": "完成",
+  "hint_new_tag": "新标签名",
+  "msg_tag_rename": "标签改成成功",
+  "msg_tag_delete": "标签已删除"
 }

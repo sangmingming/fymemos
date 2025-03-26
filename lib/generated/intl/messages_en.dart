@@ -29,12 +29,20 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m2(count) =>
       "${Intl.plural(count, zero: 'Memo', one: 'Memo', other: 'Memos')}";
 
-  static String m3(count) =>
+  static String m3(snippet) => "Referenced by 1 memo: ${snippet}";
+
+  static String m4(snippet) => "Referencing 1 memo: ${snippet}";
+
+  static String m5(count) =>
+      "${Intl.plural(count, zero: 'Referencing with 0 memo', one: 'Referencing with 1 memo', other: 'Referencing with ${count} memos')}";
+
+  static String m6(count) =>
       "${Intl.plural(count, zero: 'Tag', one: 'Tag', other: 'Tags')}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "button_cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
+    "button_finish": MessageLookupByLibrary.simpleMessage("Finish"),
     "button_login": MessageLookupByLibrary.simpleMessage("Login"),
     "button_logout": MessageLookupByLibrary.simpleMessage("Logout"),
     "button_save": MessageLookupByLibrary.simpleMessage("Save"),
@@ -48,10 +56,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "edit_pin": MessageLookupByLibrary.simpleMessage("Pin"),
     "edit_rename": MessageLookupByLibrary.simpleMessage("Rename"),
     "edit_restore": MessageLookupByLibrary.simpleMessage("Restore"),
+    "hint_new_tag": MessageLookupByLibrary.simpleMessage("New tag name"),
     "hint_search": MessageLookupByLibrary.simpleMessage("Search Memos..."),
     "memo_days": m1,
     "memo_memos": m2,
-    "memo_tags": m3,
+    "memo_reference_by_one": m3,
+    "memo_reference_one": m4,
+    "memo_references": m5,
+    "memo_tags": m6,
+    "memo_title_detail": MessageLookupByLibrary.simpleMessage("Memo Detail"),
+    "msg_tag_delete": MessageLookupByLibrary.simpleMessage("Tag deleted"),
+    "msg_tag_rename": MessageLookupByLibrary.simpleMessage("Tag renamed"),
     "share": MessageLookupByLibrary.simpleMessage("Share"),
     "theme_dark": MessageLookupByLibrary.simpleMessage("Dark"),
     "theme_light": MessageLookupByLibrary.simpleMessage("Light"),
@@ -62,8 +77,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "title_home": MessageLookupByLibrary.simpleMessage("Home"),
     "title_login": MessageLookupByLibrary.simpleMessage("Login"),
     "title_memo": MessageLookupByLibrary.simpleMessage("Memo"),
+    "title_rename_tag": MessageLookupByLibrary.simpleMessage("Rename Tag"),
     "title_resources": MessageLookupByLibrary.simpleMessage("Resources"),
     "title_settings": MessageLookupByLibrary.simpleMessage("Settings"),
     "title_theme": MessageLookupByLibrary.simpleMessage("Theme Mode"),
+    "visibility_private": MessageLookupByLibrary.simpleMessage("Private"),
+    "visibility_public": MessageLookupByLibrary.simpleMessage("Public"),
+    "visibility_workspace": MessageLookupByLibrary.simpleMessage("Workspace"),
   };
 }

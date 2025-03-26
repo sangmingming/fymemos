@@ -28,12 +28,20 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m2(count) =>
       "${Intl.plural(count, zero: '笔记', one: '笔记', other: '笔记')}";
 
-  static String m3(count) =>
+  static String m3(snippet) => "被一条笔记引用: ${snippet}";
+
+  static String m4(snippet) => "引用一条笔记: ${snippet}";
+
+  static String m5(count) =>
+      "${Intl.plural(count, zero: '没有与任何笔记关联', one: '与一条笔记关联', other: '与${count}条笔记关联')}";
+
+  static String m6(count) =>
       "${Intl.plural(count, zero: '标签', one: '标签', other: '标签')}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "button_cancel": MessageLookupByLibrary.simpleMessage("取消"),
+    "button_finish": MessageLookupByLibrary.simpleMessage("完成"),
     "button_login": MessageLookupByLibrary.simpleMessage("登录"),
     "button_logout": MessageLookupByLibrary.simpleMessage("登出"),
     "button_save": MessageLookupByLibrary.simpleMessage("保存"),
@@ -47,10 +55,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "edit_pin": MessageLookupByLibrary.simpleMessage("置顶"),
     "edit_rename": MessageLookupByLibrary.simpleMessage("重命名"),
     "edit_restore": MessageLookupByLibrary.simpleMessage("恢复"),
+    "hint_new_tag": MessageLookupByLibrary.simpleMessage("新标签名"),
     "hint_search": MessageLookupByLibrary.simpleMessage("搜索笔记..."),
     "memo_days": m1,
     "memo_memos": m2,
-    "memo_tags": m3,
+    "memo_reference_by_one": m3,
+    "memo_reference_one": m4,
+    "memo_references": m5,
+    "memo_tags": m6,
+    "memo_title_detail": MessageLookupByLibrary.simpleMessage("笔记详情"),
+    "msg_tag_delete": MessageLookupByLibrary.simpleMessage("标签已删除"),
+    "msg_tag_rename": MessageLookupByLibrary.simpleMessage("标签改成成功"),
     "share": MessageLookupByLibrary.simpleMessage("分析"),
     "theme_dark": MessageLookupByLibrary.simpleMessage("暗色"),
     "theme_light": MessageLookupByLibrary.simpleMessage("亮色"),
@@ -61,8 +76,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "title_home": MessageLookupByLibrary.simpleMessage("首页"),
     "title_login": MessageLookupByLibrary.simpleMessage("登录"),
     "title_memo": MessageLookupByLibrary.simpleMessage("笔记"),
+    "title_rename_tag": MessageLookupByLibrary.simpleMessage("标签改名"),
     "title_resources": MessageLookupByLibrary.simpleMessage("资源"),
     "title_settings": MessageLookupByLibrary.simpleMessage("设置"),
     "title_theme": MessageLookupByLibrary.simpleMessage("主题"),
+    "visibility_private": MessageLookupByLibrary.simpleMessage("仅自己可见"),
+    "visibility_public": MessageLookupByLibrary.simpleMessage("公开"),
+    "visibility_workspace": MessageLookupByLibrary.simpleMessage("工作空间可见"),
   };
 }

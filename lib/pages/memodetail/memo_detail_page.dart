@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:fymemos/data/services/api/api_client.dart';
-import 'package:fymemos/model/memos.dart';
 import 'package:fymemos/pages/common_page.dart';
 import 'package:fymemos/pages/memodetail/memo_detail_vm.dart';
-import 'package:fymemos/provider.dart';
-import 'package:fymemos/utils/load_state.dart';
+import 'package:fymemos/utils/l10n.dart';
 import 'package:fymemos/widgets/memo.dart';
 import 'package:refena_flutter/refena_flutter.dart';
 import 'package:share_plus/share_plus.dart';
@@ -19,15 +16,19 @@ class MemoDetailPage extends StatelessWidget {
       context: context,
       builder:
           (context) => AlertDialog(
-            content: Text('Are you sure delete this memo?'),
+            content: Text(context.intl.delete_memo_confirm),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context, false),
-                child: Text('Cancel'),
+                child: Text(context.intl.button_cancel),
               ),
-              TextButton(
+              FilledButton(
+                style: FilledButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.error,
+                  foregroundColor: Theme.of(context).colorScheme.onError,
+                ),
                 onPressed: () => Navigator.pop(context, true),
-                child: Text('Delete', style: TextStyle(color: Colors.red)),
+                child: Text(context.intl.edit_delete),
               ),
             ],
           ),
@@ -36,7 +37,7 @@ class MemoDetailPage extends StatelessWidget {
     if (confirmed == true && context.mounted) {
       await vm.deleteMemo();
       if (context.mounted) {
-        Navigator.of(context)..pop(); // 返回上级页面
+        Navigator.of(context).pop(); // 返回上级页面
       }
     }
   }
@@ -49,7 +50,7 @@ class MemoDetailPage extends StatelessWidget {
       builder: (context, vm) {
         return Scaffold(
           appBar: AppBar(
-            title: Text("Memo Detail"),
+            title: Text(context.intl.memo_title_detail),
             actions: [
               if (vm.memo.hasData && vm.memo.data != null)
                 PopupMenuButton(

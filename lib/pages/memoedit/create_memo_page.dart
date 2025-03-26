@@ -5,6 +5,7 @@ import 'package:fymemos/data/services/api/api_client.dart';
 import 'package:fymemos/model/memos.dart';
 import 'package:fymemos/pages/memoedit/memo_edit_vm.dart';
 import 'package:fymemos/provider.dart';
+import 'package:fymemos/utils/l10n.dart';
 import 'package:fymemos/utils/result.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -300,13 +301,16 @@ class _CreateMemoPageState extends State<CreateMemoPage> with Refena {
               children: [
                 Icon(visibility.systemIcon),
                 SizedBox(width: 5),
-                Text(visibility.displayText),
+                Text(context.intl[visibility.displayText]),
               ],
             ),
           );
         }).toList();
       },
-      icon: Icon(currentVisibility.systemIcon),
+      child: Icon(
+        currentVisibility.systemIcon,
+        color: Theme.of(context).iconTheme.color,
+      ),
       onCanceled: () => isShowDialog = false,
       onSelected: (MemoVisibility value) {
         context.notifier(memoEditVMProvider).updateVisibility(value);

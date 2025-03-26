@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:fymemos/data/services/api/api_client.dart';
 import 'package:fymemos/model/memo_request.dart';
 import 'package:fymemos/model/memos.dart';

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:fymemos/model/memos.dart';
-import 'package:fymemos/pages/memoedit/create_memo_page.dart';
 import 'package:fymemos/pages/memolist/memo_list_vm.dart';
 import 'package:fymemos/utils/load_state.dart';
 import 'package:fymemos/widgets/memo.dart';

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:fymemos/generated/l10n.dart';
-import 'package:fymemos/pages/settings/setting_vm.dart';
 import 'package:fymemos/pages/settings/settings_controller.dart';
 import 'package:go_router/go_router.dart';
 import 'package:refena_flutter/refena_flutter.dart';
