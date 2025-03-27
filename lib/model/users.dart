@@ -45,6 +45,7 @@ class UserProfile {
   final String? state;
   final DateTime? createTime;
   final DateTime? updateTime;
+  final String? token;
 
   const UserProfile({
     required this.name,
@@ -57,7 +58,36 @@ class UserProfile {
     this.state,
     this.createTime,
     this.updateTime,
+    this.token,
   });
+
+  UserProfile copyWith({
+    String? name,
+    String? username,
+    String? nickname,
+    String? role,
+    String? email,
+    String? description,
+    String? avatarUrl,
+    String? state,
+    DateTime? createTime,
+    DateTime? updateTime,
+    String? token,
+  }) {
+    return UserProfile(
+      name: name ?? this.name,
+      username: username ?? this.username,
+      nickname: nickname ?? this.nickname,
+      role: role ?? this.role,
+      email: email ?? this.email,
+      description: description ?? this.description,
+      avatarUrl: avatarUrl ?? this.avatarUrl,
+      state: state ?? this.state,
+      createTime: createTime ?? this.createTime,
+      updateTime: updateTime ?? this.updateTime,
+      token: token ?? this.token,
+    );
+  }
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
     return UserProfile(

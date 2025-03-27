@@ -41,6 +41,47 @@ class ApiClient {
     //..jsonDecodeCallback = parseJson;
   }
 
+  Future<Result<UserProfile>> signIn(
+    String baseUrl,
+    String userName,
+    String password,
+  ) async {
+    try {
+      final res = await dio.post(
+        "$baseUrl/api/v1/auth/signin",
+        queryParameters: {
+          "username": userName,
+          "password": password,
+          "neverExpire": true,
+        },
+      );
+      final authroization = res.headers.value("grpc-metadata-set-cookie");
+      if (authroization == null) {
+        return Result.error(Exception("Authorization header is missing"));
+      }
+      String token = _parseAccessToken(authroization) ?? "";
+      return Result.ok(
+        UserProfile.fromJson(
+          res.data as Map<String, dynamic>,
+        ).copyWith(token: token),
+      );
+    } on DioException catch (e) {
+      return Result.error(e);
+    }
+  }
+
+  String? _parseAccessToken(String cookieHeader) {
+    final parts = cookieHeader.split(';');
+
+    for (var part in parts) {
+      part = part.trim();
+      if (part.startsWith('memos.access-token=')) {
+        return part.split('=')[1];
+      }
+    }
+    return null;
+  }
+
   Future<LoadState<MemosResponse>> fetchMemos({
     String? parent,
     String? pageToken,

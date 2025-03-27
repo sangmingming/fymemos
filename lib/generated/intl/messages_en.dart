@@ -67,6 +67,21 @@ class MessageLookup extends MessageLookupByLibrary {
     "edit_restore": MessageLookupByLibrary.simpleMessage("Restore"),
     "hint_new_tag": MessageLookupByLibrary.simpleMessage("New tag name"),
     "hint_search": MessageLookupByLibrary.simpleMessage("Search Memos..."),
+    "login_hint_access_token": MessageLookupByLibrary.simpleMessage(
+      "Access Token",
+    ),
+    "login_hint_host": MessageLookupByLibrary.simpleMessage("Server Address"),
+    "login_hint_password": MessageLookupByLibrary.simpleMessage("Password"),
+    "login_hint_username": MessageLookupByLibrary.simpleMessage("Username"),
+    "login_tips": MessageLookupByLibrary.simpleMessage(
+      "Please enter your Memos Host and Account Information",
+    ),
+    "login_type_access_token": MessageLookupByLibrary.simpleMessage(
+      "Login with Access Token",
+    ),
+    "login_type_password": MessageLookupByLibrary.simpleMessage(
+      "Login with Password",
+    ),
     "memo_days": m1,
     "memo_memos": m2,
     "memo_reference_by_one": m3,

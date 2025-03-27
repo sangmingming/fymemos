@@ -410,6 +410,76 @@ class S {
       args: [days],
     );
   }
+
+  /// `Login with Access Token`
+  String get login_type_access_token {
+    return Intl.message(
+      'Login with Access Token',
+      name: 'login_type_access_token',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Login with Password`
+  String get login_type_password {
+    return Intl.message(
+      'Login with Password',
+      name: 'login_type_password',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Access Token`
+  String get login_hint_access_token {
+    return Intl.message(
+      'Access Token',
+      name: 'login_hint_access_token',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Password`
+  String get login_hint_password {
+    return Intl.message(
+      'Password',
+      name: 'login_hint_password',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Username`
+  String get login_hint_username {
+    return Intl.message(
+      'Username',
+      name: 'login_hint_username',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Server Address`
+  String get login_hint_host {
+    return Intl.message(
+      'Server Address',
+      name: 'login_hint_host',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter your Memos Host and Account Information`
+  String get login_tips {
+    return Intl.message(
+      'Please enter your Memos Host and Account Information',
+      name: 'login_tips',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -72,6 +72,13 @@
   "time_now": "Now",
   "time_minutes_ago": "{minutes, plural, =0{Now} =1{1 minute ago} other{{minutes} minutes ago}}",
   "time_hours_ago": "{hours, plural, =0{Now} =1{1 hour ago} other{{hours} hours ago}}",
-  "time_days_ago": "{days, plural, =0{Now} =1{Yesterday} other{{days} days ago}}"
+  "time_days_ago": "{days, plural, =0{Now} =1{Yesterday} other{{days} days ago}}",
+  "login_type_access_token": "Login with Access Token",
+  "login_type_password": "Login with Password",
+  "login_hint_access_token": "Access Token",
+  "login_hint_password": "Password",
+  "login_hint_username": "Username",
+  "login_hint_host": "Server Address",
+  "login_tips": "Please enter your Memos Host and Account Information"
 
   }

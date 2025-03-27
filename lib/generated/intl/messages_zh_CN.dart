@@ -66,6 +66,19 @@ class MessageLookup extends MessageLookupByLibrary {
     "edit_restore": MessageLookupByLibrary.simpleMessage("恢复"),
     "hint_new_tag": MessageLookupByLibrary.simpleMessage("新标签名"),
     "hint_search": MessageLookupByLibrary.simpleMessage("搜索笔记..."),
+    "login_hint_access_token": MessageLookupByLibrary.simpleMessage(
+      "Access Token",
+    ),
+    "login_hint_host": MessageLookupByLibrary.simpleMessage("服务器地址"),
+    "login_hint_password": MessageLookupByLibrary.simpleMessage("密码"),
+    "login_hint_username": MessageLookupByLibrary.simpleMessage("用户名"),
+    "login_tips": MessageLookupByLibrary.simpleMessage(
+      "请输入你的Memos服务器地址和账户信息登录",
+    ),
+    "login_type_access_token": MessageLookupByLibrary.simpleMessage(
+      "使用Access Token登录",
+    ),
+    "login_type_password": MessageLookupByLibrary.simpleMessage("使用用户名和密码登录"),
     "memo_days": m1,
     "memo_memos": m2,
     "memo_reference_by_one": m3,

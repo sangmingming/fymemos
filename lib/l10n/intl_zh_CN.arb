@@ -44,5 +44,12 @@
   "time_now": "刚刚",
   "time_minutes_ago": "{minutes, plural, =0{刚刚} =1{1分钟前} other{{minutes}分钟前}}",
   "time_hours_ago": "{hours, plural, =0{刚刚} =1{1小时前} other{{hours}小时}}",
-  "time_days_ago": "{days, plural, =0{刚刚} =1{昨天} other{{days}天前}}"
+  "time_days_ago": "{days, plural, =0{刚刚} =1{昨天} other{{days}天前}}",
+  "login_type_access_token": "使用Access Token登录",
+  "login_type_password": "使用用户名和密码登录",
+  "login_hint_access_token": "Access Token",
+  "login_hint_password": "密码",
+  "login_hint_username": "用户名",
+  "login_hint_host": "服务器地址",
+  "login_tips": "请输入你的Memos服务器地址和账户信息登录"
 }
