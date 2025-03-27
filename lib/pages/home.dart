@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fymemos/model/users.dart';
-import 'package:fymemos/pages/archived_memo_list_page.dart';
+import 'package:fymemos/pages/archivedlist/archived_memo_list_page.dart';
 import 'package:fymemos/pages/memolist/memo_list_page.dart';
 import 'package:fymemos/pages/memolist/memo_list_vm.dart';
 import 'package:fymemos/pages/resourceslist/resources_list_page.dart';

@@ -71,25 +71,37 @@ class MemoImageItem extends StatelessWidget {
 }
 
 class MemoItem extends StatelessWidget {
-  const MemoItem({required this.memo, this.isDetail = false, super.key});
+  const MemoItem({
+    required this.memo,
+    this.isDetail = false,
+    this.isExplore = false,
+    super.key,
+  });
   final Memo memo;
   final bool isDetail;
+  final bool isExplore;
 
   Widget _buildMemoContent(BuildContext context, Memo memo, bool isDetail) {
     return Padding(
-      padding: const EdgeInsets.all(12.0),
+      padding: const EdgeInsets.only(left: 12.0, right: 12.0, bottom: 12.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              SvgPicture.asset(memo.visibility.icon, width: 14, height: 14),
-              SizedBox(width: 5),
               Text(
-                memo.getFormattedDisplayTime(),
-                style: Theme.of(context).textTheme.labelMedium,
+                memo.getFormattedDisplayTime(context),
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  color: Theme.of(context).hintColor,
+                ),
               ),
               Spacer(),
+              if (memo.visibility != MemoVisibility.Private)
+                Icon(
+                  size: 18,
+                  memo.visibility.systemIcon,
+                  color: Theme.of(context).hintColor,
+                ),
               if (!isDetail)
                 PopupMenuButton(
                   itemBuilder: createMemoOptionMenu(
@@ -315,21 +327,22 @@ PopupMenuItemBuilder createMemoOptionMenu({
 }) {
   return (context) {
     return <PopupMenuEntry>[
-      memo.pinned
-          ? PopupMenuItem(
-            onTap: () => onUnpinClick?.call(),
-            child: ListTile(
-              leading: Icon(Icons.pin_drop_outlined),
-              title: Text(context.intl.edit_Unpin),
+      if (memo.state == MemoState.normal)
+        memo.pinned
+            ? PopupMenuItem(
+              onTap: () => onUnpinClick?.call(),
+              child: ListTile(
+                leading: Icon(Icons.pin_drop_outlined),
+                title: Text(context.intl.edit_Unpin),
+              ),
+            )
+            : PopupMenuItem(
+              onTap: () => onPinClick?.call(),
+              child: ListTile(
+                leading: Icon(Icons.push_pin_outlined),
+                title: Text(context.intl.edit_pin),
+              ),
             ),
-          )
-          : PopupMenuItem(
-            onTap: () => onPinClick?.call(),
-            child: ListTile(
-              leading: Icon(Icons.push_pin_outlined),
-              title: Text(context.intl.edit_pin),
-            ),
-          ),
       if (memo.state == MemoState.normal)
         PopupMenuItem(
           onTap: () => onShareClick?.call(),

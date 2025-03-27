@@ -38,6 +38,15 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m6(count) =>
       "${Intl.plural(count, zero: '标签', one: '标签', other: '标签')}";
 
+  static String m7(days) =>
+      "${Intl.plural(days, zero: '刚刚', one: '昨天', other: '${days}天前')}";
+
+  static String m8(hours) =>
+      "${Intl.plural(hours, zero: '刚刚', one: '1小时前', other: '${hours}小时')}";
+
+  static String m9(minutes) =>
+      "${Intl.plural(minutes, zero: '刚刚', one: '1分钟前', other: '${minutes}分钟前')}";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "button_cancel": MessageLookupByLibrary.simpleMessage("取消"),
@@ -70,6 +79,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "theme_dark": MessageLookupByLibrary.simpleMessage("暗色"),
     "theme_light": MessageLookupByLibrary.simpleMessage("亮色"),
     "theme_system": MessageLookupByLibrary.simpleMessage("跟随系统"),
+    "time_days_ago": m7,
+    "time_hours_ago": m8,
+    "time_minutes_ago": m9,
+    "time_now": MessageLookupByLibrary.simpleMessage("刚刚"),
     "title_about": MessageLookupByLibrary.simpleMessage("关于"),
     "title_archived": MessageLookupByLibrary.simpleMessage("归档"),
     "title_delete_tag": MessageLookupByLibrary.simpleMessage("删除标签"),

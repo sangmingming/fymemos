@@ -40,5 +40,9 @@
 "button_finish": "完成",
 "hint_new_tag": "新标签名",
 "msg_tag_rename": "标签改成成功",
-"msg_tag_delete": "标签已删除"
+"msg_tag_delete": "标签已删除",
+"time_now": "刚刚",
+"time_minutes_ago": "{minutes, plural, =0{刚刚} =1{1分钟前} other{{minutes}分钟前}}",
+"time_hours_ago": "{hours, plural, =0{刚刚} =1{1小时前} other{{hours}小时}}",
+"time_days_ago": "{days, plural, =0{刚刚} =1{昨天} other{{days}天前}}"
 }

@@ -39,6 +39,15 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m6(count) =>
       "${Intl.plural(count, zero: 'Tag', one: 'Tag', other: 'Tags')}";
 
+  static String m7(days) =>
+      "${Intl.plural(days, zero: 'Now', one: 'Yesterday', other: '${days} days ago')}";
+
+  static String m8(hours) =>
+      "${Intl.plural(hours, zero: 'Now', one: '1 hour ago', other: '${hours} hours ago')}";
+
+  static String m9(minutes) =>
+      "${Intl.plural(minutes, zero: 'Now', one: '1 minute ago', other: '${minutes} minutes ago')}";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "button_cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
@@ -71,6 +80,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "theme_dark": MessageLookupByLibrary.simpleMessage("Dark"),
     "theme_light": MessageLookupByLibrary.simpleMessage("Light"),
     "theme_system": MessageLookupByLibrary.simpleMessage("System"),
+    "time_days_ago": m7,
+    "time_hours_ago": m8,
+    "time_minutes_ago": m9,
+    "time_now": MessageLookupByLibrary.simpleMessage("Now"),
     "title_about": MessageLookupByLibrary.simpleMessage("About"),
     "title_archived": MessageLookupByLibrary.simpleMessage("Archived"),
     "title_delete_tag": MessageLookupByLibrary.simpleMessage("Delete Tag"),

@@ -366,6 +366,50 @@ class S {
       args: [],
     );
   }
+
+  /// `Now`
+  String get time_now {
+    return Intl.message('Now', name: 'time_now', desc: '', args: []);
+  }
+
+  /// `{minutes, plural, =0{Now} =1{1 minute ago} other{{minutes} minutes ago}}`
+  String time_minutes_ago(num minutes) {
+    return Intl.plural(
+      minutes,
+      zero: 'Now',
+      one: '1 minute ago',
+      other: '$minutes minutes ago',
+      name: 'time_minutes_ago',
+      desc: '',
+      args: [minutes],
+    );
+  }
+
+  /// `{hours, plural, =0{Now} =1{1 hour ago} other{{hours} hours ago}}`
+  String time_hours_ago(num hours) {
+    return Intl.plural(
+      hours,
+      zero: 'Now',
+      one: '1 hour ago',
+      other: '$hours hours ago',
+      name: 'time_hours_ago',
+      desc: '',
+      args: [hours],
+    );
+  }
+
+  /// `{days, plural, =0{Now} =1{Yesterday} other{{days} days ago}}`
+  String time_days_ago(num days) {
+    return Intl.plural(
+      days,
+      zero: 'Now',
+      one: 'Yesterday',
+      other: '$days days ago',
+      name: 'time_days_ago',
+      desc: '',
+      args: [days],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

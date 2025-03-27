@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fymemos/model/memo_nodes.dart';
 import 'package:fymemos/model/resources.dart';
+import 'package:fymemos/utils/l10n.dart';
 import 'package:intl/intl.dart';
 
 class Memo {
@@ -58,20 +59,22 @@ class Memo {
     );
   }
 
-  String getFormattedDisplayTime() {
+  String getFormattedDisplayTime(BuildContext context) {
     final now = DateTime.now();
     final difference = now.difference(displayTime);
 
     if (difference.inSeconds < 60) {
-      return '刚刚';
+      return context.intl.time_now;
     } else if (difference.inMinutes < 60) {
-      return '${difference.inMinutes}分钟前';
+      return context.intl.time_minutes_ago(difference.inMinutes);
     } else if (difference.inHours < 24) {
-      return '${difference.inHours}小时前';
+      return context.intl.time_hours_ago(difference.inHours);
     } else if (difference.inDays < 7) {
-      return '${difference.inDays}天前';
+      return context.intl.time_days_ago(difference.inDays);
     } else {
-      return DateFormat.yMMMd().format(displayTime);
+      return DateFormat.yMMMd()
+          .addPattern(DateFormat.HOUR24_MINUTE)
+          .format(displayTime);
     }
   }
 }
