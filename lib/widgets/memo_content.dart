@@ -106,9 +106,20 @@ class _NodeRenderer extends StatelessWidget {
         return _renderSpoilerNode(node.node as SpoilerNode, context);
       case NodeType.CODE:
         return _renderInlineCodeNode(node.node as InlineCodeNode, context);
+      case NodeType.HIGHLIGHT:
+        return _renderHighlightNode(node.node as HighlightNode, context);
       default:
         throw Exception('Unknown node type: ${node.type}');
     }
+  }
+
+  InlineSpan _renderHighlightNode(HighlightNode node, BuildContext context) {
+    return TextSpan(
+      text: node.content,
+      style: Theme.of(
+        context,
+      ).textTheme.bodyLarge?.copyWith(backgroundColor: Colors.yellow[300]),
+    );
   }
 
   InlineSpan _renderInlineCodeNode(InlineCodeNode node, BuildContext context) {

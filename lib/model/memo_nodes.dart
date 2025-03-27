@@ -21,6 +21,7 @@ enum NodeType {
   ORDERED_LIST_ITEM,
   IMAGE,
   CODE,
+  HIGHLIGHT,
 }
 
 extension NodeTypeExtension on NodeType {
@@ -125,9 +126,25 @@ class Node {
           type: type,
           node: OrderedListItemNode.fromJson(json['orderedListItemNode']),
         );
+      case NodeType.HIGHLIGHT:
+        return Node(
+          type: type,
+          node: HighlightNode.fromJson(json['highlightNode']),
+        );
       default:
         throw Exception('Unknown node type');
     }
+  }
+}
+
+class HighlightNode extends BaseTextNode {
+  HighlightNode({required super.content});
+  factory HighlightNode.fromJson(Map<String, dynamic> json) {
+    return HighlightNode(content: json['content']);
+  }
+  @override
+  String toString() {
+    return "==$content==";
   }
 }
 
