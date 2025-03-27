@@ -1,0 +1,44 @@
+name: 🔨Build Android Bundle
+
+on:
+  workflow_dispatch:
+
+env:
+  FLUTTER_VERSION: "3.29.1"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: 'stable'
+
+      - name: Setup Keystore
+        shell: bash
+        run: |
+          echo "${{ secrets.BASE64_KEYSTORE }}" | base64 --decode > android/app/keystore.jks
+
+      - name: Build APK
+        env:
+           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+           STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+        run: |
+          flutter build appbundle --release
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-appbundle
+          path: build/**/outputs/bundle/release/*.aab
