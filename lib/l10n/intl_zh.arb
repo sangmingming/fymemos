@@ -51,5 +51,6 @@
 "login_hint_password": "密码",
 "login_hint_username": "用户名",
 "login_hint_host": "服务器地址",
-"login_tips": "请输入你的Memos服务器地址和账户信息登录"
+"login_tips": "请输入你的Memos服务器地址和账户信息登录",
+"privacy_policy": "隐私政策"
 }

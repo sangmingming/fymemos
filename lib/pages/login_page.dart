@@ -9,6 +9,7 @@ import 'package:fymemos/utils/l10n.dart';
 import 'package:fymemos/utils/result.dart';
 import 'package:go_router/go_router.dart';
 import 'package:refena_flutter/refena_flutter.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -227,6 +228,18 @@ class _LoginPageState extends State<LoginPage> with Refena {
             ),
             SizedBox(height: 16),
             ...widgets,
+            SizedBox(height: 16),
+            GestureDetector(
+              child: Row(
+                children: [
+                  Text(context.intl.privacy_policy),
+                  Icon(Icons.navigate_next),
+                ],
+              ),
+              onTap: () {
+                launchUrlString("https://fymemos.isming.info/privacy");
+              },
+            ),
             Expanded(child: Container()),
           ],
         ),

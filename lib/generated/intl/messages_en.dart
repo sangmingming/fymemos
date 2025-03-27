@@ -91,6 +91,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "memo_title_detail": MessageLookupByLibrary.simpleMessage("Memo Detail"),
     "msg_tag_delete": MessageLookupByLibrary.simpleMessage("Tag deleted"),
     "msg_tag_rename": MessageLookupByLibrary.simpleMessage("Tag renamed"),
+    "privacy_policy": MessageLookupByLibrary.simpleMessage("Privacy Policy"),
     "share": MessageLookupByLibrary.simpleMessage("Share"),
     "theme_dark": MessageLookupByLibrary.simpleMessage("Dark"),
     "theme_light": MessageLookupByLibrary.simpleMessage("Light"),

@@ -4,6 +4,7 @@ import 'package:fymemos/pages/settings/settings_controller.dart';
 import 'package:go_router/go_router.dart';
 import 'package:refena_flutter/refena_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -43,6 +44,13 @@ class SettingsPage extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+          ListTile(
+            leading: Icon(Icons.privacy_tip_outlined),
+            title: Text(S.of(context).privacy_policy),
+            onTap: () async {
+              launchUrlString("https://fymemos.isming.info");
+            },
           ),
           ListTile(
             leading: Icon(Icons.info_outline_rounded),
