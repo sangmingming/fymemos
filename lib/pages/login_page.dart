@@ -179,7 +179,6 @@ class _LoginPageState extends State<LoginPage> with Refena {
     return Scaffold(
       appBar: AppBar(title: Text(S.of(context).title_login)),
       bottomNavigationBar: BottomAppBar(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 1),
         child: Row(
           mainAxisSize: MainAxisSize.max,
           children: [
@@ -199,12 +198,6 @@ class _LoginPageState extends State<LoginPage> with Refena {
             ),
             Spacer(),
             FilledButton.icon(
-              style: FilledButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-                backgroundColor: Theme.of(context).colorScheme.primary,
-                iconSize: 36,
-                textStyle: Theme.of(context).textTheme.titleLarge,
-              ),
               onPressed: _login,
               icon: Icon(Icons.login_outlined),
               label: Text(S.of(context).button_login),
