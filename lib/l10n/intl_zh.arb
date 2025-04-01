@@ -53,5 +53,7 @@
 "login_hint_host": "服务器地址",
 "login_tips": "请输入你的Memos服务器地址和账户信息登录",
 "privacy_policy": "隐私政策",
-"title_explore": "探索"
+"title_explore": "探索",
+"content_hint": "此刻的想法...",
+"empty_tips":"此处空空，去记录你的想法吧！"
 }

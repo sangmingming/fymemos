@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fymemos/model/memos.dart';
 import 'package:fymemos/pages/archivedlist/archived_memo_vm.dart';
+import 'package:fymemos/pages/common_page.dart';
 import 'package:fymemos/utils/load_state.dart';
 import 'package:fymemos/widgets/memo.dart';
 import 'package:refena_flutter/refena_flutter.dart';
@@ -52,6 +53,8 @@ class _ArchivedMemoListPageState extends State<ArchivedMemoListPage> {
         if (index == memos.length) {
           if (_isLoadingMore) {
             return Center(child: CircularProgressIndicator());
+          } else if (memos.isEmpty) {
+            return EmptyPage();
           } else {
             return SizedBox.shrink(); // Empty space when not loading more and not at the end
           }

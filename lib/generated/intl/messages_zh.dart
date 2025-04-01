@@ -54,6 +54,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "button_login": MessageLookupByLibrary.simpleMessage("登录"),
     "button_logout": MessageLookupByLibrary.simpleMessage("登出"),
     "button_save": MessageLookupByLibrary.simpleMessage("保存"),
+    "content_hint": MessageLookupByLibrary.simpleMessage("此刻的想法..."),
     "delete_memo_confirm": MessageLookupByLibrary.simpleMessage(
       "你确定要删除这篇笔记吗? ⚠️此操作不可撤销",
     ),
@@ -64,6 +65,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "edit_pin": MessageLookupByLibrary.simpleMessage("置顶"),
     "edit_rename": MessageLookupByLibrary.simpleMessage("重命名"),
     "edit_restore": MessageLookupByLibrary.simpleMessage("恢复"),
+    "empty_tips": MessageLookupByLibrary.simpleMessage("此处空空，去记录你的想法吧！"),
     "hint_new_tag": MessageLookupByLibrary.simpleMessage("新标签名"),
     "hint_search": MessageLookupByLibrary.simpleMessage("搜索笔记..."),
     "login_hint_access_token": MessageLookupByLibrary.simpleMessage(

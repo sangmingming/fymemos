@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fymemos/pages/common_page.dart';
 import 'package:fymemos/pages/explore/explore_vm.dart';
 import 'package:fymemos/widgets/memo.dart';
 import 'package:refena_flutter/refena_flutter.dart';
@@ -35,6 +36,8 @@ class ExplorePage extends StatelessWidget {
         if (index == vm.memos.length) {
           if (vm.isLoading) {
             return Center(child: CircularProgressIndicator());
+          } else if (vm.memos.isEmpty) {
+            return EmptyPage();
           } else {
             return SizedBox.shrink(); // Empty space when not loading more and not at the end
           }

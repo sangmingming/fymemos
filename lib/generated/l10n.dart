@@ -495,6 +495,26 @@ class S {
   String get title_explore {
     return Intl.message('Explore', name: 'title_explore', desc: '', args: []);
   }
+
+  /// `Any thoughts...`
+  String get content_hint {
+    return Intl.message(
+      'Any thoughts...',
+      name: 'content_hint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Nothing here, start writing now!`
+  String get empty_tips {
+    return Intl.message(
+      'Nothing here, start writing now!',
+      name: 'empty_tips',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

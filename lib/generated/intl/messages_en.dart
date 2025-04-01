@@ -55,6 +55,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "button_login": MessageLookupByLibrary.simpleMessage("Login"),
     "button_logout": MessageLookupByLibrary.simpleMessage("Logout"),
     "button_save": MessageLookupByLibrary.simpleMessage("Save"),
+    "content_hint": MessageLookupByLibrary.simpleMessage("Any thoughts..."),
     "delete_memo_confirm": MessageLookupByLibrary.simpleMessage(
       "Are you sure you want to delete this memo? THIS ACTION IS IRREVERSIBLE",
     ),
@@ -65,6 +66,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "edit_pin": MessageLookupByLibrary.simpleMessage("Pin"),
     "edit_rename": MessageLookupByLibrary.simpleMessage("Rename"),
     "edit_restore": MessageLookupByLibrary.simpleMessage("Restore"),
+    "empty_tips": MessageLookupByLibrary.simpleMessage(
+      "Nothing here, start writing now!",
+    ),
     "hint_new_tag": MessageLookupByLibrary.simpleMessage("New tag name"),
     "hint_search": MessageLookupByLibrary.simpleMessage("Search Memos..."),
     "login_hint_access_token": MessageLookupByLibrary.simpleMessage(

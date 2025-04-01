@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fymemos/model/memos.dart';
+import 'package:fymemos/pages/common_page.dart';
 import 'package:fymemos/pages/memolist/memo_list_vm.dart';
 import 'package:fymemos/widgets/memo.dart';
 import 'package:go_router/go_router.dart';
@@ -66,6 +67,8 @@ class _MemoListPageState extends State<MemoListPage> with Refena {
         if (index == vm.memos.length) {
           if (vm.isLoading) {
             return Center(child: CircularProgressIndicator());
+          } else if (vm.memos.isEmpty) {
+            return EmptyPage();
           } else {
             return SizedBox.shrink(); // Empty space when not loading more and not at the end
           }

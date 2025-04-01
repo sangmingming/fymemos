@@ -151,7 +151,7 @@ class _CreateMemoPageState extends State<CreateMemoPage> with Refena {
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   isCollapsed: false,
-                  labelText: 'Content',
+                  labelText: context.intl.content_hint,
                 ),
                 onChanged: (text) {
                   if (isShowDialog) {

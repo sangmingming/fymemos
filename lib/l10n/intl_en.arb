@@ -81,6 +81,8 @@
   "login_hint_host": "Server Address",
   "login_tips": "Please enter your Memos Host and Account Information",
   "privacy_policy": "Privacy Policy",
-  "title_explore": "Explore"
+  "title_explore": "Explore",
+  "content_hint": "Any thoughts...",
+  "empty_tips":"Nothing here, start writing now!"
 
   }
