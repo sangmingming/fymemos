@@ -62,6 +62,7 @@ dependencies:
   intl_translation: ^0.20.1
 
 dev_dependencies:
+  test: ^1.25.0
   flutter_test:
     sdk: flutter
 

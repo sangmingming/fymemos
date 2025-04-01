@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:fymemos/data/services/api/api_client.dart';
 import 'package:fymemos/model/resources.dart';
 import 'package:fymemos/pages/memolist/memo_list_vm.dart';

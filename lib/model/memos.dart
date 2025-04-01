@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fymemos/model/memo_nodes.dart';
+import 'package:fymemos/mark/ast/node.dart';
 import 'package:fymemos/model/resources.dart';
 import 'package:fymemos/utils/l10n.dart';
 import 'package:intl/intl.dart';
@@ -14,7 +14,7 @@ class Memo {
   late final MemoVisibility visibility;
   final bool pinned;
   final List<MemoResource> resources;
-  final List<Node> nodes;
+  final List<BaseNode> nodes;
   final String snippet;
   final List<Relation> relations;
   final MemoState state;
@@ -49,7 +49,7 @@ class Memo {
           .map((item) => MemoResource.fromJson(item as Map<String, dynamic>))
           .toList(),
       (json['nodes'] as List<dynamic>)
-          .map((item) => Node.fromJson(item as Map<String, dynamic>))
+          .map((item) => BaseNode.fromJson(item as Map<String, dynamic>))
           .toList(),
       json['snippet'] ?? "",
       (json['relations'] as List<dynamic>? ?? [])
