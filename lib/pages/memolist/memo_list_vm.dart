@@ -212,7 +212,7 @@ class ArchiveMemoAction
   ArchiveMemoAction(this.memo, this.context);
   @override
   Future<MemoListVm> reduce() async {
-    final request = UpdateMemoRequest.copyFromMemo(memo, state: "NORMAL");
+    final request = UpdateMemoRequest.copyFromMemo(memo, state: "ARCHIVED");
     final res = await ApiClient.instance.updateMemo(memo.name, request);
     if (res is Ok<Memo>) {
       context.ref.notifier(archivedMemoProvider).refresh();
@@ -231,7 +231,7 @@ class RestoreMemoAction
   RestoreMemoAction(this.memo, this.context);
   @override
   Future<MemoListVm> reduce() async {
-    final request = UpdateMemoRequest.copyFromMemo(memo, state: "ARCHIVED");
+    final request = UpdateMemoRequest.copyFromMemo(memo, state: "NORMAL");
     final res = await ApiClient.instance.updateMemo(memo.name, request);
     if (res is Ok<Memo>) {
       context.ref.notifier(archivedMemoProvider).refresh();

@@ -3,9 +3,11 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fymemos/utils/l10n.dart';
 
 class LoadingPage extends StatelessWidget {
+
+  LoadingPage({super.key});
   @override
   Widget build(BuildContext context) {
-    return Center(child: Expanded(child: CircularProgressIndicator()));
+    return Center(child: CircularProgressIndicator());
   }
 }
 
