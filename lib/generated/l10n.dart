@@ -490,6 +490,11 @@ class S {
       args: [],
     );
   }
+
+  /// `Explore`
+  String get title_explore {
+    return Intl.message('Explore', name: 'title_explore', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

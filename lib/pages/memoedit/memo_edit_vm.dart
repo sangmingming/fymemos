@@ -25,7 +25,7 @@ class MemoEditVM extends Notifier<MemoEditData> {
   }
 
   void updateVisibility(MemoVisibility visibility) {
-    state = state.copyWith(visibility: visibility);
+    state = state.copyWith(newVisibility: visibility, initial: true);
   }
 
   void clear() {
@@ -111,18 +111,21 @@ class MemoEditData {
   final String? memoName;
   final List<MemoImage> images;
   final MemoVisibility visibility;
+  final bool initial;
 
   MemoEditData copyWith({
     List<MemoImage>? image,
     String? name,
     String? desc,
-    MemoVisibility? visibility,
+    MemoVisibility? newVisibility,
+    bool? initial,
   }) {
     return MemoEditData(
       content: desc ?? content,
       images: image ?? images,
       memoName: name ?? memoName,
-      visibility: visibility ?? this.visibility,
+      visibility: newVisibility ?? visibility,
+      initial: initial ?? this.initial,
     );
   }
 
@@ -131,6 +134,7 @@ class MemoEditData {
     required this.images,
     required this.visibility,
     this.memoName,
+    this.initial = false,
   });
 }
 

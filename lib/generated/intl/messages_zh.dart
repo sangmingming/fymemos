@@ -100,6 +100,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "title_about": MessageLookupByLibrary.simpleMessage("关于"),
     "title_archived": MessageLookupByLibrary.simpleMessage("归档"),
     "title_delete_tag": MessageLookupByLibrary.simpleMessage("删除标签"),
+    "title_explore": MessageLookupByLibrary.simpleMessage("探索"),
     "title_home": MessageLookupByLibrary.simpleMessage("首页"),
     "title_login": MessageLookupByLibrary.simpleMessage("登录"),
     "title_memo": MessageLookupByLibrary.simpleMessage("笔记"),

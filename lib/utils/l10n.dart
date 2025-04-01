@@ -10,6 +10,8 @@ extension L10nExtension2 on S {
     switch (key) {
       case 'title_home':
         return title_home;
+      case 'title_explore':
+        return title_explore;
       case 'title_archived':
         return title_archived;
       case 'title_resources':

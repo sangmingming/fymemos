@@ -103,6 +103,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "title_about": MessageLookupByLibrary.simpleMessage("About"),
     "title_archived": MessageLookupByLibrary.simpleMessage("Archived"),
     "title_delete_tag": MessageLookupByLibrary.simpleMessage("Delete Tag"),
+    "title_explore": MessageLookupByLibrary.simpleMessage("Explore"),
     "title_home": MessageLookupByLibrary.simpleMessage("Home"),
     "title_login": MessageLookupByLibrary.simpleMessage("Login"),
     "title_memo": MessageLookupByLibrary.simpleMessage("Memo"),

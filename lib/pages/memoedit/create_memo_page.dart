@@ -111,7 +111,8 @@ class _CreateMemoPageState extends State<CreateMemoPage> with Refena {
   @override
   Widget build(BuildContext context) {
     final userSettings = context.watch(userSettingProvider);
-    if (userSettings.data != null) {
+    if (userSettings.data != null &&
+        !context.read(memoEditVMProvider).initial) {
       context
           .notifier(memoEditVMProvider)
           .updateVisibility(userSettings.data!.memoVisibility);
@@ -291,11 +292,15 @@ class _CreateMemoPageState extends State<CreateMemoPage> with Refena {
     return PopupMenuButton(
       requestFocus: false,
       position: PopupMenuPosition.under,
-      initialValue: context.watch(memoEditVMProvider).visibility,
+      initialValue: currentVisibility,
       offset: Offset(0, -MediaQuery.of(context).viewInsets.bottom + 120),
       itemBuilder: (context) {
         return MemoVisibility.values.map((MemoVisibility visibility) {
           return PopupMenuItem<MemoVisibility>(
+            onTap: () {
+              print("on tap visibility: $visibility");
+              context.notifier(memoEditVMProvider).updateVisibility(visibility);
+            },
             value: visibility,
             child: Row(
               children: [
@@ -313,6 +318,7 @@ class _CreateMemoPageState extends State<CreateMemoPage> with Refena {
       ),
       onCanceled: () => isShowDialog = false,
       onSelected: (MemoVisibility value) {
+        print("on select visibility: $value");
         context.notifier(memoEditVMProvider).updateVisibility(value);
       },
       onOpened: () => isShowDialog = true,

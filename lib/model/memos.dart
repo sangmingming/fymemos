@@ -18,6 +18,8 @@ class Memo {
   final String snippet;
   final List<Relation> relations;
   final MemoState state;
+  String creatorName = "";
+  String creatorAvatar = "";
 
   Memo(
     this.name,

@@ -32,7 +32,7 @@ class BottomSheetPage<T> extends Page<T> {
                   minHeight: 0,
                   maxHeight: constraints.maxHeight * 0.8, // 最大高度不超过屏幕80%
                 ),
-                child: IntrinsicHeight(child: child),
+                child: Wrap(children: [child]),
               ),
             );
           },

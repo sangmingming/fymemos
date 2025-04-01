@@ -82,29 +82,23 @@ class ApiClient {
     return null;
   }
 
-  Future<LoadState<MemosResponse>> fetchMemos({
+  Future<MemosResponse> fetchMemos({
     String? parent,
     String? pageToken,
     String? state,
     String? filter,
   }) async {
-    try {
-      final res = await dio.get(
-        "/api/v1/memos",
-        queryParameters: {
-          if (parent != null) 'parent': parent,
-          if (pageToken != null) 'pageToken': pageToken,
-          if (state != null) 'state': state,
-          if (filter != null) 'filter': filter,
-          'pageSize': PAGE_SIZE,
-        },
-      );
-      return LoadState.ok(
-        MemosResponse.fromJson(res.data as Map<String, dynamic>),
-      );
-    } on DioException catch (e) {
-      return LoadState.error(e);
-    }
+    final res = await dio.get(
+      "/api/v1/memos",
+      queryParameters: {
+        if (parent != null) 'parent': parent,
+        if (pageToken != null) 'pageToken': pageToken,
+        if (state != null) 'state': state,
+        if (filter != null) 'filter': filter,
+        'pageSize': PAGE_SIZE,
+      },
+    );
+    return MemosResponse.fromJson(res.data as Map<String, dynamic>);
   }
 
   Future<LoadState<MemosResponse>> fetchUserMemos({
@@ -306,6 +300,11 @@ class ApiClient {
     } on DioException catch (e) {
       return Result.error(e);
     }
+  }
+
+  Future<UserProfile> getUser(String id) async {
+    final res = await dio.get("/api/v1/users/$id");
+    return UserProfile.fromJson(res.data as Map<String, dynamic>);
   }
 
   String getId(String name) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fymemos/model/users.dart';
 import 'package:fymemos/pages/archivedlist/archived_memo_list_page.dart';
+import 'package:fymemos/pages/explore/explore_page.dart';
 import 'package:fymemos/pages/memolist/memo_list_page.dart';
 import 'package:fymemos/pages/memolist/memo_list_vm.dart';
 import 'package:fymemos/pages/resourceslist/resources_list_page.dart';
@@ -26,6 +27,7 @@ const List<MemoDestination> destinations = <MemoDestination>[
     Icons.workspaces_outline,
     Icons.workspaces_filled,
   ),
+  MemoDestination('title_explore', Icons.public_outlined, Icons.public_rounded),
   MemoDestination(
     'title_archived',
     Icons.inventory_2_outlined,
@@ -202,7 +204,9 @@ class _NavigationDrawerHomePageState extends State<NavigationDrawerHomePage>
                         PopupMenuItem(
                           child: Text(
                             context.intl.edit_delete,
-                            style: TextStyle(color: Colors.red),
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.error,
+                            ),
                           ),
                           onTap: () {
                             deleteTag(context, entity.key);
@@ -322,6 +326,8 @@ class _NavigationDrawerHomePageState extends State<NavigationDrawerHomePage>
     if (screenIndex == 0) {
       return MemoListPage();
     } else if (screenIndex == 1) {
+      return ExplorePage();
+    } else if (screenIndex == 2) {
       return ArchivedMemoListPage();
     } else {
       return ResourcesListPage();
