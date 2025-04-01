@@ -89,7 +89,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "msg_tag_delete": MessageLookupByLibrary.simpleMessage("标签已删除"),
     "msg_tag_rename": MessageLookupByLibrary.simpleMessage("标签改成成功"),
     "privacy_policy": MessageLookupByLibrary.simpleMessage("隐私政策"),
-    "share": MessageLookupByLibrary.simpleMessage("分析"),
+    "share": MessageLookupByLibrary.simpleMessage("分享"),
     "theme_dark": MessageLookupByLibrary.simpleMessage("暗色"),
     "theme_light": MessageLookupByLibrary.simpleMessage("亮色"),
     "theme_system": MessageLookupByLibrary.simpleMessage("跟随系统"),
