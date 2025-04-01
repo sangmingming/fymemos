@@ -16,6 +16,9 @@ class ApiClient {
 
   final dio = Dio();
   final Map<String, String> requestHeaders = {};
+  String get baseUrl {
+    return dio.options.baseUrl;
+  }
 
   void initDio({required String baseUrl, required String token}) {
     dio.options.baseUrl = baseUrl;

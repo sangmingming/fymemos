@@ -80,89 +80,130 @@ class MemoItem extends StatelessWidget {
   final bool isDetail;
   final bool isExplore;
 
-  Widget _buildMemoContent(BuildContext context, Memo memo, bool isDetail) {
+  Widget _buildExploreTitle(BuildContext context, Memo memo, bool isDetail) {
     return Padding(
-      padding: const EdgeInsets.only(left: 12.0, right: 12.0, bottom: 12.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      padding: const EdgeInsets.only(top: 12.0),
+      child: Row(
         children: [
-          Row(
+          ClipRRect(
+            borderRadius: BorderRadius.circular(6),
+            child: CachedNetworkImage(
+              imageUrl: "${ApiClient.instance.baseUrl}${memo.creatorAvatar}",
+              width: 24,
+              height: 24,
+              placeholder:
+                  (context, url) => Icon(Icons.account_circle_outlined),
+              errorWidget:
+                  (context, url, error) => Icon(Icons.account_circle_outlined),
+            ),
+          ),
+          SizedBox(width: 10),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text(memo.creatorName),
               Text(
                 memo.getFormattedDisplayTime(context),
                 style: Theme.of(context).textTheme.labelMedium?.copyWith(
                   color: Theme.of(context).hintColor,
                 ),
               ),
-              Spacer(),
-              if (memo.visibility != MemoVisibility.Private)
-                Icon(
-                  size: 18,
-                  memo.visibility.systemIcon,
-                  color: Theme.of(context).hintColor,
-                ),
-              if (!isDetail)
-                PopupMenuButton(
-                  itemBuilder: createMemoOptionMenu(
-                    context: context,
-                    memo: memo,
-                    onArchiveClick: () async {
-                      await context
-                          .redux(userMemoProvider)
-                          .dispatchAsync(ArchiveMemoAction(memo, context));
-                    },
-                    onRestoreClick: () async {
-                      await context
-                          .redux(userMemoProvider)
-                          .dispatchAsync(RestoreMemoAction(memo, context));
-                    },
-                    onPinClick: () async {
-                      await context
-                          .redux(userMemoProvider)
-                          .dispatchAsync(PinMemoAction(memo));
-                    },
-                    onUnpinClick: () async {
-                      await context
-                          .redux(userMemoProvider)
-                          .dispatchAsync(UnpinMemoAction(memo));
-                    },
-                    onDeleteClick: () async {
-                      final confirmed = await showDialog<bool>(
-                        context: context,
-                        builder:
-                            (context) => AlertDialog(
-                              content: Text(context.intl.delete_memo_confirm),
-                              actions: [
-                                TextButton(
-                                  onPressed:
-                                      () => Navigator.pop(context, false),
-                                  child: Text(context.intl.button_cancel),
-                                ),
-                                FilledButton(
-                                  style: FilledButton.styleFrom(
-                                    backgroundColor:
-                                        Theme.of(context).colorScheme.error,
-                                    foregroundColor:
-                                        Theme.of(context).colorScheme.onError,
-                                  ),
-                                  onPressed: () => Navigator.pop(context, true),
-                                  child: Text(context.intl.edit_delete),
-                                ),
-                              ],
-                            ),
-                      );
-
-                      if (confirmed == true && context.mounted) {
-                        await context
-                            .redux(userMemoProvider)
-                            .dispatchAsync(DeleteMemoAction(memo, context));
-                      }
-                    },
-                  ),
-                  icon: Icon(Icons.more_horiz_rounded),
-                ),
             ],
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOwnTitle(BuildContext context, Memo memo, bool isDetail) {
+    return Row(
+      children: [
+        Text(
+          memo.getFormattedDisplayTime(context),
+          style: Theme.of(
+            context,
+          ).textTheme.labelMedium?.copyWith(color: Theme.of(context).hintColor),
+        ),
+        Spacer(),
+        if (memo.visibility != MemoVisibility.Private)
+          Icon(
+            size: 18,
+            memo.visibility.systemIcon,
+            color: Theme.of(context).hintColor,
+          ),
+        if (!isDetail) _buildMenuButton(context, memo),
+      ],
+    );
+  }
+
+  Widget _buildMenuButton(BuildContext context, Memo memo) {
+    return PopupMenuButton(
+      itemBuilder: createMemoOptionMenu(
+        context: context,
+        memo: memo,
+        onArchiveClick: () async {
+          await context
+              .redux(userMemoProvider)
+              .dispatchAsync(ArchiveMemoAction(memo, context));
+        },
+        onRestoreClick: () async {
+          await context
+              .redux(userMemoProvider)
+              .dispatchAsync(RestoreMemoAction(memo, context));
+        },
+        onPinClick: () async {
+          await context
+              .redux(userMemoProvider)
+              .dispatchAsync(PinMemoAction(memo));
+        },
+        onUnpinClick: () async {
+          await context
+              .redux(userMemoProvider)
+              .dispatchAsync(UnpinMemoAction(memo));
+        },
+        onDeleteClick: () async {
+          final confirmed = await showDialog<bool>(
+            context: context,
+            builder:
+                (context) => AlertDialog(
+                  content: Text(context.intl.delete_memo_confirm),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, false),
+                      child: Text(context.intl.button_cancel),
+                    ),
+                    FilledButton(
+                      style: FilledButton.styleFrom(
+                        backgroundColor: Theme.of(context).colorScheme.error,
+                        foregroundColor: Theme.of(context).colorScheme.onError,
+                      ),
+                      onPressed: () => Navigator.pop(context, true),
+                      child: Text(context.intl.edit_delete),
+                    ),
+                  ],
+                ),
+          );
+
+          if (confirmed == true && context.mounted) {
+            await context
+                .redux(userMemoProvider)
+                .dispatchAsync(DeleteMemoAction(memo, context));
+          }
+        },
+      ),
+      icon: Icon(Icons.more_horiz_rounded),
+    );
+  }
+
+  Widget _buildMemoContent(BuildContext context, Memo memo, bool isDetail) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 12.0, right: 12.0, bottom: 12.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          isExplore
+              ? _buildExploreTitle(context, memo, isDetail)
+              : _buildOwnTitle(context, memo, isDetail),
           SizedBox(height: 5),
           MemoContent(
             nodes: memo.nodes,

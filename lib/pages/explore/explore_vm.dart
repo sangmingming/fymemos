@@ -133,11 +133,16 @@ class _LoadMoreMemoAction
       String uid = element.creator.id;
       if (userCaches.containsKey(uid)) {
         final user = userCaches[uid];
-        element.creatorName = user?.name ?? '';
+        if (user?.nickname.isEmpty ?? true) {
+          element.creatorName = user?.username ?? '';
+        } else {
+          element.creatorName = user?.nickname ?? user?.username ?? '';
+        }
         element.creatorAvatar = user?.avatarUrl ?? '';
       } else {
         final user = await ApiClient.instance.getUser(uid);
-        element.creatorName = user.nickname;
+        element.creatorName =
+            user.nickname.isEmpty ? user.username : user.nickname;
         element.creatorAvatar = user.avatarUrl ?? "";
         userCaches[uid] = user;
       }

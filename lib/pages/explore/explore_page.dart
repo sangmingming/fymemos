@@ -39,7 +39,7 @@ class ExplorePage extends StatelessWidget {
             return SizedBox.shrink(); // Empty space when not loading more and not at the end
           }
         } else {
-          return MemoItem(memo: vm.memos[index]);
+          return MemoItem(memo: vm.memos[index], isExplore: true);
         }
       },
     );
