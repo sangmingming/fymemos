@@ -452,7 +452,10 @@ class _NodeRenderer extends StatelessWidget {
 
   TextSpan _renderLinkNode(LinkNode node, BuildContext context) {
     return TextSpan(
-      text: node.url,
+      children:
+          node.content
+              .map((child) => _renderChildNode(child, context))
+              .toList(),
       style: TextStyle(color: Theme.of(context).primaryColor),
       recognizer:
           TapGestureRecognizer()

@@ -134,7 +134,10 @@ class LinkNode extends BaseInlineNode {
   }
 
   factory LinkNode.fromJson(Map<String, dynamic> json) {
-    return LinkNode(json['url'], json['text']);
+    return LinkNode(
+      json['url'],
+      (json['content'] as List).map((i) => BaseNode.fromJson(i)).toList(),
+    );
   }
 }
 
