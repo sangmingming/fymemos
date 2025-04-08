@@ -80,6 +80,9 @@ class _CreateMemoPageState extends State<CreateMemoPage> with Refena {
   }
 
   Future<bool> checkCameraPermission() async {
+    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+      return true;
+    }
     final status = await Permission.camera.status;
     if (status.isDenied) {
       final result = await Permission.camera.request();
@@ -268,10 +271,11 @@ class _CreateMemoPageState extends State<CreateMemoPage> with Refena {
             },
             icon: Icon(Icons.tag_outlined),
           ),
-          IconButton(
-            onPressed: _takePhoto,
-            icon: Icon(Icons.photo_camera_outlined),
-          ),
+          if (Platform.isAndroid || Platform.isIOS)
+            IconButton(
+              onPressed: _takePhoto,
+              icon: Icon(Icons.photo_camera_outlined),
+            ),
           IconButton(
             icon: Icon(Icons.image_outlined),
             onPressed: _pickFromGallery,
@@ -390,6 +394,9 @@ class _CreateMemoPageState extends State<CreateMemoPage> with Refena {
 
   // 添加相册权限检查
   Future<bool> checkStoragePermission() async {
+    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+      return true;
+    }
     final status = await Permission.photos.status;
     if (status.isDenied) {
       final result = await Permission.photos.request();
