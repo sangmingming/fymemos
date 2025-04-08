@@ -154,6 +154,11 @@ class S {
     return Intl.message('Unpin', name: 'edit_Unpin', desc: '', args: []);
   }
 
+  /// `Edit`
+  String get edit_edit {
+    return Intl.message('Edit', name: 'edit_edit', desc: '', args: []);
+  }
+
   /// `Share`
   String get share {
     return Intl.message('Share', name: 'share', desc: '', args: []);

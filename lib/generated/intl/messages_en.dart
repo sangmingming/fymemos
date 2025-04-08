@@ -63,6 +63,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "edit_Unpin": MessageLookupByLibrary.simpleMessage("Unpin"),
     "edit_archive": MessageLookupByLibrary.simpleMessage("Archive"),
     "edit_delete": MessageLookupByLibrary.simpleMessage("Delete"),
+    "edit_edit": MessageLookupByLibrary.simpleMessage("Edit"),
     "edit_pin": MessageLookupByLibrary.simpleMessage("Pin"),
     "edit_rename": MessageLookupByLibrary.simpleMessage("Rename"),
     "edit_restore": MessageLookupByLibrary.simpleMessage("Restore"),

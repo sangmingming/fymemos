@@ -34,6 +34,16 @@ class _CreateMemoPageState extends State<CreateMemoPage> with Refena {
     });
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    _contentController.dispose();
+    _contentFocusNode.dispose();
+    if (context.notifier(memoEditVMProvider).state.memo != null) {
+      context.dispose(memoEditVMProvider);
+    }
+  }
+
   void _initData() {
     widget.params.forEach((key, value) {
       switch (key) {
@@ -121,7 +131,13 @@ class _CreateMemoPageState extends State<CreateMemoPage> with Refena {
           .updateVisibility(userSettings.data!.memoVisibility);
     }
     final images = context.watch(memoEditVMProvider).images;
+    final editContent = context.read(memoEditVMProvider).content;
+
     _initData();
+    if (editContent.isNotEmpty && _contentController.text.isEmpty) {
+      _contentController.text = editContent;
+    }
+
     return DropTarget(
       onDragDone: (data) async {
         data.files.forEach((file) async {
@@ -156,6 +172,11 @@ class _CreateMemoPageState extends State<CreateMemoPage> with Refena {
                   isCollapsed: false,
                   labelText: context.intl.content_hint,
                 ),
+                onEditingComplete: () {
+                  context
+                      .notifier(memoEditVMProvider)
+                      .updateContent(_contentController.text);
+                },
                 onChanged: (text) {
                   if (isShowDialog) {
                     Navigator.of(context).pop();
@@ -330,6 +351,9 @@ class _CreateMemoPageState extends State<CreateMemoPage> with Refena {
   }
 
   void _showTagDialog(BuildContext context) async {
+    if (isShowDialog) {
+      return;
+    }
     final renderBox =
         _textFieldKey.currentContext?.findRenderObject() as RenderBox?;
     final offset = renderBox?.localToGlobal(Offset.zero) ?? Offset.zero;

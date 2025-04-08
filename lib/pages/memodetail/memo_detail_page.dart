@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:fymemos/model/memos.dart';
 import 'package:fymemos/pages/common_page.dart';
 import 'package:fymemos/pages/memodetail/memo_detail_vm.dart';
+import 'package:fymemos/pages/memoedit/memo_edit_vm.dart';
 import 'package:fymemos/utils/l10n.dart';
 import 'package:fymemos/widgets/memo.dart';
+import 'package:go_router/go_router.dart';
 import 'package:refena_flutter/refena_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -74,6 +77,15 @@ class MemoDetailPage extends StatelessWidget {
                     },
                     onShareClick: () async {
                       await Share.share(vm.memo.data!.content);
+                    },
+                    onEditClick: () async {
+                      context
+                          .notifier(memoEditVMProvider)
+                          .initMemo(vm.memo.data!);
+                      final r = await context.push<Memo>("/create_memo");
+                      if (r != null) {
+                        context.rebuild(memoDetailDataProvider(resourceName));
+                      }
                     },
                   ),
                   offset: Offset(0, 42),

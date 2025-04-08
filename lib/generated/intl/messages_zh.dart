@@ -62,6 +62,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "edit_Unpin": MessageLookupByLibrary.simpleMessage("取消置顶"),
     "edit_archive": MessageLookupByLibrary.simpleMessage("归档"),
     "edit_delete": MessageLookupByLibrary.simpleMessage("删除"),
+    "edit_edit": MessageLookupByLibrary.simpleMessage("编辑"),
     "edit_pin": MessageLookupByLibrary.simpleMessage("置顶"),
     "edit_rename": MessageLookupByLibrary.simpleMessage("重命名"),
     "edit_restore": MessageLookupByLibrary.simpleMessage("恢复"),

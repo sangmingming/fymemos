@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:fymemos/data/services/api/api_client.dart';
 import 'package:fymemos/model/resources.dart';
+import 'package:fymemos/pages/memoedit/memo_edit_vm.dart';
 import 'package:fymemos/pages/memolist/memo_list_vm.dart';
 import 'package:fymemos/utils/l10n.dart';
 import 'package:fymemos/widgets/memo_content.dart';
@@ -164,6 +165,13 @@ class MemoItem extends StatelessWidget {
           await context
               .redux(userMemoProvider)
               .dispatchAsync(UnpinMemoAction(memo));
+        },
+        onEditClick: () async {
+          context.notifier(memoEditVMProvider).initMemo(memo);
+          final r = await context.push<Memo>("/create_memo");
+          if (r != null) {
+            context.redux(userMemoProvider).dispatch(UpdateLocalMemoAction(r));
+          }
         },
         onDeleteClick: () async {
           final confirmed = await showDialog<bool>(
@@ -410,6 +418,14 @@ PopupMenuItemBuilder createMemoOptionMenu({
               title: Text(context.intl.edit_archive),
             ),
           ),
+      if (memo.state == MemoState.normal)
+        PopupMenuItem(
+          onTap: () => onEditClick?.call(),
+          child: ListTile(
+            leading: Icon(Icons.edit_outlined),
+            title: Text(context.intl.edit_edit),
+          ),
+        ),
       PopupMenuItem(
         onTap: () => onDeleteClick?.call(),
         child: ListTile(

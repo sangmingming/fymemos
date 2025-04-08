@@ -28,6 +28,10 @@ class MemoEditVM extends Notifier<MemoEditData> {
     state = state.copyWith(newVisibility: visibility, initial: true);
   }
 
+  void initMemo(Memo memo) {
+    state = MemoEditData.fromMemo(memo);
+  }
+
   void clear() {
     state = init();
   }
@@ -77,6 +81,30 @@ class MemoEditVM extends Notifier<MemoEditData> {
   }
 
   Future<Result<Memo>> saveMemo() async {
+    if (state.memoName == null || state.memo == null) {
+      return _createMemo();
+    } else {
+      return _updateMemo();
+    }
+  }
+
+  Future<Result<Memo>> _updateMemo() async {
+    final images = await checkImages();
+    final imageData =
+        images
+            .skipWhile((element) => element.memoResource == null)
+            .map((e) => e.memoResource!)
+            .toList();
+    final request = UpdateMemoRequest.copyFromMemo(
+      state.memo!,
+      content: state.content,
+      visibility: state.visibility,
+      resources: imageData,
+    );
+    return await ApiClient.instance.updateMemo(state.memoName!, request);
+  }
+
+  Future<Result<Memo>> _createMemo() async {
     final images = await checkImages();
     final imageData =
         images
@@ -111,6 +139,7 @@ class MemoEditData {
   final String? memoName;
   final List<MemoImage> images;
   final MemoVisibility visibility;
+  final Memo? memo;
   final bool initial;
 
   MemoEditData copyWith({
@@ -125,7 +154,19 @@ class MemoEditData {
       images: image ?? images,
       memoName: name ?? memoName,
       visibility: newVisibility ?? visibility,
+      memo: memo,
       initial: initial ?? this.initial,
+    );
+  }
+
+  factory MemoEditData.fromMemo(Memo memo) {
+    return MemoEditData(
+      content: memo.content,
+      images: memo.resources.map((e) => MemoImage(memoResource: e)).toList(),
+      visibility: memo.visibility,
+      memoName: memo.name,
+      memo: memo,
+      initial: true,
     );
   }
 
@@ -134,6 +175,7 @@ class MemoEditData {
     required this.images,
     required this.visibility,
     this.memoName,
+    this.memo = null,
     this.initial = false,
   });
 }

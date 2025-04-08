@@ -288,6 +288,21 @@ class UnpinMemoAction extends AsyncReduxAction<MemoListController, MemoListVm> {
   }
 }
 
+class UpdateLocalMemoAction
+    extends ReduxAction<MemoListController, MemoListVm> {
+  final Memo memo;
+  UpdateLocalMemoAction(this.memo);
+  @override
+  MemoListVm reduce() {
+    final list = state.memos;
+    final index = list.indexWhere((element) => element.name == memo.name);
+    if (index != -1) {
+      list[index] = memo;
+    }
+    return state.copyWith(memos: list);
+  }
+}
+
 class UpdateMemoAction
     extends AsyncReduxAction<MemoListController, MemoListVm> {
   final Memo memo;
