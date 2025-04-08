@@ -42,15 +42,13 @@ jobs:
       - name: Generate Changelog
         run: |
           git fetch --prune --unshallow  # 确保获取完整提交历史
-          echo "CHANGELOG=$(git log --pretty=format:'+ %s (%h)' $(git describe --tags --abbrev=0 HEAD^)..HEAD)" >> $GITHUB_ENV
+          git log --pretty=format:'- %s (%h)' $(git describe --tags --abbrev=0 HEAD^)..HEAD > changelog.txt
 
       - name: Create Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
           name: Release ${{ github.ref_name }}
-          body: |
-            🚀 New Features & Changes:
-            ${{ env.CHANGELOG }}
+          body_path: changelog.txt
           files: |
             build/**/outputs/apk/release/*.apk
