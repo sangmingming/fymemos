@@ -42,7 +42,7 @@ jobs:
       - name: Generate Changelog
         run: |
           git fetch --prune --unshallow  # 确保获取完整提交历史
-          echo "CHANGELOG=$(git log --pretty=format:'- %s (%h)' $(git describe --tags --abbrev=0 HEAD^)..HEAD)" >> $GITHUB_ENV
+          echo "CHANGELOG=$(git log --pretty=format:'+ %s (%h)' $(git describe --tags --abbrev=0 HEAD^)..HEAD)" >> $GITHUB_ENV
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
