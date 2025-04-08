@@ -8,6 +8,7 @@ import 'package:fymemos/widgets/memo_content.dart';
 import 'package:fymemos/widgets/related_memo.dart';
 import 'package:go_router/go_router.dart';
 import 'package:refena_flutter/refena_flutter.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../model/memos.dart';
 
@@ -141,6 +142,9 @@ class MemoItem extends StatelessWidget {
       itemBuilder: createMemoOptionMenu(
         context: context,
         memo: memo,
+        onShareClick: () async {
+          Share.share(memo.content);
+        },
         onArchiveClick: () async {
           await context
               .redux(userMemoProvider)
