@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fymemos/generated/l10n.dart';
 import 'package:fymemos/pages/settings/settings_controller.dart';
 import 'package:go_router/go_router.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:refena_flutter/refena_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -55,11 +56,15 @@ class SettingsPage extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.info_outline_rounded),
             title: Text(S.of(context).title_about),
-            onTap: () {
+            onTap: () async {
+              PackageInfo packageInfo = await PackageInfo.fromPlatform();
+              String appName = packageInfo.appName;
+              String version = packageInfo.version;
+              String buildNumber = packageInfo.buildNumber;
               showAboutDialog(
                 context: context,
-                applicationName: 'FyMemos',
-                applicationVersion: '1.0.0',
+                applicationName: appName,
+                applicationVersion: "$version($buildNumber)",
                 applicationLegalese: '© 2025 明明同学',
               );
             },
