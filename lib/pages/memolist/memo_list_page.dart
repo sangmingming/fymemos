@@ -55,6 +55,8 @@ class _MemoListPageState extends State<MemoListPage> with Refena {
         onPressed: _createMemo,
         tooltip: 'Create Memo',
         child: const Icon(Icons.add),
+        backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
+        foregroundColor: Theme.of(context).colorScheme.onTertiaryContainer,
       ),
     );
   }

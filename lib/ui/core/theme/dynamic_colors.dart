@@ -13,6 +13,16 @@ final dynamicColorsProvider = Provider<DynamicColors?>(
   (ref) => throw 'not initialized',
 );
 
+ColorScheme _generateColorScheme(Color primaryColor, [Brightness? brightness]) {
+  final Color seedColor = primaryColor;
+
+  final ColorScheme newScheme = ColorScheme.fromSeed(
+    seedColor: seedColor,
+    brightness: brightness ?? Brightness.light,
+  );
+  return newScheme.harmonized();
+}
+
 /// Returns the dynamic colors.
 /// A copy of the dynamic_color_plugin implementation to retrieve the dynamic colors without a widget.
 /// We need to replace [PlatformException] with a generic exception because on Windows 7 it is somehow not a [PlatformException].
@@ -22,8 +32,11 @@ Future<DynamicColors?> getDynamicColors() async {
     if (corePalette != null) {
       debugPrint('dynamic_color: Core palette detected.');
       return DynamicColors(
-        light: corePalette.toColorScheme(),
-        dark: corePalette.toColorScheme(brightness: Brightness.dark),
+        light: _generateColorScheme(corePalette.toColorScheme().primary),
+        dark: _generateColorScheme(
+          corePalette.toColorScheme(brightness: Brightness.dark).primary,
+          Brightness.dark,
+        ),
       );
     }
   } catch (e) {

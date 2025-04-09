@@ -40,8 +40,12 @@ class HeatMap extends StatelessWidget {
               ],
           textStyle:
               textStyle ??
-              TextStyle(color: Colors.black.withOpacity(0.9), fontSize: 12),
-          strokeColor: strokeColor ?? Colors.black,
+              TextStyle(
+                color: Theme.of(context).colorScheme.onSecondaryContainer,
+                fontSize: 12,
+              ),
+          strokeColor:
+              strokeColor ?? Theme.of(context).colorScheme.onSecondaryContainer,
           itemSize: itemSize,
           itemPadding: itemPadding,
         ),

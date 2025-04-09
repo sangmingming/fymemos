@@ -249,9 +249,12 @@ class _NodeRenderer extends StatelessWidget {
   InlineSpan _renderHighlightNode(Highlight node, BuildContext context) {
     return TextSpan(
       text: node.content,
-      style: Theme.of(
-        context,
-      ).textTheme.bodyLarge?.copyWith(backgroundColor: Colors.yellow[300]),
+      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+        backgroundColor:
+            Theme.of(context).brightness == Brightness.light
+                ? Colors.yellow[300]!.withAlpha(160)
+                : Colors.yellow[600]!.withAlpha(80),
+      ),
     );
   }
 
@@ -389,7 +392,7 @@ class _NodeRenderer extends StatelessWidget {
           child: Text(
             '#${node.tag}',
             style: TextStyle(
-              color: Theme.of(context).colorScheme.onPrimaryFixedVariant,
+              color: Theme.of(context).colorScheme.onPrimaryContainer,
             ),
           ),
         ),

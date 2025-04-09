@@ -16,6 +16,24 @@ class UserStatisticWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final colors =
+        isDark
+            ? [
+              Colors.grey[800]!,
+              theme.colorScheme.primary.withAlpha(50),
+              theme.colorScheme.primary.withAlpha(100),
+              theme.colorScheme.primary.withAlpha(190),
+              theme.colorScheme.primary.withAlpha(255),
+            ]
+            : [
+              Colors.grey[300]!,
+              theme.colorScheme.primary.withAlpha(50),
+              theme.colorScheme.primary.withAlpha(100),
+              theme.colorScheme.primary.withAlpha(190),
+              theme.colorScheme.primary.withAlpha(255),
+            ];
     return Padding(
       padding: const EdgeInsets.all(12.0),
       child: Column(
@@ -82,7 +100,11 @@ class UserStatisticWidget extends StatelessWidget {
             ],
           ),
           SizedBox(height: 10),
-          HeatMap(data: userStats?.memoHeatData ?? Map(), aspectRation: 2.3),
+          HeatMap(
+            data: userStats?.memoHeatData ?? Map(),
+            aspectRation: 2.3,
+            colors: colors,
+          ),
         ],
       ),
     );

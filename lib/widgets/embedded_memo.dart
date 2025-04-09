@@ -46,7 +46,7 @@ class _EmbeddedMemoItemState extends State<EmbeddedMemoItem> {
                               children: [
                                 Text(memo.getFormattedDisplayTime(context)),
                                 Spacer(),
-                                Text(memo.name.id),
+                                Text(memo.name.id.substring(0, 8)),
                                 Icon(Icons.arrow_outward),
                               ],
                             ),

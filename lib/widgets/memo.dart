@@ -270,7 +270,9 @@ class MemoItem extends StatelessWidget {
         // 新增边框形状
         side: BorderSide(
           color:
-              memo.pinned ? colorScheme.outline : colorScheme.surface, // 使用主题颜色
+              memo.pinned
+                  ? colorScheme.outline
+                  : colorScheme.surfaceContainerHighest, // 使用主题颜色
           width: 1,
         ),
         borderRadius: BorderRadius.circular(12), // 保持与卡片原有圆角一致
