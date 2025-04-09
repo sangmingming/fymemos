@@ -27,7 +27,7 @@ This app is built with Flutter and Dart.
 ## TODO
 + [ ] Local storage support.
 + [ ] More platforms app build
-+ [ ] More color themes support.
++ [x] More color themes support.
 + [ ] Support more languages.
 
 
