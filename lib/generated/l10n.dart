@@ -520,6 +520,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Theme Color`
+  String get title_color_mode {
+    return Intl.message(
+      'Theme Color',
+      name: 'title_color_mode',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

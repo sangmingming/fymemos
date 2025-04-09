@@ -56,5 +56,6 @@
   "privacy_policy": "隐私政策",
   "title_explore": "探索",
   "content_hint": "此刻的想法...",
-  "empty_tips":"此处空空，去记录你的想法吧！"
+  "empty_tips":"此处空空，去记录你的想法吧！",
+  "title_color_mode": "主题色"
 }

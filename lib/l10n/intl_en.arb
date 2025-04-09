@@ -84,6 +84,7 @@
   "privacy_policy": "Privacy Policy",
   "title_explore": "Explore",
   "content_hint": "Any thoughts...",
-  "empty_tips":"Nothing here, start writing now!"
+  "empty_tips":"Nothing here, start writing now!",
+  "title_color_mode": "Theme Color"
 
   }

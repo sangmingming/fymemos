@@ -107,6 +107,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "time_now": MessageLookupByLibrary.simpleMessage("Now"),
     "title_about": MessageLookupByLibrary.simpleMessage("About"),
     "title_archived": MessageLookupByLibrary.simpleMessage("Archived"),
+    "title_color_mode": MessageLookupByLibrary.simpleMessage("Theme Color"),
     "title_delete_tag": MessageLookupByLibrary.simpleMessage("Delete Tag"),
     "title_explore": MessageLookupByLibrary.simpleMessage("Explore"),
     "title_home": MessageLookupByLibrary.simpleMessage("Home"),

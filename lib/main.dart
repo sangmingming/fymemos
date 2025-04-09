@@ -99,7 +99,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final ref = context.ref;
     final dynamicColors = ref.watch(dynamicColorsProvider);
-    final themMode = ref.watch(settingsProvider.select((s) => s.themeMode));
+    final (themMode, colorMode) = ref.watch(
+      settingsProvider.select((s) => (s.themeMode, s.colorMode)),
+    );
     return MaterialApp.router(
       title: 'FyMemos',
       localizationsDelegates: [
@@ -113,8 +115,8 @@ class MyApp extends StatelessWidget {
         Locale('zh'),
         Locale('zh', 'CN'), // Chinese
       ],
-      theme: getTheme(Brightness.light, dynamicColors),
-      darkTheme: getTheme(Brightness.dark, dynamicColors),
+      theme: getTheme(Brightness.light, dynamicColors, colorMode),
+      darkTheme: getTheme(Brightness.dark, dynamicColors, colorMode),
       themeMode: themMode, // Use system theme mode
       routerConfig: _router,
     );

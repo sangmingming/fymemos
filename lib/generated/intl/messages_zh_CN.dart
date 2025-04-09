@@ -102,6 +102,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "time_now": MessageLookupByLibrary.simpleMessage("刚刚"),
     "title_about": MessageLookupByLibrary.simpleMessage("关于"),
     "title_archived": MessageLookupByLibrary.simpleMessage("归档"),
+    "title_color_mode": MessageLookupByLibrary.simpleMessage("主题色"),
     "title_delete_tag": MessageLookupByLibrary.simpleMessage("删除标签"),
     "title_explore": MessageLookupByLibrary.simpleMessage("探索"),
     "title_home": MessageLookupByLibrary.simpleMessage("首页"),

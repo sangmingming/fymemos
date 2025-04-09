@@ -1,5 +1,6 @@
 import 'package:fymemos/data/services/settings_provider.dart';
 import 'package:fymemos/pages/settings/setting_vm.dart';
+import 'package:fymemos/ui/core/theme/color_mode.dart';
 import 'package:fymemos/ui/core/theme/dynamic_colors.dart';
 import 'package:refena_flutter/refena_flutter.dart';
 
@@ -29,8 +30,17 @@ class SettingsController extends ReduxNotifier<SettingVM> {
   SettingVM init() {
     return SettingVM(
       settings: _settingsService.state,
+      colorModes:
+          _supportsDynamicColors
+              ? ColorMode.values
+              : ColorMode.values
+                  .where((color) => color != ColorMode.system)
+                  .toList(),
       onChangeTheme: (context, theme) async {
         _settingsService.setTheme(theme);
+      },
+      onChangeColorMode: (context, colorMode) async {
+        await _settingsService.setColorMode(colorMode);
       },
     );
   }

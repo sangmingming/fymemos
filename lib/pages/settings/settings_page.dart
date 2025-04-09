@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fymemos/generated/l10n.dart';
 import 'package:fymemos/pages/settings/settings_controller.dart';
+import 'package:fymemos/ui/core/theme/color_mode.dart';
+import 'package:fymemos/utils/l10n.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:refena_flutter/refena_flutter.dart';
@@ -47,10 +49,74 @@ class SettingsPage extends StatelessWidget {
             ),
           ),
           ListTile(
+            leading: Icon(Icons.palette_outlined),
+            title: Text(S.of(context).title_color_mode),
+            trailing: DropdownButton<ColorMode>(
+              value:
+                  context.watch(settingsControllerProvider).settings.colorMode,
+              onChanged: (ColorMode? value) {
+                if (value == null) {
+                  return;
+                }
+                context
+                    .read(settingsControllerProvider)
+                    .onChangeColorMode(context, value);
+              },
+              items:
+                  context
+                      .read(settingsControllerProvider)
+                      .colorModes
+                      .map(
+                        (colorMode) => DropdownMenuItem<ColorMode>(
+                          value: colorMode,
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 20,
+                                height: 20,
+                                decoration:
+                                    colorMode == ColorMode.system
+                                        ? BoxDecoration(
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
+                                          gradient: SweepGradient(
+                                            colors: [
+                                              Colors.pink,
+                                              Colors.red,
+                                              Colors.yellow,
+                                              Colors.orange,
+                                              Colors.green,
+                                              Colors.teal,
+                                              Colors.blue,
+                                            ],
+                                          ),
+                                        )
+                                        : BoxDecoration(
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
+                                          color: colorMode.color,
+                                        ),
+                              ),
+                              SizedBox(width: 8),
+                              Text(
+                                colorMode == ColorMode.system
+                                    ? context.intl.theme_system
+                                    : colorMode.name,
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                      .toList(),
+            ),
+          ),
+          ListTile(
             leading: Icon(Icons.privacy_tip_outlined),
             title: Text(S.of(context).privacy_policy),
             onTap: () async {
-              launchUrlString("https://fymemos.isming.info");
+              launchUrlString("https://fymemos.isming.info/privacy");
             },
           ),
           ListTile(

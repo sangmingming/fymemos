@@ -1,13 +1,22 @@
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fymemos/ui/core/theme/color_mode.dart';
 import 'package:fymemos/ui/core/theme/dynamic_colors.dart';
 import 'package:fymemos/utils/platform_check.dart';
 
 double get desktopPaddingFix => checkPlatformIsDesktop() ? 8 : 0;
 
-ThemeData getTheme(Brightness brightness, DynamicColors? dynamicColors) {
-  final colorScheme = _determineColorScheme(brightness, dynamicColors);
+ThemeData getTheme(
+  Brightness brightness,
+  DynamicColors? dynamicColors, [
+  ColorMode colorMode = ColorMode.system,
+]) {
+  final colorScheme = _determineColorScheme(
+    brightness,
+    dynamicColors,
+    colorMode,
+  );
 
   return ThemeData(
     colorScheme: colorScheme,
@@ -44,18 +53,24 @@ ThemeData getTheme(Brightness brightness, DynamicColors? dynamicColors) {
 
 ColorScheme _determineColorScheme(
   Brightness brightness,
-  DynamicColors? dynamicColors,
-) {
+  DynamicColors? dynamicColors, [
+  ColorMode colorMode = ColorMode.system,
+]) {
   final defaultColorScheme = ColorScheme.fromSeed(
     seedColor: Colors.green,
     brightness: brightness,
   );
-
-  final colorScheme =
-      brightness == Brightness.light
-          ? dynamicColors?.light
-          : dynamicColors?.dark;
-  return colorScheme ?? defaultColorScheme;
+  if (colorMode == ColorMode.system) {
+    final colorScheme =
+        brightness == Brightness.light
+            ? dynamicColors?.light
+            : dynamicColors?.dark;
+    return colorScheme ?? defaultColorScheme;
+  }
+  return ColorScheme.fromSeed(
+    seedColor: colorMode.color,
+    brightness: brightness,
+  );
 }
 
 Future<void> updateSystemOverlayStyle(BuildContext context) async {
