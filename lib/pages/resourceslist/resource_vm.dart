@@ -13,8 +13,8 @@ final resourcesVmProvider = ViewProvider<ResourcesVm>((ref) {
   print("build recources VM");
   return ResourcesVm(
     resources: res,
-    refresh: () {
-      ref.rebuild(resourcesListProvider);
+    refresh: () async {
+      await ref.rebuild(resourcesListProvider);
     },
   );
 });

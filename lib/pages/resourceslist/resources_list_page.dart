@@ -17,7 +17,9 @@ class ResourcesListPage extends StatelessWidget {
       builder: (context, vm) {
         return Scaffold(
           body: RefreshIndicator(
-            onRefresh: () => vm.refresh(),
+            onRefresh: () async {
+              await vm.refresh();
+            },
             child: _buildResult(context, vm.resources),
           ),
         );
