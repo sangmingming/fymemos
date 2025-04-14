@@ -37,7 +37,7 @@ class SettingsController extends ReduxNotifier<SettingVM> {
                   .where((color) => color != ColorMode.system)
                   .toList(),
       onChangeTheme: (context, theme) async {
-        _settingsService.setTheme(theme);
+        await _settingsService.setTheme(theme);
       },
       onChangeColorMode: (context, colorMode) async {
         await _settingsService.setColorMode(colorMode);
@@ -50,7 +50,16 @@ class SettingsController extends ReduxNotifier<SettingVM> {
   get initialAction => _SettingsInitAction();
 }
 
-class _SettingsInitAction extends WatchAction<SettingsController, SettingVM> {
+class _SettingsInitAction
+    extends AsyncReduxAction<SettingsController, SettingVM> {
+  @override
+  Future<SettingVM> reduce() async {
+    dispatch(_SettingsWatchAction());
+    return state;
+  }
+}
+
+class _SettingsWatchAction extends WatchAction<SettingsController, SettingVM> {
   @override
   SettingVM reduce() {
     return state.copyWith(settings: ref.watch(settingsProvider));

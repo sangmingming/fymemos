@@ -21,10 +21,9 @@ class SettingsService extends PureNotifier<SettingsState> {
   SettingsState init() => SettingsState();
 
   void initSettings() async {
-    state = state.copyWith(
-      themeMode: await _getThemeMode(),
-      colorMode: await _getColorMode(),
-    );
+    final color = await _getColorMode();
+    final theme = await _getThemeMode();
+    state = state.copyWith(themeMode: theme, colorMode: color);
   }
 
   Future<ColorMode> _getColorMode() async {
