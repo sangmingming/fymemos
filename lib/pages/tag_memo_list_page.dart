@@ -67,7 +67,12 @@ class _TagMemoListPageState extends State<TagMemoListPage> with Refena {
           } else {
             _memoData.addAll(r.value.memos!);
             memo = LoadState.success(_memoData);
-            _nextPageToken = r.value.nextPageToken;
+            if (r.value.nextPageToken == null) {
+              _nextPageToken = null;
+            } else {
+              _nextPageToken =
+                  r.value.nextPageToken!.isEmpty ? null : r.value.nextPageToken;
+            }
           }
         });
     }
